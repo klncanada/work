@@ -1,0 +1,266 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar, User, ArrowRight, Clock, ChevronDown, ChevronUp, ParkingCircle, Info } from 'lucide-react';
+
+const App = () => {
+  const [lang, setLang] = useState('fr');
+
+  // 12人固定名单 (按 Excel 中的顺序)
+  const names = [
+    "Nathalie", "Patricia", "Stacy", "Liliana", 
+    "Lucy", "Marianella", "Marla", "MaryZhou", 
+    "Karim", "Yan", "Marie-Eve", "Qing"
+  ];
+
+  // 自动生成排期数据的逻辑
+  const scheduleData = useMemo(() => {
+    const data = [];
+    const startWeek = 148;
+    const startDate = new Date('2025-08-11'); // 第148周的周一
+    const targetWeek = 210; // 目标周数
+
+    for (let w = startWeek; w <= targetWeek; w++) {
+      const weeksDiff = w - startWeek;
+      
+      // 计算本周起始日期 (周一)
+      const currentStart = new Date(startDate);
+      currentStart.setDate(startDate.getDate() + weeksDiff * 7);
+      
+      // 计算本周结束日期 (周五)
+      const currentEnd = new Date(currentStart);
+      currentEnd.setDate(currentStart.getDate() + 4);
+
+      // 计算持有人 (12人循环)
+      const personIndex = weeksDiff % names.length;
+      
+      data.push({
+        week: w,
+        start: currentStart.toISOString().split('T')[0],
+        end: currentEnd.toISOString().split('T')[0],
+        name: names[personIndex]
+      });
+    }
+    return data;
+  }, []);
+
+  // 语言配置
+  const translations = {
+    fr: {
+      title: "Calendrier de Stationnement",
+      subtitle: "Génération automatique du planning",
+      currentHolder: "Détenteur Actuel",
+      nextWeek: "La Semaine Prochaine",
+      startDate: "Date de début",
+      status: "Statut",
+      inUse: "En cours",
+      cycle: "Cycle",
+      weekShort: "Sem.",
+      viewFull: "Voir le calendrier complet",
+      tableWeek: "Semaine",
+      tableRange: "Période",
+      tableHolder: "Titulaire",
+      footer: "Basé sur un cycle fixe de 12 personnes. Données générées par algorithme.",
+      now: "ACTUEL"
+    },
+    en: {
+      title: "Parking Spot Schedule",
+      subtitle: "Auto-generated schedule",
+      currentHolder: "Current Holder",
+      nextWeek: "Next Week Preview",
+      startDate: "Start Date",
+      status: "Status",
+      inUse: "In Use",
+      cycle: "Week",
+      weekShort: "Wk",
+      viewFull: "View Full Schedule",
+      tableWeek: "Week",
+      tableRange: "Date Range",
+      tableHolder: "Holder",
+      footer: "Based on a 12-person fixed cycle. Algorithmically generated.",
+      now: "NOW"
+    },
+    zh: {
+      title: "车位轮流排期",
+      subtitle: "自动生成排班逻辑",
+      currentHolder: "本周持有",
+      nextWeek: "下周预告",
+      startDate: "开始日期",
+      status: "当前状态",
+      inUse: "使用中",
+      cycle: "排期周次",
+      weekShort: "周",
+      viewFull: "查看完整排期表",
+      tableWeek: "周次",
+      tableRange: "日期范围",
+      tableHolder: "持有人",
+      footer: "基于12人固定循环周期自动生成。",
+      now: "当前"
+    }
+  };
+
+  const t = translations[lang];
+  const [today] = useState(new Date()); 
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [showFullSchedule, setShowFullSchedule] = useState(false);
+
+  useEffect(() => {
+    const now = new Date();
+    const index = scheduleData.findIndex(item => {
+      const start = new Date(item.start);
+      const nextMon = new Date(start);
+      nextMon.setDate(start.getDate() + 7);
+      return now >= start && now < nextMon;
+    });
+    
+    if (index !== -1) {
+      setCurrentIndex(index);
+    } else {
+      const nextIdx = scheduleData.findIndex(item => new Date(item.start) > now);
+      setCurrentIndex(nextIdx > 0 ? nextIdx - 1 : 0);
+    }
+  }, [scheduleData]);
+
+  const current = scheduleData[currentIndex] || null;
+  const next = scheduleData[currentIndex + 1] || null;
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const locales = { fr: 'fr-FR', en: 'en-US', zh: 'zh-CN' };
+    return d.toLocaleDateString(locales[lang], { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
+      <div className="max-w-md mx-auto">
+        {/* Language Switcher */}
+        <div className="flex justify-end mb-4 gap-2">
+          {['fr', 'en', 'zh'].map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                lang === l ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400 hover:bg-slate-100'
+              }`}
+            >
+              {l.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
+        {/* Header */}
+        <header className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <ParkingCircle className="text-blue-600" size={28} />
+              {t.title}
+            </h1>
+            <p className="text-slate-500 text-sm">{t.subtitle}</p>
+          </div>
+          <div className="bg-white px-3 py-1 rounded-full border shadow-sm text-[10px] font-bold flex items-center gap-1 mt-1">
+            <Clock size={12} className="text-blue-500" />
+            {today.toLocaleDateString(lang === 'zh' ? 'zh-CN' : (lang === 'fr' ? 'fr-FR' : 'en-US'))}
+          </div>
+        </header>
+
+        {/* Current Holder Card */}
+        <div className="bg-white rounded-3xl shadow-xl shadow-blue-100 border border-blue-50 overflow-hidden mb-6">
+          <div className="bg-blue-600 px-6 py-2 text-white text-[10px] font-bold tracking-widest uppercase">
+            {t.currentHolder}
+          </div>
+          <div className="p-8 text-center">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 rounded-full mb-4">
+              <User size={40} className="text-blue-600" />
+            </div>
+            <h2 className="text-4xl font-black text-slate-800 mb-2">
+              {current ? current.name : "..."}
+            </h2>
+            <div className="flex items-center justify-center gap-2 text-slate-500 mb-6">
+              <Calendar size={16} />
+              <span className="text-sm font-medium">
+                {current ? `${formatDate(current.start)} - ${formatDate(current.end)}` : "-"}
+              </span>
+            </div>
+            
+            <div className="bg-slate-50 rounded-2xl p-4 flex justify-around">
+              <div className="text-center">
+                <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{t.status}</p>
+                <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-black uppercase">{t.inUse}</span>
+              </div>
+              <div className="w-px bg-slate-200" />
+              <div className="text-center">
+                <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{t.cycle}</p>
+                <span className="text-slate-700 text-xs font-bold">{t.weekShort} {current?.week}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Next Holder Preview */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+              <ArrowRight size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400 font-bold uppercase">{t.nextWeek}</p>
+              <h3 className="text-lg font-bold text-slate-700 leading-tight">{next ? next.name : "-"}</h3>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-slate-400 font-bold uppercase">{t.startDate}</p>
+            <p className="text-sm font-mono font-bold text-slate-600">{next ? formatDate(next.start) : "-"}</p>
+          </div>
+        </div>
+
+        {/* Detailed Schedule Toggle */}
+        <div className="border-t border-slate-200 pt-6">
+          <button 
+            onClick={() => setShowFullSchedule(!showFullSchedule)}
+            className="w-full flex items-center justify-between text-slate-400 hover:text-slate-700 transition-colors py-2 group"
+          >
+            <span className="text-xs font-bold flex items-center gap-2">
+              <Info size={14} className="group-hover:text-blue-500" />
+              {t.viewFull}
+            </span>
+            {showFullSchedule ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+
+          {showFullSchedule && (
+            <div className="mt-4 bg-white rounded-xl border border-slate-100 shadow-inner overflow-hidden max-h-64 overflow-y-auto transition-all">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 sticky top-0 z-10">
+                  <tr>
+                    <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableWeek}</th>
+                    <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableRange}</th>
+                    <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableHolder}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {scheduleData.map((item, idx) => (
+                    <tr key={idx} className={`${idx === currentIndex ? 'bg-blue-50/50' : ''}`}>
+                      <td className="px-4 py-3 font-mono text-slate-400">{item.week}</td>
+                      <td className="px-4 py-3 text-slate-500">
+                        {formatDate(item.start)} - {formatDate(item.end)}
+                      </td>
+                      <td className={`px-4 py-3 font-bold ${idx === currentIndex ? 'text-blue-600' : 'text-slate-700'}`}>
+                        {item.name}
+                        {idx === currentIndex && <span className="ml-2 text-[8px] bg-blue-600 text-white px-1 py-0.5 rounded-sm">{t.now}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Footer info */}
+        <p className="text-center text-slate-400 text-[10px] mt-12 leading-relaxed px-4">
+          {t.footer}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default App;
