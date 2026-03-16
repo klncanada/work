@@ -18,7 +18,7 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
-        // 图标组件
+        // 图标组件 (内联 SVG)
         const IconParking = () => (
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><circle cx="12" cy="12" r="10"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>
         );
@@ -48,7 +48,16 @@
         );
 
         const App = () => {
-            const [lang, setLang] = useState('fr');
+            // 根据浏览器语言检测初始语言
+            const getInitialLang = () => {
+                const browserLang = (navigator.language || 'fr').toLowerCase();
+                if (browserLang.startsWith('zh')) return 'zh';
+                if (browserLang.startsWith('fr')) return 'fr';
+                if (browserLang.startsWith('en')) return 'en';
+                return 'fr'; 
+            };
+
+            const [lang, setLang] = useState(getInitialLang);
             const [externalData, setExternalData] = useState(null);
             const [lastSync, setLastSync] = useState(null);
             const currentRowRef = useRef(null);
@@ -63,8 +72,6 @@
                 }
             }, []);
 
-            const names = ["Nathalie", "Patricia", "Stacy", "Liliana", "Lucy", "Marianella", "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing"];
-
             // 原始全量数据
             const allScheduleData = useMemo(() => {
                 if (externalData && externalData.length > 0) return externalData;
@@ -72,7 +79,14 @@
                 const data = [];
                 const startWeek = 148;
                 const startDate = new Date('2025-08-11');
-                const targetWeek = 210;
+                const changeWeek = 180; // 变更点
+                const targetWeek = 199; // 目标截止周
+
+                // 名单 A: 12人 (包含 Patricia)
+                const names12 = ["Nathalie", "Patricia", "Stacy", "Liliana", "Lucy", "Marianella", "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing"];
+                
+                // 名单 B: 11人 (去掉 Patricia)
+                const names11 = ["Nathalie", "Stacy", "Liliana", "Lucy", "Marianella", "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing"];
 
                 for (let w = startWeek; w <= targetWeek; w++) {
                     const weeksDiff = w - startWeek;
@@ -80,12 +94,25 @@
                     currentStart.setDate(startDate.getDate() + weeksDiff * 7);
                     const currentEnd = new Date(currentStart);
                     currentEnd.setDate(currentStart.getDate() + 4);
-                    const personIndex = weeksDiff % names.length;
+
+                    let name = "";
+                    if (w < changeWeek) {
+                        // 148-179: 12人循环
+                        name = names12[weeksDiff % names12.length];
+                    } else {
+                        // 180-199: 11人循环
+                        // 179周是 MaryZhou (names12 的 index 7)
+                        // names11 中 MaryZhou 是 index 6，下一个 Karim 是 index 7
+                        // 因此 180 周从 names11 的 index 7 开始顺延
+                        const weeksDiffAfterChange = w - changeWeek;
+                        name = names11[(weeksDiffAfterChange + 7) % names11.length];
+                    }
+
                     data.push({
                         week: w,
                         start: currentStart.toISOString().split('T')[0],
                         end: currentEnd.toISOString().split('T')[0],
-                        name: names[personIndex]
+                        name: name
                     });
                 }
                 return data;
@@ -105,18 +132,17 @@
                 return nextIdx > 0 ? nextIdx - 1 : 0;
             }, [allScheduleData]);
 
-            // 仅截取 41 条数据：当前周居中
+            // 仅截取 41 条数据窗口：当前周居中
             const displayedSchedule = useMemo(() => {
                 const startIdx = Math.max(0, currentIndex - 20);
                 const endIdx = Math.min(allScheduleData.length, currentIndex + 21);
                 return allScheduleData.slice(startIdx, endIdx);
             }, [allScheduleData, currentIndex]);
 
-            // 处理 Excel 上传 (逻辑保留)
+            // 处理 Excel 上传 (逻辑隐藏保留)
             const handleFileUpload = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
                 reader.onload = (evt) => {
                     const bstr = evt.target.result;
@@ -124,14 +150,12 @@
                     const wsname = wb.SheetNames.find(n => n.includes('Schedule')) || wb.SheetNames[0];
                     const ws = wb.Sheets[wsname];
                     const json = XLSX.utils.sheet_to_json(ws);
-
                     const formatted = json.map(row => ({
                         week: row['Week'] || row['周次'] || 0,
                         start: row['Handover Day'] || row['开始日期'] || '',
                         end: row['Period End'] || row['结束日期'] || '',
                         name: row['Name'] || row['持有人'] || 'Unknown'
                     })).filter(item => item.start && item.name !== 'Unknown');
-
                     if (formatted.length > 0) {
                         setExternalData(formatted);
                         const timeStr = new Date().toLocaleString();
@@ -146,7 +170,7 @@
             const translations = {
                 fr: {
                     title: "Calendrier de Stationnement",
-                    subtitle: "Synchronisé avec Excel",
+                    subtitle: "Planning dynamique auto-calculé",
                     currentHolder: "Détenteur Actuel",
                     nextWeek: "La Semaine Prochaine",
                     startDate: "Date de début",
@@ -154,18 +178,18 @@
                     inUse: "En cours",
                     cycle: "Cycle",
                     weekShort: "Sem.",
-                    viewFull: "Voir le planning (Fenêtre actuelle)",
+                    viewFull: "Voir le planning (Fenêtre active)",
                     tableWeek: "Sem.",
                     tableRange: "Période",
                     tableHolder: "Titulaire",
-                    footer: "Affichage : +- 20 semaines autour d'aujourd'hui.",
+                    footer: "Transition : 11 personnes dès la Sem. 180 (sans Patricia).",
                     now: "ACTUEL",
                     syncBtn: "Importer .xlsx",
                     syncStatus: "Dernière sync : "
                 },
                 en: {
                     title: "Parking Spot Schedule",
-                    subtitle: "Synced with Excel",
+                    subtitle: "Dynamic auto-calculated schedule",
                     currentHolder: "Current Holder",
                     nextWeek: "Next Week Preview",
                     startDate: "Start Date",
@@ -177,14 +201,14 @@
                     tableWeek: "Wk",
                     tableRange: "Date Range",
                     tableHolder: "Holder",
-                    footer: "Displaying +- 20 weeks around today.",
+                    footer: "Transition: 11-person cycle from Wk 180 (Patricia removed).",
                     now: "NOW",
                     syncBtn: "Import .xlsx",
                     syncStatus: "Last sync: "
                 },
                 zh: {
                     title: "车位轮流排期",
-                    subtitle: "已与 Excel 同步",
+                    subtitle: "动态自动计算逻辑",
                     currentHolder: "本周持有",
                     nextWeek: "下周预告",
                     startDate: "开始日期",
@@ -196,7 +220,7 @@
                     tableWeek: "周次",
                     tableRange: "日期范围",
                     tableHolder: "持有人",
-                    footer: "仅显示当前日期前后 20 周的数据。",
+                    footer: "变更说明：从 180 周起移除 Patricia，进入 11 人循环。",
                     now: "当前",
                     syncBtn: "导入 Excel 文件",
                     syncStatus: "上次更新："
@@ -210,14 +234,11 @@
             const current = allScheduleData[currentIndex] || null;
             const next = allScheduleData[currentIndex + 1] || null;
 
-            // 当列表展开时，自动滚动到当前周
+            // 列表展开时自动置顶“当前周”
             useEffect(() => {
                 if (showFullSchedule && currentRowRef.current) {
                     setTimeout(() => {
-                        currentRowRef.current.scrollIntoView({ 
-                            behavior: 'auto',
-                            block: 'start'
-                        });
+                        currentRowRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
                     }, 50);
                 }
             }, [showFullSchedule]);
@@ -234,7 +255,7 @@
                     <div className="max-w-md mx-auto">
                         <div className="flex justify-between items-center mb-6">
                              <div className="flex items-center gap-2">
-                                {/* 导入 Excel 按钮暂时隐藏，但逻辑保留在代码中 */}
+                                {/* 导入功能静默保留 */}
                                 {false && (
                                     <label className="cursor-pointer bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold text-slate-500 hover:bg-slate-100 transition-all flex items-center gap-2 shadow-sm">
                                         <IconUpload />
@@ -267,75 +288,75 @@
 
                         <header className="flex items-start justify-between mb-8">
                             <div>
-                                <h1 className="text-2xl font-bold flex items-center gap-2">
+                                <h1 className="text-2xl font-bold flex items-center gap-2 text-slate-800">
                                     <IconParking />
                                     {t.title}
                                 </h1>
-                                <p className="text-slate-500 text-xs">{t.subtitle} {lastSync && `(${t.syncStatus}${lastSync.split(',')[0]})`}</p>
+                                <p className="text-slate-500 text-xs font-medium">{t.subtitle} {lastSync && `(${t.syncStatus}${lastSync.split(',')[0]})`}</p>
                             </div>
-                            <div className="bg-white px-3 py-1 rounded-full border shadow-sm text-[10px] font-bold flex items-center gap-1 mt-1">
+                            <div className="bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm text-[10px] font-bold flex items-center gap-1 mt-1">
                                 <IconClock />
                                 {today.toLocaleDateString(lang === 'zh' ? 'zh-CN' : (lang === 'fr' ? 'fr-FR' : 'en-US'))}
                             </div>
                         </header>
 
-                        {/* Current Holder Card */}
-                        <div className="bg-white rounded-3xl shadow-xl shadow-blue-100 border border-blue-50 overflow-hidden mb-6">
-                            <div className="bg-blue-600 px-6 py-2 text-white text-[10px] font-bold tracking-widest uppercase text-center">
+                        {/* 本周持有人卡片 */}
+                        <div className="bg-white rounded-3xl shadow-xl shadow-blue-100/50 border border-blue-50 overflow-hidden mb-6">
+                            <div className="bg-blue-600 px-6 py-2 text-white text-[10px] font-black tracking-widest uppercase text-center">
                                 {t.currentHolder}
                             </div>
                             <div className="p-8 text-center">
                                 <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 rounded-full mb-4">
                                     <IconUser />
                                 </div>
-                                <h2 className="text-4xl font-black text-slate-800 mb-2">
+                                <h2 className="text-4xl font-black text-slate-800 mb-2 leading-tight">
                                     {current ? current.name : "..."}
                                 </h2>
-                                <div className="flex items-center justify-center gap-2 text-slate-500 mb-6">
+                                <div className="flex items-center justify-center gap-2 text-slate-400 mb-6">
                                     <IconCalendar />
-                                    <span className="text-sm font-medium">
+                                    <span className="text-sm font-bold tracking-tight">
                                         {current ? `${formatDate(current.start)} - ${formatDate(current.end)}` : "-"}
                                     </span>
                                 </div>
                                 
                                 <div className="bg-slate-50 rounded-2xl p-4 flex justify-around">
                                     <div className="text-center">
-                                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{t.status}</p>
-                                        <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-black uppercase">{t.inUse}</span>
+                                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-tighter">{t.status}</p>
+                                        <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-black uppercase tracking-widest">{t.inUse}</span>
                                     </div>
                                     <div className="w-px bg-slate-200" />
                                     <div className="text-center">
-                                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{t.cycle}</p>
-                                        <span className="text-slate-700 text-xs font-bold">{t.weekShort} {current?.week}</span>
+                                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-tighter">{t.cycle}</p>
+                                        <span className="text-slate-700 text-xs font-black">{t.weekShort} {current?.week}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Next Preview */}
+                        {/* 下周预告卡片 */}
                         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm mb-8 flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
                                     <IconArrowRight />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase">{t.nextWeek}</p>
-                                    <h3 className="text-lg font-bold text-slate-700 leading-tight">{next ? next.name : "-"}</h3>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{t.nextWeek}</p>
+                                    <h3 className="text-lg font-black text-slate-700 leading-tight">{next ? next.name : "-"}</h3>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] text-slate-400 font-bold uppercase">{t.startDate}</p>
+                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{t.startDate}</p>
                                 <p className="text-sm font-mono font-bold text-slate-600">{next ? formatDate(next.start) : "-"}</p>
                             </div>
                         </div>
 
-                        {/* List Toggle Section */}
+                        {/* 列表折叠部分 */}
                         <div className="border-t border-slate-200 pt-6">
                             <button 
                                 onClick={() => setShowFullSchedule(!showFullSchedule)}
                                 className="w-full flex items-center justify-between text-slate-400 hover:text-slate-700 transition-colors py-2 group"
                             >
-                                <span className="text-xs font-bold flex items-center gap-2">
+                                <span className="text-xs font-black flex items-center gap-2 tracking-tight uppercase">
                                     <IconInfo />
                                     {t.viewFull}
                                 </span>
@@ -343,13 +364,13 @@
                             </button>
 
                             {showFullSchedule && (
-                                <div className="mt-4 bg-white rounded-xl border border-slate-100 shadow-inner overflow-hidden max-h-96 overflow-y-auto transition-all">
+                                <div className="mt-4 bg-white rounded-2xl border border-slate-100 shadow-inner overflow-hidden max-h-96 overflow-y-auto transition-all scroll-smooth">
                                     <table className="w-full text-left text-xs border-collapse">
                                         <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
                                             <tr>
-                                                <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableWeek}</th>
-                                                <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableRange}</th>
-                                                <th className="px-4 py-2 font-bold text-slate-400 text-[9px] uppercase">{t.tableHolder}</th>
+                                                <th className="px-4 py-2 font-black text-slate-400 text-[9px] uppercase">{t.tableWeek}</th>
+                                                <th className="px-4 py-2 font-black text-slate-400 text-[9px] uppercase">{t.tableRange}</th>
+                                                <th className="px-4 py-2 font-black text-slate-400 text-[9px] uppercase">{t.tableHolder}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50">
@@ -357,17 +378,17 @@
                                                 const isCurrent = item.week === current?.week && item.start === current?.start;
                                                 return (
                                                     <tr 
-                                                        key={idx} 
+                                                        key={`${item.week}-${idx}`} 
                                                         ref={isCurrent ? currentRowRef : null}
                                                         className={`${isCurrent ? 'bg-blue-50/70' : ''} transition-colors`}
                                                     >
-                                                        <td className="px-4 py-3 font-mono text-slate-400">{item.week}</td>
-                                                        <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                                                        <td className="px-4 py-3 font-mono text-slate-400 font-bold">{item.week}</td>
+                                                        <td className="px-4 py-3 text-slate-500 font-medium whitespace-nowrap">
                                                             {formatDate(item.start)} - {formatDate(item.end)}
                                                         </td>
-                                                        <td className={`px-4 py-3 font-bold ${isCurrent ? 'text-blue-600' : 'text-slate-700'}`}>
+                                                        <td className={`px-4 py-3 font-black ${isCurrent ? 'text-blue-600' : 'text-slate-700'}`}>
                                                             {item.name}
-                                                            {isCurrent && <span className="ml-2 text-[8px] bg-blue-600 text-white px-1 py-0.5 rounded-sm">{t.now}</span>}
+                                                            {isCurrent && <span className="ml-2 text-[8px] bg-blue-600 text-white px-1 py-0.5 rounded-sm tracking-tighter">{t.now}</span>}
                                                         </td>
                                                     </tr>
                                                 );
@@ -378,7 +399,7 @@
                             )}
                         </div>
 
-                        <p className="text-center text-slate-400 text-[10px] mt-12 leading-relaxed px-4 pb-12">
+                        <p className="text-center text-slate-400 text-[10px] mt-12 leading-relaxed px-4 pb-12 font-medium">
                             {t.footer}
                         </p>
                     </div>
