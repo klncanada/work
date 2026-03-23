@@ -140,25 +140,26 @@
       position: absolute;
       left: 18px;
       top: 18px;
-      padding: 12px 14px;
+      padding: 12px 16px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(229, 231, 235, 0.95);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 145, 77, 0.18);
+      border: 1px solid rgba(255, 145, 77, 0.35);
+      box-shadow: 0 8px 20px rgba(255, 145, 77, 0.12);
+      backdrop-filter: blur(6px);
       max-width: 320px;
       z-index: 500;
     }
 
     .map-overlay strong {
       display: block;
-      margin-bottom: 6px;
+      margin: 0;
       font-size: 14px;
+      font-weight: 700;
+      color: #9a3412;
     }
 
     .map-overlay span {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
+      display: none;
     }
 
     .cards {
@@ -495,13 +496,9 @@
       if (!mapOverlay) return;
 
       const safeName = escapeHtml(office.name || getText('office'));
-      const safeAddress = escapeHtml(office.address || '-');
-      const phone = escapeHtml(office.phone || '-');
-      const fax = escapeHtml(office.fax || '-');
-
       mapOverlay.innerHTML = `
         <strong>${safeName}</strong>
-        <span>${safeAddress}<br>${getText('phone')}: ${phone}<br>${getText('fax')}: ${fax}</span>
+        <span></span>
       `;
     }
 
@@ -565,6 +562,8 @@
       console.assert(escapeHtml('&<>"\'') === '&amp;&lt;&gt;&quot;&#39;', 'escapeHtml should encode special chars');
       console.assert(detectLanguage() === 'en' || detectLanguage() === 'fr' || detectLanguage() === 'zh', 'detectLanguage should return supported language');
       console.assert(buildPopupHtml({ name: 'Test', address: 'Addr', phone: '1', fax: '2' }).includes('Test'), 'buildPopupHtml should include office name');
+      updateOverlay({ name: 'Overlay Test' });
+      console.assert(document.getElementById('mapOverlay').textContent.includes('Overlay Test'), 'updateOverlay should render office name only');
       console.assert(buildPopupHtml({ name: 'A&B', address: '<Addr>', phone: '1', fax: '2' }).includes('A&amp;B'), 'buildPopupHtml should escape special chars');
       console.assert(createCard({ name: 'Test Office', tag: 'office', address: 'A', phone: '', fax: '' }, 0) instanceof HTMLElement, 'createCard should return an HTML element');
       console.assert(createCard({ name: 'A&B', tag: 'office', address: '<Addr>', phone: '', fax: '' }, 1).innerHTML.includes('A&amp;B'), 'createCard should escape special chars');
