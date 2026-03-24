@@ -1,362 +1,578 @@
-import React, { useMemo, useState } from "react";
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KLN Employee Portal</title>
+  <meta name="description" content="KLN employee portal with multilingual support for GitHub Pages deployment." />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef3ff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #1d4ed8;
+      --primary-2: #2563eb;
+      --border: #dbe3f0;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+      --maxw: 1100px;
+    }
 
-const content = {
-  zh: {
-    brand: "KLN Work Portal",
-    heroTitle: "员工入口",
-    open: "进入页面",
-    panelLabel: "页面说明",
-    panelIntro: "进入前先了解这个页面能帮助你完成什么。",
-    audienceLabel: "适用对象",
-    stepsLabel: "你可以做什么",
-    items: [
-      {
-        id: "offices",
-        icon: "🏢",
-        className: "office",
-        title: "办公室信息",
-        subtitle: "查看 KLN Canada 各办公室位置与地图",
-        description: "适合新员工、访客或需要确认办公室地址与路线的同事。",
-        audience: "新员工、访客、跨办公室协作同事",
-        benefits: [
-          "快速找到各办公室地址与地图位置",
-          "出发前确认到访地点与路线",
-          "减少反复询问办公室位置的时间",
-        ],
-        href: "https://klncanada.github.io/work/KLNCanadaOffices",
-      },
-      {
-        id: "parking",
-        icon: "🚗",
-        className: "parking",
-        title: "女士停车排班",
-        subtitle: "查看 Dorval 办公室共享车位安排",
-        description: "帮助员工快速确认本周或当月停车安排，减少来回沟通。",
-        audience: "需要使用 Dorval 女士停车位的员工",
-        benefits: [
-          "查看当前日期对应的停车安排",
-          "确认自己是否在本轮使用名单中",
-          "提前安排通勤，避免当天临时确认",
-        ],
-        href: "https://klncanada.github.io/work/LadiesParkingSchedule",
-      },
-      {
-        id: "holiday",
-        icon: "📅",
-        className: "holiday",
-        title: "节假日日历",
-        subtitle: "查看年度法定假期",
-        description: "适合计划休假、安排出勤或提前了解全年公司假期。",
-        audience: "所有员工与行政协调人员",
-        benefits: [
-          "查看年度法定假期安排",
-          "提前规划请假和出勤时间",
-          "需要时下载并同步公司假期日历",
-        ],
-        href: "https://klncanada.github.io/work/holiday",
-      },
-    ],
-  },
-  en: {
-    brand: "KLN Work Portal",
-    heroTitle: "Employee Portal",
-    open: "Open Page",
-    panelLabel: "Page Overview",
-    panelIntro: "See what each page helps you accomplish before you open it.",
-    audienceLabel: "Best for",
-    stepsLabel: "What you can do",
-    items: [
-      {
-        id: "offices",
-        icon: "🏢",
-        className: "office",
-        title: "Office Information",
-        subtitle: "View KLN Canada office locations and maps",
-        description: "Best for new employees, visitors, or anyone who needs office addresses and directions.",
-        audience: "New employees, visitors, cross-office staff",
-        benefits: [
-          "Find office addresses and map locations quickly",
-          "Confirm the place you need to visit before leaving",
-          "Save time by avoiding back-and-forth questions",
-        ],
-        href: "https://klncanada.github.io/work/KLNCanadaOffices",
-      },
-      {
-        id: "parking",
-        icon: "🚗",
-        className: "parking",
-        title: "Ladies Parking Schedule",
-        subtitle: "View the Dorval shared parking schedule",
-        description: "Helps employees quickly confirm weekly or monthly parking assignments.",
-        audience: "Employees using the Dorval ladies parking spots",
-        benefits: [
-          "Check the parking assignment for the current period",
-          "Confirm whether your name is in the current rotation",
-          "Plan commuting ahead instead of checking at the last minute",
-        ],
-        href: "https://klncanada.github.io/work/LadiesParkingSchedule",
-      },
-      {
-        id: "holiday",
-        icon: "📅",
-        className: "holiday",
-        title: "Holiday Calendar",
-        subtitle: "View annual statutory holidays",
-        description: "Useful for planning time off, coordinating staffing, or reviewing company holidays in advance.",
-        audience: "All employees and coordinators",
-        benefits: [
-          "Review annual statutory holidays",
-          "Plan vacation and attendance earlier",
-          "Download and sync the holiday calendar when needed",
-        ],
-        href: "https://klncanada.github.io/work/holiday",
-      },
-    ],
-  },
-  fr: {
-    brand: "KLN Work Portal",
-    heroTitle: "Portail Employés",
-    open: "Ouvrir",
-    panelLabel: "Aperçu",
-    panelIntro: "Consultez ce que chaque page peut vous apporter avant de l’ouvrir.",
-    audienceLabel: "Pour qui",
-    stepsLabel: "Ce que vous pouvez faire",
-    items: [
-      {
-        id: "offices",
-        icon: "🏢",
-        className: "office",
-        title: "Bureaux",
-        subtitle: "Voir les emplacements et cartes des bureaux KLN Canada",
-        description: "Idéal pour les nouveaux employés, les visiteurs ou toute personne qui doit confirmer une adresse ou un trajet.",
-        audience: "Nouveaux employés, visiteurs, personnel inter-bureaux",
-        benefits: [
-          "Trouver rapidement les adresses et emplacements",
-          "Vérifier le lieu avant un déplacement",
-          "Réduire les échanges inutiles pour trouver un bureau",
-        ],
-        href: "https://klncanada.github.io/work/KLNCanadaOffices",
-      },
-      {
-        id: "parking",
-        icon: "🚗",
-        className: "parking",
-        title: "Horaire du stationnement",
-        subtitle: "Voir l’horaire du stationnement partagé à Dorval",
-        description: "Permet de confirmer rapidement l’attribution hebdomadaire ou mensuelle du stationnement.",
-        audience: "Employées utilisant les places réservées à Dorval",
-        benefits: [
-          "Vérifier l’attribution pour la période en cours",
-          "Confirmer si votre nom figure dans la rotation",
-          "Mieux organiser le trajet avant le jour même",
-        ],
-        href: "https://klncanada.github.io/work/LadiesParkingSchedule",
-      },
-      {
-        id: "holiday",
-        icon: "📅",
-        className: "holiday",
-        title: "Calendrier des congés",
-        subtitle: "Voir les jours fériés annuels",
-        description: "Utile pour planifier les congés, organiser la présence ou consulter les jours fériés à l’avance.",
-        audience: "Tous les employés et coordinateurs",
-        benefits: [
-          "Consulter les jours fériés annuels",
-          "Planifier les congés et la présence plus tôt",
-          "Télécharger et synchroniser le calendrier si nécessaire",
-        ],
-        href: "https://klncanada.github.io/work/holiday",
-      },
-    ],
-  },
-} as const;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
 
-type Lang = keyof typeof content;
-type Item = (typeof content)[Lang]["items"][number];
+    a { color: inherit; text-decoration: none; }
 
-const langs: { key: Lang; label: string }[] = [
-  { key: "zh", label: "中" },
-  { key: "en", label: "EN" },
-  { key: "fr", label: "FR" },
-];
+    .container {
+      width: min(calc(100% - 32px), var(--maxw));
+      margin: 0 auto;
+    }
 
-export default function KlnWorkPortalRedesign() {
-  const [currentLang, setCurrentLang] = useState<Lang>("zh");
-  const [activeId, setActiveId] = useState<Item["id"]>("offices");
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.82);
+      border-bottom: 1px solid rgba(219, 227, 240, 0.9);
+    }
 
-  const data = content[currentLang];
-  const activeItem = useMemo(
-    () => data.items.find((item) => item.id === activeId) ?? data.items[0],
-    [data, activeId]
-  );
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 12px 0;
+    }
 
-  return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-7">
-      <style>{`
-        .portal-shell {
-          box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-        }
-        .portal-tile {
-          transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-        }
-        .portal-tile:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-        }
-      `}</style>
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-      <div className="portal-shell mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-slate-200 bg-white">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 pb-0 pt-6">
-          <div className="text-sm font-bold uppercase tracking-[0.08em] text-slate-500">
-            {data.brand}
-          </div>
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
 
-          <div className="inline-flex gap-1 rounded-full border border-slate-200 bg-slate-50 p-1">
-            {langs.map((lang) => (
-              <button
-                key={lang.key}
-                type="button"
-                onClick={() => setCurrentLang(lang.key)}
-                className={[
-                  "rounded-full px-4 py-2 text-sm",
-                  currentLang === lang.key
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-500 hover:bg-white",
-                ].join(" ")}
-                aria-pressed={currentLang === lang.key}
-              >
-                {lang.label}
-              </button>
-            ))}
-          </div>
-        </div>
+    .brand-text h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
 
-        <div className="px-6 pb-2 pt-3">
-          <h1 className="m-0 text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
-            {data.heroTitle}
-          </h1>
-        </div>
+    .brand-text p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="p-6 pt-5">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {data.items.map((item) => {
-                const isActive = item.id === activeItem.id;
-                const gradientClass =
-                  item.className === "office"
-                    ? "bg-gradient-to-br from-sky-500/15 to-cyan-500/10"
-                    : item.className === "parking"
-                      ? "bg-gradient-to-br from-rose-500/15 to-orange-500/10"
-                      : "bg-gradient-to-br from-emerald-500/15 to-lime-500/10";
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveId(item.id)}
-                    className={[
-                      "portal-tile min-h-[200px] rounded-[24px] border p-5 text-left",
-                      isActive
-                        ? "border-slate-900 bg-slate-900 text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)]"
-                        : `border-slate-200 text-slate-900 ${gradientClass}`,
-                    ].join(" ")}
-                  >
-                    <div className="flex h-full flex-col justify-between">
-                      <div className={[
-                        "inline-flex h-[52px] w-[52px] items-center justify-center rounded-[18px] text-2xl",
-                        isActive ? "bg-white/10" : "bg-white/80",
-                      ].join(" ")}>
-                        {item.icon}
-                      </div>
+    .lang-switcher {
+      display: inline-flex;
+      gap: 6px;
+      background: #f3f6fc;
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
 
-                      <div>
-                        <h2 className="mb-2 mt-5 text-[22px] font-semibold leading-tight">
-                          {item.title}
-                        </h2>
-                        <p className={[
-                          "m-0 text-[15px] leading-6",
-                          isActive ? "text-white/90" : "text-slate-700",
-                        ].join(" ")}>
-                          {item.subtitle}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: 0.2s ease;
+    }
 
-          <div className="flex items-center border-t border-slate-200 bg-slate-50 p-6 lg:border-l lg:border-t-0">
-            <div className="w-full rounded-[26px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
-              <div className="mb-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-500">
-                {data.panelLabel}
-              </div>
+    .lang-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
+      font-weight: 600;
+    }
 
-              <div className="mb-4 flex h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-slate-100 text-[28px]">
-                {activeItem.icon}
-              </div>
+    .hero {
+      padding: 56px 0 24px;
+    }
 
-              <h3 className="mb-3 text-[28px] font-semibold leading-tight text-slate-900">
-                {activeItem.title}
-              </h3>
+    .hero-card {
+      background: linear-gradient(135deg, #eaf2ff 0%, #ffffff 60%, #f8fbff 100%);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
 
-              <p className="mb-4 text-[15px] leading-7 text-slate-500">
-                {data.panelIntro}
-              </p>
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
 
-              <div className="mb-5 rounded-[18px] bg-slate-50 p-4">
-                <p className="m-0 text-[15px] leading-7 text-slate-700">
-                  {activeItem.description}
-                </p>
-              </div>
+    .hero h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.12;
+    }
 
-              <div className="mb-5">
-                <div className="mb-2 text-sm font-semibold text-slate-500">
-                  {data.audienceLabel}
-                </div>
-                <p className="m-0 text-[15px] leading-7 text-slate-700">
-                  {activeItem.audience}
-                </p>
-              </div>
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.7;
+      max-width: 62ch;
+    }
 
-              <div className="mb-6">
-                <div className="mb-3 text-sm font-semibold text-slate-500">
-                  {data.stepsLabel}
-                </div>
-                <div className="space-y-3">
-                  {activeItem.benefits.map((benefit, index) => (
-                    <div
-                      key={benefit}
-                      className="flex items-start gap-3 rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3"
-                    >
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-700 shadow-sm">
-                        {index + 1}
-                      </div>
-                      <div className="pt-0.5 text-[15px] leading-6 text-slate-700">
-                        {benefit}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+    .hero-panel {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+    }
 
-              <a
-                href={activeItem.href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-[18px] bg-slate-900 px-5 py-4 text-base font-bold text-white transition hover:-translate-y-[1px] hover:opacity-95"
-              >
-                {data.open}
-              </a>
-            </div>
-          </div>
+    .hero-panel h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .quick-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .quick-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--primary);
+      margin-top: 8px;
+      flex: 0 0 auto;
+    }
+
+    .section {
+      padding: 24px 0 56px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      min-height: 280px;
+    }
+
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+
+    .card h4 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+    }
+
+    .card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex-grow: 1;
+    }
+
+    .card-meta {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .footer {
+      padding: 0 0 40px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .hero-card,
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner,
+      .section-head,
+      .footer-card {
+        align-items: flex-start;
+      }
+
+      .hero-card {
+        padding: 24px;
+      }
+
+      .controls {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">KLN</div>
+        <div class="brand-text">
+          <h1 data-i18n="brandTitle">KLN 员工门户</h1>
+          <p data-i18n="brandSubtitle">统一入口，快速访问常用员工服务</p>
         </div>
       </div>
-
-      <div className="sr-only" data-testid="portal-data-check">
-        {content.zh.items.length}-{content.en.items.length}-{content.fr.items.length}
+      <div class="controls">
+        <label class="sr-only" for="languageSelect">Language</label>
+        <div class="lang-switcher" role="group" aria-label="Language switcher">
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="fr">FR</button>
+        </div>
       </div>
     </div>
-  );
-}
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div>
+            <span class="eyebrow" data-i18n="heroEyebrow">Employee Access Portal</span>
+            <h2 data-i18n="heroTitle">一站式访问办公室、停车安排与节假日信息</h2>
+            <p data-i18n="heroDesc">
+              本门户整合了 KLN Canada 员工常用入口，帮助你快速访问办公室地点信息、女士停车排班以及法定节假日安排。
+            </p>
+          </div>
+          <aside class="hero-panel">
+            <h3 data-i18n="heroPanelTitle">快速访问内容</h3>
+            <ul class="quick-list">
+              <li><span class="dot"></span><span data-i18n="quick1">查看办公室位置与地图</span></li>
+              <li><span class="dot"></span><span data-i18n="quick2">查看女士停车值班安排</span></li>
+              <li><span class="dot"></span><span data-i18n="quick3">查询 2026 节假日安排</span></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h3 data-i18n="sectionTitle">常用员工入口</h3>
+            <p data-i18n="sectionDesc">点击下方卡片即可进入对应页面。</p>
+          </div>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-icon">📍</div>
+            <h4 data-i18n="officeTitle">办公室地点</h4>
+            <p data-i18n="officeDesc">查看 KLN Canada 办公室位置、地址以及地图入口，方便员工访客导航与办公地点确认。</p>
+            <div class="card-meta" data-i18n="officeMeta">页面：办公室信息 / 地图 / 导航</div>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/KLNCanadaOffices" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">🚗</div>
+            <h4 data-i18n="parkingTitle">女士停车安排</h4>
+            <p data-i18n="parkingDesc">进入女士停车排班页面，查看停车时段安排与值班信息，帮助员工快速获取相关日程。</p>
+            <div class="card-meta" data-i18n="parkingMeta">页面：排班 / 时间安排 / 员工使用</div>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/LadiesParkingSchedule" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">🗓️</div>
+            <h4 data-i18n="holidayTitle">节假日安排</h4>
+            <p data-i18n="holidayDesc">查看法定节假日信息，支持不同地区的假期展示，帮助员工规划出勤与休假安排。</p>
+            <div class="card-meta" data-i18n="holidayMeta">页面：假期 / 地区切换 / 年度安排</div>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/holiday" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-card">
+        <span data-i18n="footerLeft">KLN Canada Employee Portal</span>
+        <span data-i18n="footerRight">可部署为单一 index.html 到 GitHub Pages</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const translations = {
+      zh: {
+        brandTitle: 'KLN 员工门户',
+        brandSubtitle: '统一入口，快速访问常用员工服务',
+        heroEyebrow: 'Employee Access Portal',
+        heroTitle: '一站式访问办公室、停车安排与节假日信息',
+        heroDesc: '本门户整合了 KLN Canada 员工常用入口，帮助你快速访问办公室地点信息、女士停车排班以及法定节假日安排。',
+        heroPanelTitle: '快速访问内容',
+        quick1: '查看办公室位置与地图',
+        quick2: '查看女士停车值班安排',
+        quick3: '查询 2026 节假日安排',
+        sectionTitle: '常用员工入口',
+        sectionDesc: '点击下方卡片即可进入对应页面。',
+        officeTitle: '办公室地点',
+        officeDesc: '查看 KLN Canada 办公室位置、地址以及地图入口，方便员工访客导航与办公地点确认。',
+        officeMeta: '页面：办公室信息 / 地图 / 导航',
+        parkingTitle: '女士停车安排',
+        parkingDesc: '进入女士停车排班页面，查看停车时段安排与值班信息，帮助员工快速获取相关日程。',
+        parkingMeta: '页面：排班 / 时间安排 / 员工使用',
+        holidayTitle: '节假日安排',
+        holidayDesc: '查看法定节假日信息，支持不同地区的假期展示，帮助员工规划出勤与休假安排。',
+        holidayMeta: '页面：假期 / 地区切换 / 年度安排',
+        openPage: '打开页面',
+        footerLeft: 'KLN Canada Employee Portal',
+        footerRight: '可部署为单一 index.html 到 GitHub Pages'
+      },
+      en: {
+        brandTitle: 'KLN Employee Portal',
+        brandSubtitle: 'A unified entry point for everyday employee services',
+        heroEyebrow: 'Employee Access Portal',
+        heroTitle: 'One place for offices, parking schedules, and holidays',
+        heroDesc: 'This portal brings together frequently used KLN Canada employee links so staff can quickly access office locations, the ladies parking schedule, and holiday information.',
+        heroPanelTitle: 'Quick access',
+        quick1: 'View office locations and maps',
+        quick2: 'Check the ladies parking schedule',
+        quick3: 'Review the 2026 holiday calendar',
+        sectionTitle: 'Employee shortcuts',
+        sectionDesc: 'Use the cards below to open each page.',
+        officeTitle: 'Office Locations',
+        officeDesc: 'Find KLN Canada office locations, addresses, and map access for navigation, visits, and workplace reference.',
+        officeMeta: 'Page: offices / maps / directions',
+        parkingTitle: 'Ladies Parking Schedule',
+        parkingDesc: 'Open the ladies parking schedule page to review time slots and parking arrangements for employees.',
+        parkingMeta: 'Page: schedule / time slots / employee use',
+        holidayTitle: 'Holiday Calendar',
+        holidayDesc: 'Review statutory holiday information with regional views to help employees plan attendance and time off.',
+        holidayMeta: 'Page: holidays / region switch / yearly planning',
+        openPage: 'Open page',
+        footerLeft: 'KLN Canada Employee Portal',
+        footerRight: 'Ready to deploy as a single index.html on GitHub Pages'
+      },
+      fr: {
+        brandTitle: 'Portail Employés KLN',
+        brandSubtitle: 'Un point d’accès unique pour les services employés courants',
+        heroEyebrow: 'Portail d’accès des employés',
+        heroTitle: 'Un seul endroit pour les bureaux, le stationnement et les congés',
+        heroDesc: 'Ce portail regroupe les liens les plus utilisés par les employés de KLN Canada afin d’accéder rapidement aux bureaux, à l’horaire de stationnement pour les dames et aux jours fériés.',
+        heroPanelTitle: 'Accès rapide',
+        quick1: 'Voir les emplacements des bureaux et les cartes',
+        quick2: 'Consulter l’horaire de stationnement pour les dames',
+        quick3: 'Consulter le calendrier des congés 2026',
+        sectionTitle: 'Accès employés',
+        sectionDesc: 'Cliquez sur les cartes ci-dessous pour ouvrir chaque page.',
+        officeTitle: 'Emplacements des bureaux',
+        officeDesc: 'Consultez les emplacements, adresses et cartes des bureaux de KLN Canada pour faciliter les déplacements et les visites.',
+        officeMeta: 'Page : bureaux / cartes / itinéraires',
+        parkingTitle: 'Horaire de stationnement',
+        parkingDesc: 'Accédez à la page d’horaire de stationnement pour consulter les plages horaires et l’organisation du stationnement.',
+        parkingMeta: 'Page : horaire / plages horaires / usage employés',
+        holidayTitle: 'Calendrier des congés',
+        holidayDesc: 'Consultez les jours fériés avec affichage par région pour mieux planifier la présence au bureau et les congés.',
+        holidayMeta: 'Page : congés / sélection de région / planification annuelle',
+        openPage: 'Ouvrir la page',
+        footerLeft: 'Portail Employés KLN Canada',
+        footerRight: 'Prêt à être déployé comme index.html unique sur GitHub Pages'
+      }
+    };
+
+    const supportedLangs = ['zh', 'en', 'fr'];
+
+    function normalizeLang(lang) {
+      if (!lang) return 'en';
+      const lower = lang.toLowerCase();
+      if (lower.startsWith('zh')) return 'zh';
+      if (lower.startsWith('fr')) return 'fr';
+      return 'en';
+    }
+
+    function applyLanguage(lang) {
+      const selected = supportedLangs.includes(lang) ? lang : 'en';
+      const dict = translations[selected];
+
+      document.documentElement.lang = selected === 'zh' ? 'zh-CN' : selected;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+
+      document.querySelectorAll('.lang-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.lang === selected);
+        btn.setAttribute('aria-pressed', btn.dataset.lang === selected ? 'true' : 'false');
+      });
+
+      localStorage.setItem('kln-portal-lang', selected);
+    }
+
+    function detectInitialLanguage() {
+      const saved = localStorage.getItem('kln-portal-lang');
+      if (saved && supportedLangs.includes(saved)) return saved;
+
+      const browserLangs = Array.isArray(navigator.languages) && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || 'en'];
+
+      for (const lang of browserLangs) {
+        const normalized = normalizeLang(lang);
+        if (supportedLangs.includes(normalized)) return normalized;
+      }
+      return 'en';
+    }
+
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+    });
+
+    applyLanguage(detectInitialLanguage());
+  </script>
+</body>
+</html>
