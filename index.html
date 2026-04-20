@@ -119,18 +119,18 @@
     }
 
     .hero {
-      padding: 56px 0 24px;
+      padding: 22px 0 12px;
     }
 
     .hero-card {
       background: linear-gradient(135deg, #eaf2ff 0%, #ffffff 60%, #f8fbff 100%);
       border: 1px solid var(--border);
-      border-radius: 28px;
+      border-radius: 24px;
       box-shadow: var(--shadow);
-      padding: 34px;
+      padding: 20px 24px;
       display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      gap: 28px;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 18px;
       align-items: center;
     }
 
@@ -146,24 +146,24 @@
     }
 
     .hero h2 {
-      margin: 0 0 14px;
-      font-size: clamp(1.9rem, 4vw, 3rem);
+      margin: 0 0 10px;
+      font-size: clamp(1.45rem, 3vw, 2.1rem);
       line-height: 1.12;
     }
 
     .hero p {
       margin: 0;
       color: var(--muted);
-      font-size: 1.04rem;
-      line-height: 1.7;
+      font-size: 0.98rem;
+      line-height: 1.55;
       max-width: 62ch;
     }
 
     .hero-panel {
       background: rgba(255,255,255,0.9);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 20px;
+      border-radius: 18px;
+      padding: 14px 16px;
     }
 
     .hero-panel h3 {
@@ -176,7 +176,7 @@
       margin: 0;
       padding: 0;
       display: grid;
-      gap: 10px;
+      gap: 6px;
     }
 
     .quick-list li {
@@ -197,7 +197,7 @@
     }
 
     .section {
-      padding: 24px 0 56px;
+      padding: 12px 0 40px;
     }
 
     .section-head {
@@ -220,7 +220,7 @@
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 20px;
     }
 
@@ -229,10 +229,10 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      min-height: 280px;
+      min-height: 240px;
     }
 
     .card-icon {
@@ -325,6 +325,12 @@
       border: 0;
     }
 
+    @media (max-width: 1100px) {
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 900px) {
       .hero-card,
       .cards {
@@ -355,14 +361,13 @@
       <div class="brand">
         <div class="brand-badge">KLN</div>
         <div class="brand-text">
-          <h1 data-i18n="brandTitle">KLN 员工门户</h1>
-          <p data-i18n="brandSubtitle">统一入口，快速访问常用员工服务</p>
+          <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
+          <p data-i18n="brandSubtitle">A unified entry point for everyday employee services</p>
         </div>
       </div>
       <div class="controls">
         <label class="sr-only" for="languageSelect">Language</label>
         <div class="lang-switcher" role="group" aria-label="Language switcher">
-          <button class="lang-btn" data-lang="zh">中文</button>
           <button class="lang-btn" data-lang="en">EN</button>
           <button class="lang-btn" data-lang="fr">FR</button>
         </div>
@@ -376,17 +381,18 @@
         <div class="hero-card">
           <div>
             <span class="eyebrow" data-i18n="heroEyebrow">Employee Access Portal</span>
-            <h2 data-i18n="heroTitle">一站式访问办公室、停车安排与节假日信息</h2>
+            <h2 data-i18n="heroTitle">One place for offices, parking, holidays, and directory access</h2>
             <p data-i18n="heroDesc">
-              本门户整合了 KLN Canada 员工常用入口，帮助你快速访问办公室地点信息、女士停车排班以及法定节假日安排。
+              Quick access to the most frequently used KLN Canada employee links.
             </p>
           </div>
           <aside class="hero-panel">
-            <h3 data-i18n="heroPanelTitle">快速访问内容</h3>
+            <h3 data-i18n="heroPanelTitle">Quick access</h3>
             <ul class="quick-list">
-              <li><span class="dot"></span><span data-i18n="quick1">查看办公室位置与地图</span></li>
-              <li><span class="dot"></span><span data-i18n="quick2">查看女士停车值班安排</span></li>
-              <li><span class="dot"></span><span data-i18n="quick3">查询 2026 节假日安排</span></li>
+              <li><span class="dot"></span><span data-i18n="quick1">Office locations and maps</span></li>
+              <li><span class="dot"></span><span data-i18n="quick2">Ladies parking schedule</span></li>
+              <li><span class="dot"></span><span data-i18n="quick3">Holiday calendar and regional view</span></li>
+              <li><span class="dot"></span><span data-i18n="quick4">Employee directory</span></li>
             </ul>
           </aside>
         </div>
@@ -405,31 +411,41 @@
         <div class="cards">
           <article class="card">
             <div class="card-icon">📍</div>
-            <h4 data-i18n="officeTitle">办公室地点</h4>
-            <p data-i18n="officeDesc">查看 KLN Canada 办公室位置、地址以及地图入口，方便员工访客导航与办公地点确认。</p>
-            <div class="card-meta" data-i18n="officeMeta">页面：办公室信息 / 地图 / 导航</div>
+            <h4 data-i18n="officeTitle">Office Locations</h4>
+            <p data-i18n="officeDesc">Find KLN Canada office locations, addresses, and map access for navigation and workplace reference.</p>
+            <div class="card-meta" data-i18n="officeMeta">Page: offices / maps / directions</div>
             <div class="card-actions">
-              <a class="btn btn-primary" href="https://klncanada.github.io/work/KLNCanadaOffices" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/KLNCanadaOffices" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
           </article>
 
           <article class="card">
             <div class="card-icon">🚗</div>
-            <h4 data-i18n="parkingTitle">女士停车安排</h4>
-            <p data-i18n="parkingDesc">进入女士停车排班页面，查看停车时段安排与值班信息，帮助员工快速获取相关日程。</p>
-            <div class="card-meta" data-i18n="parkingMeta">页面：排班 / 时间安排 / 员工使用</div>
+            <h4 data-i18n="parkingTitle">Ladies Parking Schedule</h4>
+            <p data-i18n="parkingDesc">Review time slots and parking arrangements for employees.</p>
+            <div class="card-meta" data-i18n="parkingMeta">Page: schedule / time slots / employee use</div>
             <div class="card-actions">
-              <a class="btn btn-primary" href="https://klncanada.github.io/work/LadiesParkingSchedule" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/LadiesParkingSchedule" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
           </article>
 
           <article class="card">
             <div class="card-icon">🗓️</div>
-            <h4 data-i18n="holidayTitle">节假日安排</h4>
-            <p data-i18n="holidayDesc">查看法定节假日信息，支持不同地区的假期展示，帮助员工规划出勤与休假安排。</p>
-            <div class="card-meta" data-i18n="holidayMeta">页面：假期 / 地区切换 / 年度安排</div>
+            <h4 data-i18n="holidayTitle">Holiday Calendar</h4>
+            <p data-i18n="holidayDesc">Review statutory holiday information with regional views for planning attendance and time off.</p>
+            <div class="card-meta" data-i18n="holidayMeta">Page: holidays / region switch / yearly planning</div>
             <div class="card-actions">
-              <a class="btn btn-primary" href="https://klncanada.github.io/work/holiday" target="_blank" rel="noopener noreferrer" data-i18n="openPage">打开页面</a>
+              <a class="btn btn-primary" href="https://klncanada.github.io/work/holiday" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">📇</div>
+            <h4 data-i18n="directoryTitle">Employee Directory</h4>
+            <p data-i18n="directoryDesc">Open the directory homepage to access employee contact and directory information.</p>
+            <div class="card-meta" data-i18n="directoryMeta">Page: directory / contacts / lookup</div>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://tools.klncanada.com/Directory/" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
           </article>
         </div>
@@ -448,52 +464,31 @@
 
   <script>
     const translations = {
-      zh: {
-        brandTitle: 'KLN 员工门户',
-        brandSubtitle: '统一入口，快速访问常用员工服务',
-        heroEyebrow: 'Employee Access Portal',
-        heroTitle: '一站式访问办公室、停车安排与节假日信息',
-        heroDesc: '本门户整合了 KLN Canada 员工常用入口，帮助你快速访问办公室地点信息、女士停车排班以及法定节假日安排。',
-        heroPanelTitle: '快速访问内容',
-        quick1: '查看办公室位置与地图',
-        quick2: '查看女士停车值班安排',
-        quick3: '查询 2026 节假日安排',
-        sectionTitle: '常用员工入口',
-        sectionDesc: '点击下方卡片即可进入对应页面。',
-        officeTitle: '办公室地点',
-        officeDesc: '查看 KLN Canada 办公室位置、地址以及地图入口，方便员工访客导航与办公地点确认。',
-        officeMeta: '页面：办公室信息 / 地图 / 导航',
-        parkingTitle: '女士停车安排',
-        parkingDesc: '进入女士停车排班页面，查看停车时段安排与值班信息，帮助员工快速获取相关日程。',
-        parkingMeta: '页面：排班 / 时间安排 / 员工使用',
-        holidayTitle: '节假日安排',
-        holidayDesc: '查看法定节假日信息，支持不同地区的假期展示，帮助员工规划出勤与休假安排。',
-        holidayMeta: '页面：假期 / 地区切换 / 年度安排',
-        openPage: '打开页面',
-        footerLeft: 'KLN Canada Employee Portal',
-        footerRight: '可部署为单一 index.html 到 GitHub Pages'
-      },
       en: {
         brandTitle: 'KLN Employee Portal',
         brandSubtitle: 'A unified entry point for everyday employee services',
         heroEyebrow: 'Employee Access Portal',
-        heroTitle: 'One place for offices, parking schedules, and holidays',
-        heroDesc: 'This portal brings together frequently used KLN Canada employee links so staff can quickly access office locations, the ladies parking schedule, and holiday information.',
+        heroTitle: 'One place for offices, parking, holidays, and directory access',
+        heroDesc: 'Quick access to the most frequently used KLN Canada employee links.',
         heroPanelTitle: 'Quick access',
-        quick1: 'View office locations and maps',
-        quick2: 'Check the ladies parking schedule',
-        quick3: 'Review the 2026 holiday calendar',
+        quick1: 'Office locations and maps',
+        quick2: 'Ladies parking schedule',
+        quick3: 'Holiday calendar and regional view',
+        quick4: 'Employee directory',
         sectionTitle: 'Employee shortcuts',
-        sectionDesc: 'Use the cards below to open each page.',
+        sectionDesc: 'Open the tools below.',
         officeTitle: 'Office Locations',
-        officeDesc: 'Find KLN Canada office locations, addresses, and map access for navigation, visits, and workplace reference.',
+        officeDesc: 'Find KLN Canada office locations, addresses, and map access for navigation and workplace reference.',
         officeMeta: 'Page: offices / maps / directions',
         parkingTitle: 'Ladies Parking Schedule',
-        parkingDesc: 'Open the ladies parking schedule page to review time slots and parking arrangements for employees.',
+        parkingDesc: 'Review time slots and parking arrangements for employees.',
         parkingMeta: 'Page: schedule / time slots / employee use',
         holidayTitle: 'Holiday Calendar',
-        holidayDesc: 'Review statutory holiday information with regional views to help employees plan attendance and time off.',
+        holidayDesc: 'Review statutory holiday information with regional views for planning attendance and time off.',
         holidayMeta: 'Page: holidays / region switch / yearly planning',
+        directoryTitle: 'Employee Directory',
+        directoryDesc: 'Open the directory homepage to access employee contact and directory information.',
+        directoryMeta: 'Page: directory / contacts / lookup',
         openPage: 'Open page',
         footerLeft: 'KLN Canada Employee Portal',
         footerRight: 'Ready to deploy as a single index.html on GitHub Pages'
@@ -502,35 +497,38 @@
         brandTitle: 'Portail Employés KLN',
         brandSubtitle: 'Un point d’accès unique pour les services employés courants',
         heroEyebrow: 'Portail d’accès des employés',
-        heroTitle: 'Un seul endroit pour les bureaux, le stationnement et les congés',
-        heroDesc: 'Ce portail regroupe les liens les plus utilisés par les employés de KLN Canada afin d’accéder rapidement aux bureaux, à l’horaire de stationnement pour les dames et aux jours fériés.',
+        heroTitle: 'Un seul endroit pour les bureaux, le stationnement, les congés et le répertoire',
+        heroDesc: 'Accès rapide aux liens les plus utilisés par les employés de KLN Canada.',
         heroPanelTitle: 'Accès rapide',
-        quick1: 'Voir les emplacements des bureaux et les cartes',
-        quick2: 'Consulter l’horaire de stationnement pour les dames',
-        quick3: 'Consulter le calendrier des congés 2026',
+        quick1: 'Emplacements des bureaux et cartes',
+        quick2: 'Horaire de stationnement pour les dames',
+        quick3: 'Calendrier des congés et vue régionale',
+        quick4: 'Répertoire des employés',
         sectionTitle: 'Accès employés',
-        sectionDesc: 'Cliquez sur les cartes ci-dessous pour ouvrir chaque page.',
+        sectionDesc: 'Ouvrez les outils ci-dessous.',
         officeTitle: 'Emplacements des bureaux',
         officeDesc: 'Consultez les emplacements, adresses et cartes des bureaux de KLN Canada pour faciliter les déplacements et les visites.',
         officeMeta: 'Page : bureaux / cartes / itinéraires',
         parkingTitle: 'Horaire de stationnement',
-        parkingDesc: 'Accédez à la page d’horaire de stationnement pour consulter les plages horaires et l’organisation du stationnement.',
+        parkingDesc: 'Consultez les plages horaires et l’organisation du stationnement pour les employés.',
         parkingMeta: 'Page : horaire / plages horaires / usage employés',
         holidayTitle: 'Calendrier des congés',
-        holidayDesc: 'Consultez les jours fériés avec affichage par région pour mieux planifier la présence au bureau et les congés.',
+        holidayDesc: 'Consultez les jours fériés avec affichage par région pour mieux planifier la présence et les congés.',
         holidayMeta: 'Page : congés / sélection de région / planification annuelle',
+        directoryTitle: 'Répertoire des employés',
+        directoryDesc: 'Ouvrez la page d’accueil du répertoire pour accéder aux coordonnées et informations des employés.',
+        directoryMeta: 'Page : répertoire / contacts / recherche',
         openPage: 'Ouvrir la page',
         footerLeft: 'Portail Employés KLN Canada',
         footerRight: 'Prêt à être déployé comme index.html unique sur GitHub Pages'
       }
     };
 
-    const supportedLangs = ['zh', 'en', 'fr'];
+    const supportedLangs = ['en', 'fr'];
 
     function normalizeLang(lang) {
       if (!lang) return 'en';
       const lower = lang.toLowerCase();
-      if (lower.startsWith('zh')) return 'zh';
       if (lower.startsWith('fr')) return 'fr';
       return 'en';
     }
@@ -539,7 +537,7 @@
       const selected = supportedLangs.includes(lang) ? lang : 'en';
       const dict = translations[selected];
 
-      document.documentElement.lang = selected === 'zh' ? 'zh-CN' : selected;
+      document.documentElement.lang = selected;
       document.querySelectorAll('[data-i18n]').forEach((el) => {
         const key = el.getAttribute('data-i18n');
         if (dict[key]) el.textContent = dict[key];
