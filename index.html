@@ -185,6 +185,22 @@
       gap: 10px;
       color: var(--muted);
       line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    }
+
+    .quick-list li.active-timezone {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(59, 130, 246, 0.08));
+      border-color: rgba(37, 99, 235, 0.35);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      color: var(--text);
+    }
+
+    .quick-list li.active-timezone .dot {
+      background: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
     }
 
     .dot {
@@ -387,12 +403,11 @@
             </p>
           </div>
           <aside class="hero-panel">
-            <h3 data-i18n="heroPanelTitle">Quick access</h3>
+            <h3>Current Time</h3>
             <ul class="quick-list">
-              <li><span class="dot"></span><span data-i18n="quick1">Office locations and maps</span></li>
-              <li><span class="dot"></span><span data-i18n="quick2">Ladies parking schedule</span></li>
-              <li><span class="dot"></span><span data-i18n="quick3">Holiday calendar and regional view</span></li>
-              <li><span class="dot"></span><span data-i18n="quick4">Employee directory</span></li>
+              <li id="row-est"><span class="dot"></span><span>Eastern Time : <strong id="time-est">--:--</strong> <span id="date-est"></span></span></li>
+              <li id="row-pt"><span class="dot"></span><span>Pacific Time : <strong id="time-pt">--:--</strong> <span id="date-pt"></span></span></li>
+              <li id="row-bj"><span class="dot"></span><span>China Standard : <strong id="time-bj">--:--</strong> <span id="date-bj"></span></span></li>
             </ul>
           </aside>
         </div>
@@ -571,6 +586,56 @@
     });
 
     applyLanguage(detectInitialLanguage());
+
+    function updateTimes() {
+      const now = new Date();
+
+      const formatTime = (timeZone) => new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(now);
+
+      const formatDate = (timeZone) => new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        month: 'short',
+        day: 'numeric'
+      }).format(now);
+
+      document.getElementById('time-est').textContent = formatTime('America/New_York');
+      document.getElementById('time-pt').textContent = formatTime('America/Los_Angeles');
+      document.getElementById('time-bj').textContent = formatTime('Asia/Shanghai');
+
+      document.getElementById('date-est').textContent = ' (' + formatDate('America/New_York') + ')';
+      document.getElementById('date-pt').textContent = ' (' + formatDate('America/Los_Angeles') + ')';
+      document.getElementById('date-bj').textContent = ' (' + formatDate('Asia/Shanghai') + ')';
+
+      const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const map = {
+        'America/New_York': 'row-est',
+        'America/Toronto': 'row-est',
+        'America/Detroit': 'row-est',
+        'America/Montreal': 'row-est',
+        'America/Los_Angeles': 'row-pt',
+        'America/Vancouver': 'row-pt',
+        'Asia/Shanghai': 'row-bj',
+        'Asia/Beijing': 'row-bj'
+      };
+
+      ['row-est', 'row-pt', 'row-bj'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active-timezone');
+      });
+
+      if (map[userTz]) {
+        const active = document.getElementById(map[userTz]);
+        if (active) active.classList.add('active-timezone');
+      }
+    }
+
+    updateTimes();
+    setInterval(updateTimes, 60000);
   </script>
 </body>
 </html>
