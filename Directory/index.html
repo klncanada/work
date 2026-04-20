@@ -11,8 +11,7 @@
         .checkbox-custom:checked { background-color: #3b82f6; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* 针对多列显示的滚动条优化 */
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -20,61 +19,56 @@
 <body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-4">
             <div>
-                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Enterprise Directory</h1>
-                <p id="lastUpdated" class="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">Connecting to contacts.csv...</p>
+                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Internal Contact Directory</h1>
+                <p id="lastUpdated" class="text-gray-400 text-[10px] mt-1 uppercase tracking-widest font-bold">Connecting to contacts.csv...</p>
             </div>
             <div class="flex items-center gap-3">
-                <!-- 手动上传按钮 -->
                 <input type="file" id="manualFileInput" accept=".csv" class="hidden" onchange="handleManualUpload(event)">
-                <button onclick="document.getElementById('manualFileInput').click()" class="bg-white hover:bg-gray-50 text-gray-600 text-[10px] font-bold py-1.5 px-3 rounded-full border border-gray-200 shadow-sm transition-all uppercase tracking-wider">
+                <button id="manualUploadBtn" onclick="document.getElementById('manualFileInput').click()" class="bg-white hover:bg-gray-50 text-blue-600 text-[10px] font-bold py-1.5 px-4 rounded-full border border-blue-200 shadow-sm transition-all uppercase tracking-wider">
                     Manual Upload
                 </button>
-                <!-- 状态标签 -->
                 <div id="syncStatus" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-amber-200 shadow-sm">
                     Synchronizing...
                 </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- 侧边栏：筛选器 -->
-            <aside class="lg:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Department</h3>
-                    <div id="deptFilters" class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <aside class="lg:col-span-1 flex flex-col gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Department</h3>
+                    <div id="deptFilters" class="space-y-1 max-h-48 overflow-y-auto custom-scrollbar pr-2 text-xs"></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Office</h3>
-                    <div id="officeFilters" class="space-y-3"></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Office</h3>
+                    <div id="officeFilters" class="space-y-1 text-xs"></div>
                 </div>
 
-                <button onclick="resetFilters()" class="w-full py-3 text-xs font-black text-gray-300 hover:text-red-500 transition-colors uppercase tracking-widest">
-                    Clear Filters
+                <button onclick="resetFilters()" class="w-full py-3 text-xs font-black text-red-500 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all uppercase tracking-widest shadow-sm">
+                    Clear All Filters
                 </button>
             </aside>
 
-            <!-- 主区域：搜索和结果 -->
-            <main class="lg:col-span-3 space-y-6">
+            <main class="lg:col-span-3 space-y-4">
                 <div class="relative">
                     <input type="text" id="searchBar" placeholder="Search by name, alias, office, or extension..." 
                            class="w-full pl-12 pr-6 py-4 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 transition-all text-lg outline-none placeholder:text-gray-300">
                     <svg class="w-6 h-6 text-gray-300 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
 
-                <!-- 结果表格容器 -->
                 <div id="resultsWrapper" class="hidden fade-in bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
                     <div class="overflow-x-auto custom-scrollbar">
                         <table class="min-w-full divide-y divide-gray-100">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Employee</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Alias</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Office</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Main Numbers</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Ext</th>
+                                    <th class="px-6 py-4 text-left">Employee</th>
+                                    <th class="px-6 py-4 text-left">Alias</th>
+                                    <th class="px-6 py-4 text-left">Office</th>
+                                    <th class="px-6 py-4 text-left">Main Numbers</th>
+                                    <th class="px-6 py-4 text-center">Ext</th>
                                 </tr>
                             </thead>
                             <tbody id="contactList" class="divide-y divide-gray-50 text-gray-700"></tbody>
@@ -82,13 +76,12 @@
                     </div>
                 </div>
 
-                <!-- 默认/空状态 -->
-                <div id="initialState" class="py-24 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-200">
+                <div id="initialState" class="py-20 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-200">
                     <p class="text-gray-300 font-bold uppercase tracking-widest text-sm">Waiting for input to search...</p>
                 </div>
 
-                <div id="emptyState" class="hidden py-24 text-center bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <p class="text-gray-400">No matching contacts found.</p>
+                <div id="emptyState" class="hidden py-20 text-center bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-gray-400 font-bold">No matching contacts found.</p>
                 </div>
             </main>
         </div>
@@ -99,10 +92,10 @@
         let selectedDepts = [];
         let selectedOffices = [];
 
-        // 统一的数据解析处理函数
         function processData(csvString, sourceLabelText) {
             const badge = document.getElementById('syncStatus');
             const lastUpdated = document.getElementById('lastUpdated');
+            const manualBtn = document.getElementById('manualUploadBtn');
 
             Papa.parse(csvString, {
                 header: true,
@@ -112,13 +105,16 @@
                     badge.innerText = "Synchronized";
                     badge.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-green-200 shadow-sm";
                     lastUpdated.innerText = sourceLabelText;
+                    
+                    // 核心要求：同步成功后隐藏手动按钮
+                    manualBtn.classList.add('hidden');
+                    
                     initFilters();
                     render();
                 }
             });
         }
 
-        // 自动获取 CSV
         async function fetchCSV() {
             const badge = document.getElementById('syncStatus');
             try {
@@ -126,23 +122,19 @@
                 const response = await fetch(csvPath);
                 if (!response.ok) throw new Error("Auto-load failed");
                 const csvString = await response.text();
-                processData(csvString, "Data loaded from contacts.csv");
+                processData(csvString, "Live Data: contacts.csv");
             } catch (err) {
-                console.warn("Auto-sync failed, waiting for manual upload or server setup.");
                 badge.innerText = "Manual Ready";
                 badge.className = "bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-blue-200 shadow-sm";
             }
         }
 
-        // 手动上传处理
         function handleManualUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                const csvString = e.target.result;
-                processData(csvString, `Data uploaded from: ${file.name}`);
+                processData(e.target.result, `Manual: ${file.name}`);
             };
             reader.readAsText(file);
         }
@@ -152,16 +144,16 @@
             const offices = [...new Set(contacts.map(c => c.Office))].filter(o => o).sort();
 
             document.getElementById('deptFilters').innerHTML = depts.map(dept => `
-                <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" value="${dept}" onchange="toggleFilter('dept', '${dept}')" class="checkbox-custom w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500">
-                    <span class="text-gray-500 group-hover:text-gray-900 transition-colors text-xs font-bold">${dept}</span>
+                <label class="flex items-center space-x-2 cursor-pointer group py-0.5">
+                    <input type="checkbox" value="${dept}" onchange="toggleFilter('dept', '${dept}')" class="checkbox-custom w-3.5 h-3.5 border-gray-300 rounded text-blue-600 focus:ring-0">
+                    <span class="text-gray-500 group-hover:text-gray-900 transition-colors">${dept}</span>
                 </label>
             `).join('');
 
             document.getElementById('officeFilters').innerHTML = offices.map(off => `
-                <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" value="${off}" onchange="toggleFilter('office', '${off}')" class="checkbox-custom w-4 h-4 border-gray-300 rounded text-green-600 focus:ring-green-500">
-                    <span class="text-gray-500 group-hover:text-gray-900 transition-colors text-xs font-bold">${off}</span>
+                <label class="flex items-center space-x-2 cursor-pointer group py-0.5">
+                    <input type="checkbox" value="${off}" onchange="toggleFilter('office', '${off}')" class="checkbox-custom w-3.5 h-3.5 border-gray-300 rounded text-green-600 focus:ring-0">
+                    <span class="text-gray-500 group-hover:text-gray-900 transition-colors">${off}</span>
                 </label>
             `).join('');
         }
@@ -209,22 +201,22 @@
                 document.getElementById('contactList').innerHTML = filtered.map(c => {
                     const m1 = c['Main Number'] || '';
                     const m2 = c['2nd Main Number'] || '';
-                    const ext = c.Extension || '-';
+                    const ext = (c.Extension && c.Extension !== 'nan') ? c.Extension : '-';
 
                     return `
                     <tr class="hover:bg-blue-50/40 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <div class="text-sm font-bold text-gray-800">${c.Employee}</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">${c.Department || 'N/A'}</div>
+                            <div class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">${c.Department || 'N/A'}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-mono font-bold">${c.Alias || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">${c.Office}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-blue-600 font-mono font-bold">${c.Alias || '-'}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-700 font-medium">${c.Office}</td>
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <div class="text-xs text-gray-600 font-mono">${m1}</div>
                             <div class="text-[10px] text-gray-400 font-mono italic">${m2}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 font-bold text-gray-700 text-xs">${ext}</span>
+                        <td class="px-6 py-3 whitespace-nowrap text-center">
+                            <span class="bg-gray-100 px-3 py-1 rounded-lg border border-gray-200 font-bold text-gray-700 text-xs">${ext}</span>
                         </td>
                     </tr>
                     `;
