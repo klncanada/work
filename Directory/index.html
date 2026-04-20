@@ -3,101 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Contact Directory</title>
-    <!-- 引入 Tailwind CSS 用于样式构建 -->
+    <title>Internal Contact Directory</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 PapaParse 用于解析本地或远程 CSV 文件 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f4f7f6; }
         .checkbox-custom:checked { background-color: #3b82f6; }
-        /* 列表显示时的淡入动画 */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 针对多列显示的滚动条优化 */
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Enterprise Directory</h1>
-                <p class="text-gray-500 mt-1 uppercase text-xs font-bold tracking-widest">
-                    Data Source: <span id="sourceLabel" class="text-blue-500 underline decoration-dotted">Connecting...</span>
-                </p>
+                <p id="lastUpdated" class="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">Connecting to contacts.csv...</p>
             </div>
-            <div id="statusBadge" class="flex items-center gap-2">
-                <div id="badgeText" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-amber-200">
-                    Synchronizing CSV...
-                </div>
-                <!-- 手动加载备选按钮 -->
-                <input type="file" id="manualFile" accept=".csv" class="hidden" />
-                <button id="manualBtn" onclick="document.getElementById('manualFile').click()" class="hidden bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-sm hover:bg-blue-700 transition-colors">
-                    Load CSV Manually
-                </button>
+            <div id="syncStatus" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-amber-200 shadow-sm">
+                Synchronizing...
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- 侧边栏筛选 -->
+            <!-- 侧边栏：筛选器 -->
             <aside class="lg:col-span-1 space-y-6">
-                <!-- 部门筛选器 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Department</h3>
-                    <div id="deptFilters" class="space-y-3 max-h-64 overflow-y-auto pr-2">
-                        <!-- 动态生成复选框 -->
-                    </div>
+                    <div id="deptFilters" class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2"></div>
                 </div>
 
-                <!-- 办公室筛选器 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Office</h3>
-                    <div id="officeFilters" class="space-y-3">
-                        <!-- 动态生成复选框 -->
-                    </div>
+                    <div id="officeFilters" class="space-y-3"></div>
                 </div>
 
                 <button onclick="resetFilters()" class="w-full py-3 text-xs font-black text-gray-300 hover:text-red-500 transition-colors uppercase tracking-widest">
-                    Clear Selection
+                    Clear Filters
                 </button>
             </aside>
 
-            <!-- 主内容区 -->
+            <!-- 主区域：搜索和结果 -->
             <main class="lg:col-span-3 space-y-6">
-                <!-- 搜索框 -->
                 <div class="relative">
-                    <input type="text" id="searchBar" placeholder="Search by name, alias, extension..." 
+                    <input type="text" id="searchBar" placeholder="Search by name, alias, office, or extension..." 
                            class="w-full pl-12 pr-6 py-4 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 transition-all text-lg outline-none placeholder:text-gray-300">
                     <svg class="w-6 h-6 text-gray-300 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
 
-                <!-- 结果表格 -->
+                <!-- 结果表格容器 -->
                 <div id="resultsWrapper" class="hidden fade-in bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-                    <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Employee</th>
-                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Alias</th>
-                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Office / Host</th>
-                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Ext</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contactList" class="divide-y divide-gray-50 text-gray-700">
-                            <!-- 动态加载内容 -->
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="min-w-full divide-y divide-gray-100">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Employee</th>
+                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Alias</th>
+                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Office</th>
+                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Main Numbers</th>
+                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Ext</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contactList" class="divide-y divide-gray-50 text-gray-700"></tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- 初始空状态 -->
-                <div id="initialState" class="py-32 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-100">
-                    <p class="text-gray-300 font-bold uppercase tracking-widest text-sm">Waiting for input to search database...</p>
+                <!-- 默认/空状态 -->
+                <div id="initialState" class="py-24 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-100">
+                    <p class="text-gray-300 font-bold uppercase tracking-widest text-sm">Waiting for input to search...</p>
                 </div>
 
-                <!-- 搜索无结果 -->
-                <div id="emptyState" class="hidden py-32 text-center bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div id="emptyState" class="hidden py-24 text-center bg-white rounded-2xl shadow-sm border border-gray-100">
                     <p class="text-gray-400">No matching contacts found.</p>
                 </div>
             </main>
@@ -109,75 +91,50 @@
         let selectedDepts = [];
         let selectedOffices = [];
 
-        const badgeText = document.getElementById('badgeText');
-        const sourceLabel = document.getElementById('sourceLabel');
-        const manualBtn = document.getElementById('manualBtn');
-
-        // 核心：读取同级目录下的 contacts.csv
         async function fetchCSV() {
+            const badge = document.getElementById('syncStatus');
+            const lastUpdated = document.getElementById('lastUpdated');
             try {
-                // 构建完整的相对路径以避免 URL 解析错误
+                // 自动处理相对路径
                 const csvPath = new URL('./contacts.csv', window.location.href).href;
                 const response = await fetch(csvPath);
-                
                 if (!response.ok) throw new Error("CSV file not found");
-                
                 const csvString = await response.text();
-                parseCSVData(csvString, "contacts.csv (Auto)");
+                
+                Papa.parse(csvString, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        contacts = results.data;
+                        badge.innerText = "Synchronized";
+                        badge.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-green-200 shadow-sm";
+                        lastUpdated.innerText = "Data loaded from contacts.csv";
+                        initFilters();
+                        render();
+                    }
+                });
             } catch (err) {
-                console.error("Fetch error:", err);
-                badgeText.innerText = "Security/Path Error";
-                badgeText.className = "bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-red-200";
-                sourceLabel.innerText = "Manual Load Required";
-                // 如果自动读取失败（例如 file:// 协议或 blob 预览），显示手动按钮
-                manualBtn.classList.remove('hidden');
+                console.error(err);
+                badge.innerText = "Connection Error";
+                badge.className = "bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-red-200 shadow-sm";
             }
         }
 
-        // 处理手动文件选择
-        document.getElementById('manualFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                parseCSVData(event.target.result, file.name + " (Manual)");
-                manualBtn.classList.add('hidden');
-            };
-            reader.readAsText(file);
-        });
-
-        function parseCSVData(csvString, sourceName) {
-            Papa.parse(csvString, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    contacts = results.data;
-                    sourceLabel.innerText = sourceName;
-                    badgeText.innerText = "Synchronized";
-                    badgeText.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-green-200";
-                    
-                    initFilters();
-                    render();
-                }
-            });
-        }
-
-        // 初始化筛选器列表
         function initFilters() {
+            // 根据你的新表头提取数据
             const depts = [...new Set(contacts.map(c => c.Department))].filter(d => d).sort();
+            const offices = [...new Set(contacts.map(c => c.Office))].filter(o => o).sort();
+
             document.getElementById('deptFilters').innerHTML = depts.map(dept => `
                 <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" value="${dept}" onchange="toggleFilter('dept', '${dept}')" 
-                           class="checkbox-custom w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500 transition-all">
+                    <input type="checkbox" value="${dept}" onchange="toggleFilter('dept', '${dept}')" class="checkbox-custom w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500">
                     <span class="text-gray-500 group-hover:text-gray-900 transition-colors text-xs font-bold">${dept}</span>
                 </label>
             `).join('');
 
-            const offices = [...new Set(contacts.map(c => c.Office))].filter(o => o).sort();
             document.getElementById('officeFilters').innerHTML = offices.map(off => `
                 <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" value="${off}" onchange="toggleFilter('office', '${off}')" 
-                           class="checkbox-custom w-4 h-4 border-gray-300 rounded text-green-600 focus:ring-green-500 transition-all">
+                    <input type="checkbox" value="${off}" onchange="toggleFilter('office', '${off}')" class="checkbox-custom w-4 h-4 border-gray-300 rounded text-green-600 focus:ring-green-500">
                     <span class="text-gray-500 group-hover:text-gray-900 transition-colors text-xs font-bold">${off}</span>
                 </label>
             `).join('');
@@ -209,39 +166,45 @@
             }
 
             const filtered = contacts.filter(c => {
-                const searchStr = `${c.Name} ${c.Alias} ${c.Extension} ${c.Department} ${c.Office}`.toLowerCase();
-                const matchSearch = searchStr.includes(search);
+                // 搜索时包含所有新字段
+                const text = `${c.Employee} ${c.Alias} ${c.Office} ${c.Department} ${c.Extension} ${c['Main Number']} ${c['2nd Main Number']}`.toLowerCase();
+                const matchSearch = text.includes(search);
                 const matchDept = selectedDepts.length === 0 || selectedDepts.includes(c.Department);
                 const matchOffice = selectedOffices.length === 0 || selectedOffices.includes(c.Office);
                 return matchSearch && matchDept && matchOffice;
             });
 
             document.getElementById('initialState').classList.add('hidden');
-            
             if (filtered.length === 0) {
                 document.getElementById('resultsWrapper').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } else {
                 document.getElementById('resultsWrapper').classList.remove('hidden');
                 document.getElementById('emptyState').classList.add('hidden');
-                document.getElementById('contactList').innerHTML = filtered.map(c => `
+                document.getElementById('contactList').innerHTML = filtered.map(c => {
+                    // 处理可能为空的数字列
+                    const m1 = c['Main Number'] || '';
+                    const m2 = c['2nd Main Number'] || '';
+                    const ext = c.Extension || '-';
+
+                    return `
                     <tr class="hover:bg-blue-50/40 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-bold text-gray-800">${c.Name}</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">${c.Department}</div>
+                            <div class="text-sm font-bold text-gray-800">${c.Employee}</div>
+                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">${c.Department || 'N/A'}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-mono font-bold">${c.Alias}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-mono font-bold">${c.Alias || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">${c.Office}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-700 font-medium">${c.Office}</div>
-                            <div class="text-[10px] text-gray-400 font-mono italic">${c.HostNumber}</div>
+                            <div class="text-xs text-gray-600 font-mono">${m1}</div>
+                            <div class="text-[10px] text-gray-400 font-mono italic">${m2}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 font-bold text-gray-600 text-xs">
-                                ${c.Extension && c.Extension !== 'nan' ? c.Extension.replace('.0', '') : '-'}
-                            </span>
+                            <span class="bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 font-bold text-gray-700 text-xs">${ext}</span>
                         </td>
                     </tr>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
