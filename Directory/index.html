@@ -25,8 +25,16 @@
                 <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Enterprise Directory</h1>
                 <p id="lastUpdated" class="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">Connecting to contacts.csv...</p>
             </div>
-            <div id="syncStatus" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-amber-200 shadow-sm">
-                Synchronizing...
+            <div class="flex items-center gap-3">
+                <!-- 手动上传按钮 -->
+                <input type="file" id="manualFileInput" accept=".csv" class="hidden" onchange="handleManualUpload(event)">
+                <button onclick="document.getElementById('manualFileInput').click()" class="bg-white hover:bg-gray-50 text-gray-600 text-[10px] font-bold py-1.5 px-3 rounded-full border border-gray-200 shadow-sm transition-all uppercase tracking-wider">
+                    Manual Upload
+                </button>
+                <!-- 状态标签 -->
+                <div id="syncStatus" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-amber-200 shadow-sm">
+                    Synchronizing...
+                </div>
             </div>
         </header>
 
@@ -75,7 +83,7 @@
                 </div>
 
                 <!-- 默认/空状态 -->
-                <div id="initialState" class="py-24 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-100">
+                <div id="initialState" class="py-24 text-center bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-200">
                     <p class="text-gray-300 font-bold uppercase tracking-widest text-sm">Waiting for input to search...</p>
                 </div>
 
@@ -91,37 +99,55 @@
         let selectedDepts = [];
         let selectedOffices = [];
 
-        async function fetchCSV() {
+        // 统一的数据解析处理函数
+        function processData(csvString, sourceLabelText) {
             const badge = document.getElementById('syncStatus');
             const lastUpdated = document.getElementById('lastUpdated');
+
+            Papa.parse(csvString, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    contacts = results.data;
+                    badge.innerText = "Synchronized";
+                    badge.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-green-200 shadow-sm";
+                    lastUpdated.innerText = sourceLabelText;
+                    initFilters();
+                    render();
+                }
+            });
+        }
+
+        // 自动获取 CSV
+        async function fetchCSV() {
+            const badge = document.getElementById('syncStatus');
             try {
-                // 自动处理相对路径
                 const csvPath = new URL('./contacts.csv', window.location.href).href;
                 const response = await fetch(csvPath);
-                if (!response.ok) throw new Error("CSV file not found");
+                if (!response.ok) throw new Error("Auto-load failed");
                 const csvString = await response.text();
-                
-                Papa.parse(csvString, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        contacts = results.data;
-                        badge.innerText = "Synchronized";
-                        badge.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-green-200 shadow-sm";
-                        lastUpdated.innerText = "Data loaded from contacts.csv";
-                        initFilters();
-                        render();
-                    }
-                });
+                processData(csvString, "Data loaded from contacts.csv");
             } catch (err) {
-                console.error(err);
-                badge.innerText = "Connection Error";
-                badge.className = "bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-red-200 shadow-sm";
+                console.warn("Auto-sync failed, waiting for manual upload or server setup.");
+                badge.innerText = "Manual Ready";
+                badge.className = "bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-blue-200 shadow-sm";
             }
         }
 
+        // 手动上传处理
+        function handleManualUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvString = e.target.result;
+                processData(csvString, `Data uploaded from: ${file.name}`);
+            };
+            reader.readAsText(file);
+        }
+
         function initFilters() {
-            // 根据你的新表头提取数据
             const depts = [...new Set(contacts.map(c => c.Department))].filter(d => d).sort();
             const offices = [...new Set(contacts.map(c => c.Office))].filter(o => o).sort();
 
@@ -166,7 +192,6 @@
             }
 
             const filtered = contacts.filter(c => {
-                // 搜索时包含所有新字段
                 const text = `${c.Employee} ${c.Alias} ${c.Office} ${c.Department} ${c.Extension} ${c['Main Number']} ${c['2nd Main Number']}`.toLowerCase();
                 const matchSearch = text.includes(search);
                 const matchDept = selectedDepts.length === 0 || selectedDepts.includes(c.Department);
@@ -182,7 +207,6 @@
                 document.getElementById('resultsWrapper').classList.remove('hidden');
                 document.getElementById('emptyState').classList.add('hidden');
                 document.getElementById('contactList').innerHTML = filtered.map(c => {
-                    // 处理可能为空的数字列
                     const m1 = c['Main Number'] || '';
                     const m2 = c['2nd Main Number'] || '';
                     const ext = c.Extension || '-';
