@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KLN Canada Office Directory (Iframe Embed)</title>
+  <title>KLN Canada Office Directory</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -12,38 +12,76 @@
       --muted: #6b7280;
       --line: #e5e7eb;
       --brand: #2563eb;
-      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-      --radius: 18px;
+      --shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
 
-    body {
+    /* Force full height and prevent main window scrolling */
+    html, body {
+      height: 100%;
       margin: 0;
+      overflow: hidden;
+    }
+
+    body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 220px);
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
       color: var(--text);
     }
 
     .page {
-      max-width: 1240px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 24px 20px 40px;
+      padding: 12px 20px;
     }
 
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
 
-    .page-title { margin: 0; font-size: 28px; font-weight: 700; }
+    .page-title { margin: 0; font-size: 22px; font-weight: 700; }
+
+    /* Language Switcher Styles */
+    .lang-switcher {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+    }
+
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: var(--brand);
+      color: #fff;
+    }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
-      gap: 24px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
     }
 
     .panel {
@@ -51,13 +89,24 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    .panel-header { padding: 18px 20px; border-bottom: 1px solid var(--line); }
-    .panel-title { margin: 0; font-size: 18px; font-weight: 700; }
+    .panel-header { 
+      padding: 10px 16px; 
+      border-bottom: 1px solid var(--line);
+      background: #fafbff;
+    }
+    .panel-title { margin: 0; font-size: 14px; font-weight: 700; color: #4b5563; }
 
-    .map-wrap { position: relative; height: 620px; background: #eef2f7; }
+    .map-wrap { 
+      flex: 1; 
+      position: relative; 
+      background: #eef2f7; 
+      min-height: 0;
+    }
     
     #mapIframe {
       width: 100%;
@@ -66,60 +115,67 @@
     }
 
     .cards {
-      padding: 16px;
+      padding: 10px;
       display: grid;
-      gap: 14px;
-      max-height: 620px;
+      gap: 8px;
       overflow-y: auto;
+      background: #fdfeff;
+      flex: 1;
     }
 
     .office-card {
       border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 12px;
       background: #fff;
       transition: all 0.2s ease;
       cursor: pointer;
     }
 
     .office-card:hover, .office-card.active {
-      transform: translateY(-2px);
       border-color: #bfdbfe;
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
     }
 
     .office-card.active {
-      border-left: 5px solid var(--brand);
+      border-left: 4px solid var(--brand);
       background: #f8faff;
     }
 
-    .office-name { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+    .office-name { margin: 0 0 2px; font-size: 15px; font-weight: 700; }
     .office-tag { 
-      font-size: 11px; font-weight: 700; color: var(--brand); 
-      text-transform: uppercase; background: #eff6ff; padding: 2px 6px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; color: var(--brand); 
+      text-transform: uppercase; background: #eff6ff; padding: 1px 6px; border-radius: 4px;
+      display: inline-block; margin-bottom: 4px;
     }
-    .office-address { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .office-address { margin: 4px 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
     
-    .contact-item { font-size: 13px; display: flex; gap: 8px; margin-top: 4px; }
-    .contact-label { color: var(--muted); width: 30px; }
+    .contact-item { font-size: 12px; display: flex; gap: 8px; margin-top: 1px; }
+    .contact-label { color: var(--muted); width: 24px; }
 
     @media (max-width: 980px) {
-      .layout { grid-template-columns: 1fr; }
-      .map-wrap { height: 400px; }
-      .cards { max-height: none; }
+      html, body { overflow: auto; }
+      .page { height: auto; }
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .map-wrap { height: 350px; }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="topbar">
-      <h1 class="page-title">Office Directory</h1>
+      <h1 class="page-title" data-i18n="pageTitle">Office Directory</h1>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="fr">FR</button>
+      </div>
     </div>
 
     <section class="layout">
+      <!-- Map Panel -->
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">Location Map</h2>
+          <h2 class="panel-title" data-i18n="mapTitle">Location Map</h2>
         </div>
         <div class="map-wrap">
           <iframe 
@@ -131,9 +187,10 @@
         </div>
       </div>
 
+      <!-- List Panel -->
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">Offices</h2>
+          <h2 class="panel-title" data-i18n="listTitle">Offices</h2>
         </div>
         <div class="cards" id="officeCards"></div>
       </div>
@@ -141,13 +198,12 @@
   </div>
 
   <script>
-    // No coordinates needed, just addresses
     const offices = [
       {
         id: "hq",
         name: "Montreal (Canada Headquarter)",
         tag: "headquarter",
-        address: "1425 TransCanada Highway, Dorval, QC H9P 2W9, Canada",
+        address: "1425 Trans Canada Route, Dorval, QC H9P 2W9, Canada",
         phone: "+1 514 822 4448",
         fax: "+1 514 822 4445"
       },
@@ -177,36 +233,72 @@
       }
     ];
 
+    const i18n = {
+      en: {
+        pageTitle: 'Office Directory',
+        mapTitle: 'Location Map',
+        listTitle: 'Offices',
+        headquarter: 'Headquarter',
+        warehouse: 'Warehouse',
+        office: 'Office',
+        tel: 'Tel',
+        fax: 'Fax'
+      },
+      fr: {
+        pageTitle: 'Bureaux KLN Canada',
+        mapTitle: 'Carte des sites',
+        listTitle: 'Nos Emplacements',
+        headquarter: 'Siège Social',
+        warehouse: 'Entrepôt',
+        office: 'Bureau',
+        tel: 'Tél',
+        fax: 'Fax'
+      }
+    };
+
+    let currentLang = 'en';
+    let selectedOfficeId = offices[0].id;
+
+    function getText(key) {
+      return i18n[currentLang][key] || key;
+    }
+
     function renderUI() {
       const container = document.getElementById('officeCards');
-      offices.forEach((office, index) => {
+      container.innerHTML = ''; // Clear for language switch
+
+      offices.forEach((office) => {
         const card = document.createElement('div');
-        card.className = 'office-card';
+        card.className = `office-card ${office.id === selectedOfficeId ? 'active' : ''}`;
         card.id = `card-${office.id}`;
         card.innerHTML = `
-          <span class="office-tag">${office.tag}</span>
+          <span class="office-tag">${getText(office.tag)}</span>
           <h3 class="office-name">${office.name}</h3>
           <p class="office-address">${office.address}</p>
-          <div class="contact-item"><span class="contact-label">Tel</span><span>${office.phone}</span></div>
-          <div class="contact-item"><span class="contact-label">Fax</span><span>${office.fax}</span></div>
+          <div class="contact-item"><span class="contact-label">${getText('tel')}</span><span>${office.phone}</span></div>
+          <div class="contact-item"><span class="contact-label">${getText('fax')}</span><span>${office.fax}</span></div>
         `;
         card.onclick = () => selectOffice(office);
         container.appendChild(card);
       });
-      
-      // Default selection
-      selectOffice(offices[0]);
+
+      // Update static text
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = getText(el.getAttribute('data-i18n'));
+      });
     }
 
     function selectOffice(office) {
-      // Update sidebar UI
+      selectedOfficeId = office.id;
+      
+      // Update sidebar visual state
       document.querySelectorAll('.office-card').forEach(c => c.classList.remove('active'));
-      document.getElementById(`card-${office.id}`).classList.add('active');
+      const activeCard = document.getElementById(`card-${office.id}`);
+      if (activeCard) activeCard.classList.add('active');
 
-      // Update Map Iframe
-      // We use the standard google.com/maps?q=ADDRESS&output=embed URL
+      // Refresh Map Iframe
       const encodedAddress = encodeURIComponent(office.address);
-      const mapSrc = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      const mapSrc = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=16&ie=UTF8&iwloc=A&output=embed`;
       
       const iframe = document.getElementById('mapIframe');
       if (iframe.src !== mapSrc) {
@@ -214,7 +306,22 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', renderUI);
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      renderUI();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderUI();
+      selectOffice(offices[0]);
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.onclick = () => setLanguage(btn.getAttribute('data-lang'));
+      });
+    });
   </script>
 </body>
 </html>
