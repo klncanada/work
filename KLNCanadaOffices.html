@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KLN Canada Office Directory</title>
+  <title>KLN Canada Office Directory (Iframe Embed)</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -12,18 +12,15 @@
       --muted: #6b7280;
       --line: #e5e7eb;
       --brand: #2563eb;
-      --brand-soft: #dbeafe;
       --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 220px);
       color: var(--text);
     }
@@ -38,49 +35,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
       margin-bottom: 20px;
     }
 
-    .page-title {
-      margin: 0;
-      font-size: clamp(24px, 3vw, 34px);
-      line-height: 1.15;
-      font-weight: 700;
-    }
-
-    .lang-switcher {
-      display: inline-flex;
-      gap: 8px;
-      padding: 4px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-    }
-
-    .lang-btn {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .lang-btn.active {
-      background: var(--brand);
-      color: #ffffff;
-    }
+    .page-title { margin: 0; font-size: 28px; font-weight: 700; }
 
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
       gap: 24px;
-      align-items: start;
     }
 
     .panel {
@@ -91,74 +54,15 @@
       overflow: hidden;
     }
 
-    .panel-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-    }
+    .panel-header { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+    .panel-title { margin: 0; font-size: 18px; font-weight: 700; }
 
-    .panel-title {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .map-wrap {
-      position: relative;
-      min-height: 620px;
-      background: #eef2f7;
-    }
-
-    .map-canvas {
+    .map-wrap { position: relative; height: 620px; background: #eef2f7; }
+    
+    #mapIframe {
       width: 100%;
-      height: 620px;
-      display: block;
-      background: linear-gradient(180deg, #eff7ff 0%, #deecfb 100%);
-    }
-
-    .leaflet-container {
-      font-family: inherit;
-    }
-
-    .office-popup {
-      min-width: 220px;
-      line-height: 1.6;
-      color: #1f2937;
-    }
-
-    .office-popup strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-
-    .office-popup .meta {
-      color: #6b7280;
-      font-size: 13px;
-    }
-
-    .map-overlay {
-      position: absolute;
-      left: 18px;
-      top: 18px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(229, 231, 235, 0.95);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      max-width: 320px;
-      z-index: 500;
-    }
-
-    .map-overlay strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-
-    .map-overlay span {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
+      height: 100%;
+      border: 0;
     }
 
     .cards {
@@ -166,8 +70,7 @@
       display: grid;
       gap: 14px;
       max-height: 620px;
-      overflow: auto;
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      overflow-y: auto;
     }
 
     .office-card {
@@ -175,123 +78,62 @@
       border-radius: 16px;
       padding: 16px;
       background: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: all 0.2s ease;
       cursor: pointer;
     }
 
-    .office-card:hover,
-    .office-card.active {
+    .office-card:hover, .office-card.active {
       transform: translateY(-2px);
       border-color: #bfdbfe;
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
     }
 
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
+    .office-card.active {
+      border-left: 5px solid var(--brand);
+      background: #f8faff;
     }
 
-    .office-name {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 700;
+    .office-name { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+    .office-tag { 
+      font-size: 11px; font-weight: 700; color: var(--brand); 
+      text-transform: uppercase; background: #eff6ff; padding: 2px 6px; border-radius: 4px;
     }
-
-    .office-tag {
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-      text-transform: capitalize;
-    }
-
-    .office-address {
-      margin: 0 0 12px;
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 14px;
-    }
-
-    .contact-list {
-      display: grid;
-      gap: 8px;
-      margin: 0;
-    }
-
-    .contact-item {
-      display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: 10px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .contact-label {
-      color: var(--muted);
-    }
+    .office-address { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    
+    .contact-item { font-size: 13px; display: flex; gap: 8px; margin-top: 4px; }
+    .contact-label { color: var(--muted); width: 30px; }
 
     @media (max-width: 980px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-      .map-canvas {
-        height: 420px;
-      }
-      .map-wrap, .cards {
-        max-height: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .contact-item {
-        grid-template-columns: 1fr;
-        gap: 2px;
-      }
+      .layout { grid-template-columns: 1fr; }
+      .map-wrap { height: 400px; }
+      .cards { max-height: none; }
     }
   </style>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
   <div class="page">
     <div class="topbar">
-      <h1 class="page-title" data-i18n="pageTitle">Office Directory</h1>
-      <div class="lang-switcher">
-        <button class="lang-btn" data-lang="en" type="button">EN</button>
-        <button class="lang-btn" data-lang="fr" type="button">FR</button>
-      </div>
+      <h1 class="page-title">Office Directory</h1>
     </div>
 
     <section class="layout">
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title" data-i18n="mapTitle">Map</h2>
+          <h2 class="panel-title">Location Map</h2>
         </div>
         <div class="map-wrap">
-          <div id="officeMap" class="map-canvas"></div>
-          <div class="map-overlay" id="mapOverlay">
-            <strong data-i18n="overlayTitle">Office Map</strong>
-            <span data-i18n="overlayHint">Select an office to view location details.</span>
-          </div>
+          <iframe 
+            id="mapIframe" 
+            loading="lazy" 
+            allowfullscreen 
+            src="about:blank">
+          </iframe>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title" data-i18n="listTitle">Locations</h2>
+          <h2 class="panel-title">Offices</h2>
         </div>
         <div class="cards" id="officeCards"></div>
       </div>
@@ -299,194 +141,80 @@
   </div>
 
   <script>
-    // Corrected coordinates to fix "drift"
+    // No coordinates needed, just addresses
     const offices = [
       {
+        id: "hq",
         name: "Montreal (Canada Headquarter)",
         tag: "headquarter",
-        address: "1425 TransCanada, Suite 150, Dorval, QC, Canada H9P 2W9",
+        address: "1425 TransCanada Highway, Dorval, QC H9P 2W9, Canada",
         phone: "+1 514 822 4448",
-        fax: "+1 514 822 4445",
-        lat: 45.4745, // Corrected from 45.4629
-        lng: -73.7712 // Corrected from -73.7443
+        fax: "+1 514 822 4445"
       },
       {
+        id: "wh",
         name: "Montreal (Warehouse)",
         tag: "warehouse",
-        address: "9942 Chemin de la Cote-de-Liesse, Lachine, QC, Canada H8T 1A1",
+        address: "9942 Chemin de la Côte-de-Liesse, Lachine, QC H8T 1A1, Canada",
         phone: "+1 514 420 0282",
-        fax: "+1 514 636 5976",
-        lat: 45.4621, // Corrected
-        lng: -73.7155  // Corrected
+        fax: "+1 514 636 5976"
       },
       {
-        name: "Toronto",
+        id: "to",
+        name: "Toronto Office",
         tag: "office",
-        address: "1450 Meyerside Drive, Suite 301, Mississauga, ON, Canada L5T 2N5",
+        address: "1450 Meyerside Drive, Mississauga, ON L5T 2N5, Canada",
         phone: "+1 905 565 8788",
-        fax: "+1 905 565 8783",
-        lat: 43.6662, // Corrected
-        lng: -79.6738  // Corrected
+        fax: "+1 905 565 8783"
       },
       {
-        name: "Vancouver",
+        id: "van",
+        name: "Vancouver Office",
         tag: "office",
-        address: "13431 Maycrest Way, Suite 105, Richmond, BC, Canada V6V 2M3",
+        address: "13431 Maycrest Way, Richmond, BC V6V 2M3, Canada",
         phone: "N/A",
-        fax: "N/A",
-        lat: 49.1866, // Corrected
-        lng: -123.0645 // Corrected
+        fax: "N/A"
       }
     ];
 
-    const i18n = {
-      en: {
-        pageTitle: 'Office Directory',
-        mapTitle: 'Map',
-        listTitle: 'Locations',
-        overlayTitle: 'Office Map',
-        overlayHint: 'Select an office to view location details.',
-        phone: 'Tel',
-        fax: 'Fax',
-        office: 'Office',
-        warehouse: 'Warehouse',
-        headquarter: 'Headquarter',
-        noData: 'No office data available.'
-      },
-      fr: {
-        pageTitle: 'Bureaux',
-        mapTitle: 'Carte',
-        listTitle: 'Sites',
-        overlayTitle: 'Carte des bureaux',
-        overlayHint: 'Sélectionnez un bureau pour afficher les détails.',
-        phone: 'Tél',
-        fax: 'Fax',
-        office: 'Bureau',
-        warehouse: 'Entrepôt',
-        headquarter: 'Siège social',
-        noData: 'Aucune donnée de bureau disponible.'
-      }
-    };
-
-    let currentLang = 'en';
-    let officeMap = null;
-    let officeMarkers = [];
-    let mapIsReady = false;
-
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>"']/g, m => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[m]));
-    }
-
-    function getText(key) {
-      return i18n[currentLang]?.[key] ?? i18n.en[key] ?? key;
-    }
-
-    function applyLanguage(lang) {
-      currentLang = i18n[lang] ? lang : 'en';
-      document.querySelectorAll('[data-i18n]').forEach((node) => {
-        const key = node.getAttribute('data-i18n');
-        node.textContent = getText(key);
-      });
-
-      document.querySelectorAll('.lang-btn').forEach((button) => {
-        button.classList.toggle('active', button.dataset.lang === currentLang);
-      });
-
-      renderOffices();
-    }
-
-    function buildPopupHtml(office) {
-      return `
-        <div class="office-popup">
-          <strong>${escapeHtml(office.name)}</strong>
-          <div>${escapeHtml(office.address)}</div>
-          <div class="meta">${getText('phone')}: ${escapeHtml(office.phone)}<br>${getText('fax')}: ${escapeHtml(office.fax)}</div>
-        </div>
-      `;
-    }
-
-    function initializeMap() {
-      const mapElement = document.getElementById('officeMap');
-      if (!mapElement) return null;
-
-      const map = L.map(mapElement).setView([56.1304, -106.3468], 4);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
-      return map;
-    }
-
-    function updateOverlay(office) {
-      const mapOverlay = document.getElementById('mapOverlay');
-      if (!mapOverlay) return;
-      mapOverlay.innerHTML = `
-        <strong>${escapeHtml(office.name)}</strong>
-        <span>${escapeHtml(office.address)}<br>${getText('phone')}: ${escapeHtml(office.phone)}<br>${getText('fax')}: ${escapeHtml(office.fax)}</span>
-      `;
-    }
-
-    function setActiveOffice(office, cardEl, index) {
-      document.querySelectorAll('.office-card').forEach(c => c.classList.remove('active'));
-      if (cardEl) cardEl.classList.add('active');
-      updateOverlay(office);
-
-      if (officeMap && officeMarkers[index]) {
-        officeMarkers[index].openPopup();
-        officeMap.flyTo([office.lat, office.lng], 14, { animate: true, duration: 1 });
-      }
-    }
-
-    function renderOffices() {
-      const cardsRoot = document.getElementById('officeCards');
-      if (!cardsRoot) return;
-      cardsRoot.innerHTML = '';
-      
-      if (officeMap) officeMap.remove();
-      officeMap = initializeMap();
-      officeMarkers = [];
-
-      const bounds = [];
+    function renderUI() {
+      const container = document.getElementById('officeCards');
       offices.forEach((office, index) => {
-        // Create Card
-        const card = document.createElement('article');
+        const card = document.createElement('div');
         card.className = 'office-card';
+        card.id = `card-${office.id}`;
         card.innerHTML = `
-          <div class="card-top">
-            <h3 class="office-name">${escapeHtml(office.name)}</h3>
-            <span class="office-tag">${getText(office.tag)}</span>
-          </div>
-          <p class="office-address">${escapeHtml(office.address)}</p>
-          <div class="contact-list">
-            <div class="contact-item"><div class="contact-label">${getText('phone')}</div><div>${escapeHtml(office.phone)}</div></div>
-            <div class="contact-item"><div class="contact-label">${getText('fax')}</div><div>${escapeHtml(office.fax)}</div></div>
-          </div>
+          <span class="office-tag">${office.tag}</span>
+          <h3 class="office-name">${office.name}</h3>
+          <p class="office-address">${office.address}</p>
+          <div class="contact-item"><span class="contact-label">Tel</span><span>${office.phone}</span></div>
+          <div class="contact-item"><span class="contact-label">Fax</span><span>${office.fax}</span></div>
         `;
-        card.addEventListener('click', () => setActiveOffice(office, card, index));
-        cardsRoot.appendChild(card);
-
-        // Add Marker
-        if (officeMap) {
-          const marker = L.marker([office.lat, office.lng]).addTo(officeMap);
-          marker.bindPopup(buildPopupHtml(office));
-          marker.on('click', () => setActiveOffice(office, card, index));
-          officeMarkers[index] = marker;
-          bounds.push([office.lat, office.lng]);
-        }
+        card.onclick = () => selectOffice(office);
+        container.appendChild(card);
       });
+      
+      // Default selection
+      selectOffice(offices[0]);
+    }
 
-      if (officeMap && bounds.length > 0) {
-        officeMap.fitBounds(bounds, { padding: [50, 50] });
+    function selectOffice(office) {
+      // Update sidebar UI
+      document.querySelectorAll('.office-card').forEach(c => c.classList.remove('active'));
+      document.getElementById(`card-${office.id}`).classList.add('active');
+
+      // Update Map Iframe
+      // We use the standard google.com/maps?q=ADDRESS&output=embed URL
+      const encodedAddress = encodeURIComponent(office.address);
+      const mapSrc = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      
+      const iframe = document.getElementById('mapIframe');
+      if (iframe.src !== mapSrc) {
+        iframe.src = mapSrc;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
-      });
-      applyLanguage('en');
-    });
+    document.addEventListener('DOMContentLoaded', renderUI);
   </script>
 </body>
 </html>
