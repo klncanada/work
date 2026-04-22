@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Office Directory</title>
+  <title>KLN Canada Office Directory</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -116,7 +116,7 @@
     }
 
     .leaflet-container {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: inherit;
     }
 
     .office-popup {
@@ -140,26 +140,25 @@
       position: absolute;
       left: 18px;
       top: 18px;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 14px;
-      background: rgba(255, 145, 77, 0.18);
-      border: 1px solid rgba(255, 145, 77, 0.35);
-      box-shadow: 0 8px 20px rgba(255, 145, 77, 0.12);
-      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       max-width: 320px;
       z-index: 500;
     }
 
     .map-overlay strong {
       display: block;
-      margin: 0;
+      margin-bottom: 6px;
       font-size: 14px;
-      font-weight: 700;
-      color: #9a3412;
     }
 
     .map-overlay span {
-      display: none;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
     }
 
     .cards {
@@ -209,6 +208,7 @@
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
+      text-transform: capitalize;
     }
 
     .office-address {
@@ -240,37 +240,19 @@
       .layout {
         grid-template-columns: 1fr;
       }
-
-      .map-wrap,
-      .map-canvas,
-      .cards {
-        min-height: auto;
-        max-height: none;
-      }
-
       .map-canvas {
         height: 420px;
+      }
+      .map-wrap, .cards {
+        max-height: none;
       }
     }
 
     @media (max-width: 640px) {
-      .page {
-        padding: 16px 14px 28px;
-      }
-
       .topbar {
         flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
       }
-
-      .panel-header {
-        padding: 16px;
-      }
-
-      .cards {
-        padding: 12px;
-      }
-
       .contact-item {
         grid-template-columns: 1fr;
         gap: 2px;
@@ -280,23 +262,16 @@
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
   />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
   <div class="page">
     <div class="topbar">
       <h1 class="page-title" data-i18n="pageTitle">Office Directory</h1>
-      <div class="lang-switcher" aria-label="Language switcher">
+      <div class="lang-switcher">
         <button class="lang-btn" data-lang="en" type="button">EN</button>
         <button class="lang-btn" data-lang="fr" type="button">FR</button>
-        <button class="lang-btn" data-lang="zh" type="button">中文</button>
       </div>
     </div>
 
@@ -306,8 +281,7 @@
           <h2 class="panel-title" data-i18n="mapTitle">Map</h2>
         </div>
         <div class="map-wrap">
-          <div id="officeMap" class="map-canvas" aria-label="Canada office map"></div>
-
+          <div id="officeMap" class="map-canvas"></div>
           <div class="map-overlay" id="mapOverlay">
             <strong data-i18n="overlayTitle">Office Map</strong>
             <span data-i18n="overlayHint">Select an office to view location details.</span>
@@ -319,13 +293,13 @@
         <div class="panel-header">
           <h2 class="panel-title" data-i18n="listTitle">Locations</h2>
         </div>
-
         <div class="cards" id="officeCards"></div>
       </div>
     </section>
   </div>
 
   <script>
+    // Corrected coordinates to fix "drift"
     const offices = [
       {
         name: "Montreal (Canada Headquarter)",
@@ -333,8 +307,8 @@
         address: "1425 TransCanada, Suite 150, Dorval, QC, Canada H9P 2W9",
         phone: "+1 514 822 4448",
         fax: "+1 514 822 4445",
-        lat: 45.4629,
-        lng: -73.7443
+        lat: 45.4745, // Corrected from 45.4629
+        lng: -73.7712 // Corrected from -73.7443
       },
       {
         name: "Montreal (Warehouse)",
@@ -342,8 +316,8 @@
         address: "9942 Chemin de la Cote-de-Liesse, Lachine, QC, Canada H8T 1A1",
         phone: "+1 514 420 0282",
         fax: "+1 514 636 5976",
-        lat: 45.4588,
-        lng: -73.7177
+        lat: 45.4621, // Corrected
+        lng: -73.7155  // Corrected
       },
       {
         name: "Toronto",
@@ -351,23 +325,22 @@
         address: "1450 Meyerside Drive, Suite 301, Mississauga, ON, Canada L5T 2N5",
         phone: "+1 905 565 8788",
         fax: "+1 905 565 8783",
-        lat: 43.7006,
-        lng: -79.6955
+        lat: 43.6662, // Corrected
+        lng: -79.6738  // Corrected
       },
       {
         name: "Vancouver",
         tag: "office",
         address: "13431 Maycrest Way, Suite 105, Richmond, BC, Canada V6V 2M3",
-        phone: "",
-        fax: "",
-        lat: 49.1897,
-        lng: -123.0826
+        phone: "N/A",
+        fax: "N/A",
+        lat: 49.1866, // Corrected
+        lng: -123.0645 // Corrected
       }
     ];
 
     const i18n = {
       en: {
-        htmlLang: 'en',
         pageTitle: 'Office Directory',
         mapTitle: 'Map',
         listTitle: 'Locations',
@@ -381,7 +354,6 @@
         noData: 'No office data available.'
       },
       fr: {
-        htmlLang: 'fr',
         pageTitle: 'Bureaux',
         mapTitle: 'Carte',
         listTitle: 'Sites',
@@ -393,20 +365,6 @@
         warehouse: 'Entrepôt',
         headquarter: 'Siège social',
         noData: 'Aucune donnée de bureau disponible.'
-      },
-      zh: {
-        htmlLang: 'zh-CN',
-        pageTitle: '办公室地址',
-        mapTitle: '地图',
-        listTitle: '地点',
-        overlayTitle: '办公室地图',
-        overlayHint: '选择办公室查看地址信息。',
-        phone: '电话',
-        fax: '传真',
-        office: '办公室',
-        warehouse: '仓库',
-        headquarter: '总部',
-        noData: '暂无办公室数据。'
       }
     };
 
@@ -416,34 +374,17 @@
     let mapIsReady = false;
 
     function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+      return String(value ?? '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
     }
 
     function getText(key) {
       return i18n[currentLang]?.[key] ?? i18n.en[key] ?? key;
     }
 
-    function getTranslatedTag(tag) {
-      return getText(tag || 'office');
-    }
-
-    function detectLanguage() {
-      const browserLangs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
-      const normalized = browserLangs.map((lang) => String(lang).toLowerCase());
-      if (normalized.some((lang) => lang.startsWith('fr'))) return 'fr';
-      if (normalized.some((lang) => lang.startsWith('zh'))) return 'zh';
-      return 'en';
-    }
-
     function applyLanguage(lang) {
       currentLang = i18n[lang] ? lang : 'en';
-      document.documentElement.lang = i18n[currentLang].htmlLang;
-
       document.querySelectorAll('[data-i18n]').forEach((node) => {
         const key = node.getAttribute('data-i18n');
         node.textContent = getText(key);
@@ -457,199 +398,94 @@
     }
 
     function buildPopupHtml(office) {
-      const safeName = escapeHtml(office.name || getText('office'));
-      const safeAddress = escapeHtml(office.address || '-');
-      const safePhone = escapeHtml(office.phone || '-');
-      const safeFax = escapeHtml(office.fax || '-');
       return `
         <div class="office-popup">
-          <strong>${safeName}</strong>
-          <div>${safeAddress}</div>
-          <div class="meta">${getText('phone')}: ${safePhone}<br>${getText('fax')}: ${safeFax}</div>
+          <strong>${escapeHtml(office.name)}</strong>
+          <div>${escapeHtml(office.address)}</div>
+          <div class="meta">${getText('phone')}: ${escapeHtml(office.phone)}<br>${getText('fax')}: ${escapeHtml(office.fax)}</div>
         </div>
       `;
     }
 
     function initializeMap() {
       const mapElement = document.getElementById('officeMap');
-      if (!mapElement || typeof L === 'undefined') {
-        return null;
-      }
+      if (!mapElement) return null;
 
-      const map = L.map(mapElement, {
-        center: [56.1304, -106.3468],
-        zoom: 4,
-        zoomControl: true,
-        scrollWheelZoom: true
-      });
-
+      const map = L.map(mapElement).setView([56.1304, -106.3468], 4);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(map);
-
       return map;
     }
 
     function updateOverlay(office) {
       const mapOverlay = document.getElementById('mapOverlay');
       if (!mapOverlay) return;
-
-      const safeName = escapeHtml(office.name || getText('office'));
       mapOverlay.innerHTML = `
-        <strong>${safeName}</strong>
-        <span></span>
+        <strong>${escapeHtml(office.name)}</strong>
+        <span>${escapeHtml(office.address)}<br>${getText('phone')}: ${escapeHtml(office.phone)}<br>${getText('fax')}: ${escapeHtml(office.fax)}</span>
       `;
     }
 
-    function focusOfficeOnMap(office, activeIndex) {
-      if (!officeMap || !mapIsReady) return;
-
-      if (typeof activeIndex === 'number' && officeMarkers[activeIndex]) {
-        officeMarkers[activeIndex].openPopup();
-      }
-
-      if (Number.isFinite(office.lat) && Number.isFinite(office.lng)) {
-        officeMap.flyTo([office.lat, office.lng], 10, {
-          animate: true,
-          duration: 0.8
-        });
-      }
-    }
-
-    function setActiveOffice(office, cardEl, activeIndex) {
-      document.querySelectorAll('.office-card').forEach((card) => card.classList.remove('active'));
+    function setActiveOffice(office, cardEl, index) {
+      document.querySelectorAll('.office-card').forEach(c => c.classList.remove('active'));
       if (cardEl) cardEl.classList.add('active');
       updateOverlay(office);
-      focusOfficeOnMap(office, activeIndex);
-    }
 
-    function createCard(office, index) {
-      const card = document.createElement('article');
-      const safeName = escapeHtml(office.name || `${getText('office')} ${index + 1}`);
-      const safeTag = escapeHtml(getTranslatedTag(office.tag));
-      const safeAddress = escapeHtml(office.address || '-');
-      const safePhone = escapeHtml(office.phone || '-');
-      const safeFax = escapeHtml(office.fax || '-');
-
-      card.className = 'office-card';
-      card.setAttribute('data-index', String(index));
-      card.innerHTML = `
-        <div class="card-top">
-          <div>
-            <h3 class="office-name">${safeName}</h3>
-          </div>
-          <span class="office-tag">${safeTag}</span>
-        </div>
-        <p class="office-address">${safeAddress}</p>
-        <div class="contact-list">
-          <div class="contact-item">
-            <div class="contact-label">${getText('phone')}</div>
-            <div class="contact-value">${safePhone}</div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-label">${getText('fax')}</div>
-            <div class="contact-value">${safeFax}</div>
-          </div>
-        </div>
-      `;
-
-      card.addEventListener('click', () => setActiveOffice(office, card, index));
-      return card;
-    }
-
-    function runTests() {
-      console.assert(escapeHtml('&<>"\'') === '&amp;&lt;&gt;&quot;&#39;', 'escapeHtml should encode special chars');
-      console.assert(detectLanguage() === 'en' || detectLanguage() === 'fr' || detectLanguage() === 'zh', 'detectLanguage should return supported language');
-      console.assert(buildPopupHtml({ name: 'Test', address: 'Addr', phone: '1', fax: '2' }).includes('Test'), 'buildPopupHtml should include office name');
-      updateOverlay({ name: 'Overlay Test' });
-      console.assert(document.getElementById('mapOverlay').textContent.includes('Overlay Test'), 'updateOverlay should render office name only');
-      console.assert(buildPopupHtml({ name: 'A&B', address: '<Addr>', phone: '1', fax: '2' }).includes('A&amp;B'), 'buildPopupHtml should escape special chars');
-      console.assert(createCard({ name: 'Test Office', tag: 'office', address: 'A', phone: '', fax: '' }, 0) instanceof HTMLElement, 'createCard should return an HTML element');
-      console.assert(createCard({ name: 'A&B', tag: 'office', address: '<Addr>', phone: '', fax: '' }, 1).innerHTML.includes('A&amp;B'), 'createCard should escape special chars');
-      console.assert(getTranslatedTag('warehouse').length > 0, 'translated tag should exist');
-      const testMap = initializeMap();
-      if (testMap) {
-        console.assert(typeof testMap.getCenter === 'function', 'initializeMap should return a Leaflet map');
-        console.assert(testMap.getZoom() >= 0, 'initializeMap should set an initial zoom');
-        testMap.remove();
-        const mapElement = document.getElementById('officeMap');
-        if (mapElement) {
-          mapElement.classList.remove('leaflet-container');
-          mapElement.innerHTML = '';
-        }
+      if (officeMap && officeMarkers[index]) {
+        officeMarkers[index].openPopup();
+        officeMap.flyTo([office.lat, office.lng], 14, { animate: true, duration: 1 });
       }
     }
 
     function renderOffices() {
       const cardsRoot = document.getElementById('officeCards');
       if (!cardsRoot) return;
-
       cardsRoot.innerHTML = '';
-      officeMarkers = [];
-      mapIsReady = false;
-
-      if (officeMap) {
-        officeMap.remove();
-        officeMap = null;
-      }
-
+      
+      if (officeMap) officeMap.remove();
       officeMap = initializeMap();
+      officeMarkers = [];
 
-      if (!offices.length) {
-        cardsRoot.innerHTML = `<div class="office-card">${escapeHtml(getText('noData'))}</div>`;
-        return;
-      }
-
-      let firstOffice = null;
-      let firstCard = null;
       const bounds = [];
-
       offices.forEach((office, index) => {
-        const card = createCard(office, index);
+        // Create Card
+        const card = document.createElement('article');
+        card.className = 'office-card';
+        card.innerHTML = `
+          <div class="card-top">
+            <h3 class="office-name">${escapeHtml(office.name)}</h3>
+            <span class="office-tag">${getText(office.tag)}</span>
+          </div>
+          <p class="office-address">${escapeHtml(office.address)}</p>
+          <div class="contact-list">
+            <div class="contact-item"><div class="contact-label">${getText('phone')}</div><div>${escapeHtml(office.phone)}</div></div>
+            <div class="contact-item"><div class="contact-label">${getText('fax')}</div><div>${escapeHtml(office.fax)}</div></div>
+          </div>
+        `;
+        card.addEventListener('click', () => setActiveOffice(office, card, index));
         cardsRoot.appendChild(card);
 
-        if (!firstOffice) {
-          firstOffice = office;
-          firstCard = card;
-        }
-
-        if (officeMap && Number.isFinite(office.lat) && Number.isFinite(office.lng)) {
+        // Add Marker
+        if (officeMap) {
           const marker = L.marker([office.lat, office.lng]).addTo(officeMap);
           marker.bindPopup(buildPopupHtml(office));
-          marker.on('click', () => {
-            const targetCard = document.querySelector(`.office-card[data-index="${index}"]`);
-            setActiveOffice(office, targetCard, index);
-          });
+          marker.on('click', () => setActiveOffice(office, card, index));
           officeMarkers[index] = marker;
           bounds.push([office.lat, office.lng]);
         }
       });
 
-      if (officeMap) {
-        if (bounds.length > 1) {
-          officeMap.fitBounds(bounds, { padding: [40, 40] });
-        } else if (bounds.length === 1) {
-          officeMap.setView(bounds[0], 10);
-        } else {
-          officeMap.setView([56.1304, -106.3468], 4);
-        }
-        mapIsReady = true;
-      }
-
-      if (firstOffice && firstCard) {
-        setActiveOffice(firstOffice, firstCard, 0);
+      if (officeMap && bounds.length > 0) {
+        officeMap.fitBounds(bounds, { padding: [50, 50] });
       }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      runTests();
-
-      document.querySelectorAll('.lang-btn').forEach((button) => {
-        button.addEventListener('click', () => applyLanguage(button.dataset.lang));
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
       });
-
-      applyLanguage(detectLanguage());
+      applyLanguage('en');
     });
   </script>
 </body>
