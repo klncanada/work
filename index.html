@@ -191,16 +191,43 @@
       gap: 5px;
     }
 
-    .quick-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
+    .quick-list li { display:none; }
+
+    .timezone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .tz-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: var(--surface);
+      text-align: center;
+    }
+
+    .tz-label {
+      font-size: 0.78rem;
       color: var(--muted);
-      line-height: 1.45;
-      padding: 6px 8px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      margin-bottom: 6px;
+    }
+
+    .tz-time {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .tz-date {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .tz-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
     }
 
     .quick-list li.active-timezone {
@@ -475,11 +502,23 @@
             <div class="hero-info-grid">
               <aside class="hero-panel" style="grid-column: 1 / -1;">
                 <h3 data-i18n="currentTimeTitle">Current Time</h3>
-                <ul class="quick-list">
-                  <li id="row-est"><span class="dot"></span><span><span data-i18n="easternTimeLabel">Eastern Time</span> : <strong id="time-est">--:--</strong><span id="date-est"></span></span></li>
-                  <li id="row-pt"><span class="dot"></span><span><span data-i18n="pacificTimeLabel">Pacific Time</span> : <strong id="time-pt">--:--</strong><span id="date-pt"></span></span></li>
-                  <li id="row-bj"><span class="dot"></span><span><span data-i18n="chinaStandardLabel">China Standard</span> : <strong id="time-bj">--:--</strong><span id="date-bj"></span></span></li>
-                </ul>
+                <div class="timezone-grid">
+                  <div class="tz-card" id="row-est">
+                    <div class="tz-label" data-i18n="easternTimeLabel">Eastern Time</div>
+                    <div class="tz-time" id="time-est">--:--</div>
+                    <div class="tz-date" id="date-est"></div>
+                  </div>
+                  <div class="tz-card" id="row-pt">
+                    <div class="tz-label" data-i18n="pacificTimeLabel">Pacific Time</div>
+                    <div class="tz-time" id="time-pt">--:--</div>
+                    <div class="tz-date" id="date-pt"></div>
+                  </div>
+                  <div class="tz-card" id="row-bj">
+                    <div class="tz-label" data-i18n="chinaStandardLabel">China Standard</div>
+                    <div class="tz-time" id="time-bj">--:--</div>
+                    <div class="tz-date" id="date-bj"></div>
+                  </div>
+                </div>
               </aside>
             </div>
           </div>
@@ -789,13 +828,13 @@
 
       ['row-est', 'row-pt', 'row-bj'].forEach((id) => {
         const el = getEl(id);
-        if (el) el.classList.remove('active-timezone');
+        if (el) el.classList.remove('active');
       });
 
       const activeId = map[userTz];
       if (activeId) {
         const active = getEl(activeId);
-        if (active) active.classList.add('active-timezone');
+        if (active) active.classList.add('active');
       }
     }
 
