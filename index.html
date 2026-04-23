@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +24,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
       color: var(--text);
     }
@@ -129,9 +129,9 @@
       box-shadow: var(--shadow);
       padding: 20px 24px;
       display: grid;
-      grid-template-columns: 1.35fr 1fr;
+      grid-template-columns: 1.15fr 1fr;
       gap: 18px;
-      align-items: center;
+      align-items: start;
     }
 
     .eyebrow {
@@ -159,33 +159,45 @@
       max-width: 62ch;
     }
 
+    .hero-side {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-info-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 10px;
+    }
+
     .hero-panel {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.92);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 14px 16px;
+      padding: 12px 14px;
     }
 
     .hero-panel h3 {
-      margin: 0 0 12px;
-      font-size: 1rem;
+      margin: 0 0 10px;
+      font-size: 0.98rem;
     }
 
-    .quick-list {
+    .quick-list,
+    .info-list {
       list-style: none;
       margin: 0;
       padding: 0;
       display: grid;
-      gap: 6px;
+      gap: 5px;
     }
 
     .quick-list li {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
       color: var(--muted);
-      line-height: 1.5;
-      padding: 8px 10px;
+      line-height: 1.45;
+      padding: 6px 8px;
       border-radius: 12px;
       border: 1px solid transparent;
       transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
@@ -203,13 +215,44 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
     }
 
+    .info-item {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 8px;
+    }
+
     .dot {
       width: 9px;
       height: 9px;
       border-radius: 999px;
       background: var(--primary);
-      margin-top: 8px;
+      margin-top: 6px;
       flex: 0 0 auto;
+    }
+
+    .info-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .info-value {
+      color: var(--text);
+      word-break: break-word;
+      font-size: 0.88rem;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.84rem;
+    }
+
+    .privacy-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.35;
     }
 
     .section {
@@ -232,6 +275,21 @@
     .section-head p {
       margin: 8px 0 0;
       color: var(--muted);
+    }
+
+    .visitor-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .visitor-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
     }
 
     .cards {
@@ -306,11 +364,6 @@
       border-color: transparent;
     }
 
-    .btn-secondary {
-      background: #fff;
-      color: var(--text);
-    }
-
     .btn:hover { transform: translateY(-1px); }
 
     .footer {
@@ -342,12 +395,18 @@
     }
 
     @media (max-width: 1100px) {
+      .visitor-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .cards {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 900px) {
+      .visitor-row {
+        grid-template-columns: 1fr;
+      }
       .hero-card,
       .cards {
         grid-template-columns: 1fr;
@@ -362,11 +421,22 @@
       }
 
       .hero-card {
-        padding: 24px;
+        padding: 20px;
       }
 
       .controls {
         width: 100%;
+      }
+
+      .info-item {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hero-info-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -382,10 +452,10 @@
         </div>
       </div>
       <div class="controls">
-        <label class="sr-only" for="languageSelect">Language</label>
+        <span class="sr-only">Language</span>
         <div class="lang-switcher" role="group" aria-label="Language switcher">
-          <button class="lang-btn" data-lang="en">EN</button>
-          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" type="button" data-lang="en">EN</button>
+          <button class="lang-btn" type="button" data-lang="fr">FR</button>
         </div>
       </div>
     </div>
@@ -398,28 +468,53 @@
           <div>
             <span class="eyebrow" data-i18n="heroEyebrow">Employee Access Portal</span>
             <h2 data-i18n="heroTitle">One place for offices, parking, holidays, and directory access</h2>
-            <p data-i18n="heroDesc">
-              Quick access to the most frequently used KLN Canada employee links.
-            </p>
+            <p data-i18n="heroDesc">Quick access to the most frequently used KLN Canada employee links.</p>
           </div>
-          <aside class="hero-panel">
-            <h3 data-i18n="currentTimeTitle">Current Time</h3>
-            <ul class="quick-list">
-              <li id="row-est"><span class="dot"></span><span><span data-i18n="easternTimeLabel">Eastern Time</span> : <strong id="time-est">--:--</strong> <span id="date-est"></span></span></li>
-              <li id="row-pt"><span class="dot"></span><span><span data-i18n="pacificTimeLabel">Pacific Time</span> : <strong id="time-pt">--:--</strong> <span id="date-pt"></span></span></li>
-              <li id="row-bj"><span class="dot"></span><span><span data-i18n="chinaStandardLabel">China Standard</span> : <strong id="time-bj">--:--</strong> <span id="date-bj"></span></span></li>
-            </ul>
-          </aside>
+
+          <div class="hero-side">
+            <div class="hero-info-grid">
+              <aside class="hero-panel" style="grid-column: 1 / -1;">
+                <h3 data-i18n="currentTimeTitle">Current Time</h3>
+                <ul class="quick-list">
+                  <li id="row-est"><span class="dot"></span><span><span data-i18n="easternTimeLabel">Eastern Time</span> : <strong id="time-est">--:--</strong><span id="date-est"></span></span></li>
+                  <li id="row-pt"><span class="dot"></span><span><span data-i18n="pacificTimeLabel">Pacific Time</span> : <strong id="time-pt">--:--</strong><span id="date-pt"></span></span></li>
+                  <li id="row-bj"><span class="dot"></span><span><span data-i18n="chinaStandardLabel">China Standard</span> : <strong id="time-bj">--:--</strong><span id="date-bj"></span></span></li>
+                </ul>
+              </aside>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
+        <div class="visitor-row">
+          <div class="visitor-card">
+            <div class="info-label" data-i18n="ipLabel">IP Address</div>
+            <div class="info-value mono" id="visitor-ip">Loading...</div>
+          </div>
+          <div class="visitor-card">
+            <div class="info-label" data-i18n="browserLabel">Browser</div>
+            <div class="info-value" id="visitor-browser">Loading...</div>
+          </div>
+          <div class="visitor-card">
+            <div class="info-label" data-i18n="cityLabel">City</div>
+            <div class="info-value" id="visitor-city">Loading...</div>
+          </div>
+          <div class="visitor-card">
+            <div class="info-label" data-i18n="weatherLabel">Weather</div>
+            <div class="info-value" id="visitor-weather">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+      <div class="container">
         <div class="section-head">
           <div>
-            <h3 data-i18n="sectionTitle">常用员工入口</h3>
-            <p data-i18n="sectionDesc">点击下方卡片即可进入对应页面。</p>
+            <h3 data-i18n="sectionTitle">Employee shortcuts</h3>
+            <p data-i18n="sectionDesc">Open the tools below.</p>
           </div>
         </div>
 
@@ -472,7 +567,7 @@
     <div class="container">
       <div class="footer-card">
         <span data-i18n="footerLeft">KLN Canada Employee Portal</span>
-        <span data-i18n="footerRight">可部署为单一 index.html 到 GitHub Pages</span>
+        <span data-i18n="footerRight">Powered by OpenAI · GitHub · Cloudflare</span>
       </div>
     </div>
   </footer>
@@ -489,6 +584,12 @@
         easternTimeLabel: 'Eastern Time',
         pacificTimeLabel: 'Pacific Time',
         chinaStandardLabel: 'China Standard',
+        visitorInfoTitle: 'Visitor Info',
+        ipLabel: 'IP Address',
+        browserLabel: 'Browser',
+        cityLabel: 'City',
+        weatherLabel: 'Weather',
+        privacyNote: 'Information is generated in the browser. IP, city, and weather depend on third-party service availability.',
         sectionTitle: 'Employee shortcuts',
         sectionDesc: 'Open the tools below.',
         officeTitle: 'Office Locations',
@@ -505,7 +606,7 @@
         directoryMeta: 'Page: directory / contacts / lookup',
         openPage: 'Open page',
         footerLeft: 'KLN Canada Employee Portal',
-        footerRight: 'Ready to deploy as a single index.html on GitHub Pages'
+        footerRight: 'Powered by OpenAI · GitHub · Cloudflare'
       },
       fr: {
         brandTitle: 'Portail Employés KLN',
@@ -517,6 +618,12 @@
         easternTimeLabel: 'Heure de l’Est',
         pacificTimeLabel: 'Heure du Pacifique',
         chinaStandardLabel: 'Heure normale de Chine',
+        visitorInfoTitle: 'Infos visiteur',
+        ipLabel: 'Adresse IP',
+        browserLabel: 'Navigateur',
+        cityLabel: 'Ville',
+        weatherLabel: 'Météo',
+        privacyNote: 'Les informations sont générées dans le navigateur. L’IP, la ville et la météo dépendent de la disponibilité de services tiers.',
         sectionTitle: 'Accès employés',
         sectionDesc: 'Ouvrez les outils ci-dessous.',
         officeTitle: 'Emplacements des bureaux',
@@ -533,17 +640,78 @@
         directoryMeta: 'Page : répertoire / contacts / recherche',
         openPage: 'Ouvrir la page',
         footerLeft: 'Portail Employés KLN Canada',
-        footerRight: 'Prêt à être déployé comme index.html unique sur GitHub Pages'
+        footerRight: 'Propulsé par OpenAI · GitHub · Cloudflare'
+      }
+    };
+
+    const weatherDescriptions = {
+      en: {
+        0: 'Clear',
+        1: 'Mostly clear',
+        2: 'Partly cloudy',
+        3: 'Overcast',
+        45: 'Fog',
+        48: 'Rime fog',
+        51: 'Light drizzle',
+        53: 'Drizzle',
+        55: 'Dense drizzle',
+        61: 'Light rain',
+        63: 'Rain',
+        65: 'Heavy rain',
+        71: 'Light snow',
+        73: 'Snow',
+        75: 'Heavy snow',
+        80: 'Rain showers',
+        81: 'Heavy showers',
+        82: 'Violent showers',
+        95: 'Thunderstorm'
+      },
+      fr: {
+        0: 'Dégagé',
+        1: 'Plutôt dégagé',
+        2: 'Partiellement nuageux',
+        3: 'Couvert',
+        45: 'Brouillard',
+        48: 'Brouillard givrant',
+        51: 'Bruine légère',
+        53: 'Bruine',
+        55: 'Bruine dense',
+        61: 'Pluie légère',
+        63: 'Pluie',
+        65: 'Forte pluie',
+        71: 'Neige légère',
+        73: 'Neige',
+        75: 'Forte neige',
+        80: 'Averses',
+        81: 'Fortes averses',
+        82: 'Averses violentes',
+        95: 'Orage'
       }
     };
 
     const supportedLangs = ['en', 'fr'];
+    let latestWeatherCode = null;
+    let latestTemperature = null;
+
+    function getEl(id) {
+      return document.getElementById(id);
+    }
 
     function normalizeLang(lang) {
       if (!lang) return 'en';
       const lower = lang.toLowerCase();
       if (lower.startsWith('fr')) return 'fr';
       return 'en';
+    }
+
+    function getCurrentLanguage() {
+      const saved = localStorage.getItem('kln-portal-lang');
+      return supportedLangs.includes(saved) ? saved : 'en';
+    }
+
+    function setText(id, value) {
+      const el = getEl(id);
+      if (el) el.textContent = value;
     }
 
     function applyLanguage(lang) {
@@ -562,6 +730,7 @@
       });
 
       localStorage.setItem('kln-portal-lang', selected);
+      refreshWeatherText();
     }
 
     function detectInitialLanguage() {
@@ -579,35 +748,32 @@
       return 'en';
     }
 
-    document.querySelectorAll('.lang-btn').forEach((btn) => {
-      btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
-    });
-
-    applyLanguage(detectInitialLanguage());
-
-    function updateTimes() {
-      const now = new Date();
-
-      const formatTime = (timeZone) => new Intl.DateTimeFormat('en-US', {
+    function formatTime(timeZone) {
+      return new Intl.DateTimeFormat('en-US', {
         timeZone,
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
-      }).format(now);
+      }).format(new Date());
+    }
 
-      const formatDate = (timeZone) => new Intl.DateTimeFormat('en-US', {
+    function formatDate(timeZone, lang) {
+      const locale = lang === 'fr' ? 'fr-CA' : 'en-US';
+      return new Intl.DateTimeFormat(locale, {
         timeZone,
         month: 'short',
         day: 'numeric'
-      }).format(now);
+      }).format(new Date());
+    }
 
-      document.getElementById('time-est').textContent = formatTime('America/New_York');
-      document.getElementById('time-pt').textContent = formatTime('America/Los_Angeles');
-      document.getElementById('time-bj').textContent = formatTime('Asia/Shanghai');
-
-      document.getElementById('date-est').textContent = ' (' + formatDate('America/New_York') + ')';
-      document.getElementById('date-pt').textContent = ' (' + formatDate('America/Los_Angeles') + ')';
-      document.getElementById('date-bj').textContent = ' (' + formatDate('Asia/Shanghai') + ')';
+    function updateTimes() {
+      const lang = getCurrentLanguage();
+      setText('time-est', formatTime('America/New_York'));
+      setText('time-pt', formatTime('America/Los_Angeles'));
+      setText('time-bj', formatTime('Asia/Shanghai'));
+      setText('date-est', ` (${formatDate('America/New_York', lang)})`);
+      setText('date-pt', ` (${formatDate('America/Los_Angeles', lang)})`);
+      setText('date-bj', ` (${formatDate('Asia/Shanghai', lang)})`);
 
       const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const map = {
@@ -621,18 +787,110 @@
         'Asia/Beijing': 'row-bj'
       };
 
-      ['row-est', 'row-pt', 'row-bj'].forEach(id => {
-        const el = document.getElementById(id);
+      ['row-est', 'row-pt', 'row-bj'].forEach((id) => {
+        const el = getEl(id);
         if (el) el.classList.remove('active-timezone');
       });
 
-      if (map[userTz]) {
-        const active = document.getElementById(map[userTz]);
+      const activeId = map[userTz];
+      if (activeId) {
+        const active = getEl(activeId);
         if (active) active.classList.add('active-timezone');
       }
     }
 
+    function detectBrowserName() {
+      const ua = navigator.userAgent;
+      if (/Edg\//.test(ua)) return 'Microsoft Edge';
+      if (/OPR\//.test(ua) || /Opera\//.test(ua)) return 'Opera';
+      if (/Chrome\//.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua)) return 'Google Chrome';
+      if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return 'Safari';
+      if (/Firefox\//.test(ua)) return 'Firefox';
+      if (/MSIE|Trident\//.test(ua)) return 'Internet Explorer';
+      return 'Unknown';
+    }
+
+    function describeWeather(code) {
+      const lang = getCurrentLanguage();
+      const table = weatherDescriptions[lang] || weatherDescriptions.en;
+      return table[code] || (lang === 'fr' ? 'Indisponible' : 'Unavailable');
+    }
+
+    function refreshWeatherText() {
+      const weatherEl = getEl('visitor-weather');
+      if (!weatherEl) return;
+      if (latestWeatherCode === null) return;
+      const weatherText = describeWeather(latestWeatherCode);
+      weatherEl.textContent = latestTemperature !== null && latestTemperature !== undefined
+        ? `${weatherText}, ${latestTemperature}°C`
+        : weatherText;
+    }
+
+    async function loadVisitorInfo() {
+      const ipEl = getEl('visitor-ip');
+      const browserEl = getEl('visitor-browser');
+      const cityEl = getEl('visitor-city');
+      const weatherEl = getEl('visitor-weather');
+
+      if (browserEl) browserEl.textContent = detectBrowserName();
+
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (ipEl) ipEl.textContent = data.ip || 'Unavailable';
+
+        const cityParts = [data.city, data.region, data.country_name].filter(Boolean);
+        if (cityEl) cityEl.textContent = cityParts.length ? cityParts.join(', ') : 'Unavailable';
+
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          try {
+            const weatherResp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current=temperature_2m,weather_code&temperature_unit=celsius`);
+            if (!weatherResp.ok) throw new Error('Weather response was not ok');
+            const weatherData = await weatherResp.json();
+            latestTemperature = weatherData?.current?.temperature_2m;
+            latestWeatherCode = weatherData?.current?.weather_code ?? null;
+            refreshWeatherText();
+          } catch (error) {
+            if (weatherEl) weatherEl.textContent = getCurrentLanguage() === 'fr' ? 'Indisponible' : 'Unavailable';
+          }
+        } else if (weatherEl) {
+          weatherEl.textContent = getCurrentLanguage() === 'fr' ? 'Indisponible' : 'Unavailable';
+        }
+      } catch (error) {
+        if (ipEl) ipEl.textContent = 'Unavailable';
+        if (cityEl) cityEl.textContent = getCurrentLanguage() === 'fr' ? 'Indisponible' : 'Unavailable';
+        if (weatherEl) weatherEl.textContent = getCurrentLanguage() === 'fr' ? 'Indisponible' : 'Unavailable';
+      }
+    }
+
+    function runSelfChecks() {
+      const requiredIds = [
+        'time-est', 'time-pt', 'time-bj',
+        'date-est', 'date-pt', 'date-bj',
+        'visitor-ip', 'visitor-browser', 'visitor-city', 'visitor-weather'
+      ];
+
+      requiredIds.forEach((id) => {
+        console.assert(!!getEl(id), `Missing required element: ${id}`);
+      });
+
+      console.assert(typeof detectBrowserName() === 'string', 'Browser detection should return a string');
+      console.assert(supportedLangs.includes(detectInitialLanguage()), 'Initial language should be supported');
+    }
+
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyLanguage(btn.dataset.lang);
+        updateTimes();
+      });
+    });
+
+    applyLanguage(detectInitialLanguage());
     updateTimes();
+    loadVisitorInfo();
+    runSelfChecks();
     setInterval(updateTimes, 60000);
   </script>
 </body>
