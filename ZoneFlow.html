@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLN ZoneFlow - Global Timezone Planner</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .timeline-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .timeline-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.25);
+            border-radius: 10px;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.45);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-300">
+
+    <!-- Navigation Bar -->
+    <nav class="border-b border-slate-200/80 dark:border-slate-900 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                    <i class="ph ph-globe-hemisphere-west text-xl"></i>
+                </div>
+                <div>
+                    <h1 id="nav-title" class="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">KLN ZoneFlow</h1>
+                    <p id="nav-subtitle" class="text-xxs text-slate-400 font-medium">多方高效时区规划工作台</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- Manual Language Switcher -->
+                <div class="relative inline-block text-left">
+                    <select id="langSelect" class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer">
+                        <option value="zh">🇨🇳 简体中文</option>
+                        <option value="en">🇺🇸 English</option>
+                        <option value="fr">🇫🇷 Français</option>
+                    </select>
+                </div>
+
+                <!-- Live Clock Toggle -->
+                <button id="liveClockToggle" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition hover:scale-105 active:scale-95 text-slate-600 dark:text-slate-300">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span id="liveStatusDot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span id="liveClockStatusText">实时同步中</span>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all duration-200">
+                    <i id="themeIcon" class="ph ph-moon text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
+        
+        <!-- Panel 1: Time Controller Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            <!-- Base Time Input Card -->
+            <div class="lg:col-span-12 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 lg:p-8 flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <span class="bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 w-fit">
+                            <i class="ph ph-anchor-simple text-sm"></i> <span id="lbl-base-ref">基准参考点</span>
+                        </span>
+                        <span id="currentTimeDisplay" class="text-xs font-mono text-slate-400"></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Primary Zone Selector -->
+                        <div>
+                            <label id="lbl-base-zone" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准时区</label>
+                            <div class="relative">
+                                <select id="baseZoneSelect" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950/40 transition appearance-none cursor-pointer">
+                                    <!-- Populated dynamically -->
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                    <i class="ph ph-caret-down text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Field -->
+                        <div>
+                            <label id="lbl-base-date" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准日期</label>
+                            <div class="relative">
+                                <input type="date" id="inputDate" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Time Field -->
+                        <div>
+                            <label id="lbl-base-time" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准时间</label>
+                            <div class="relative">
+                                <input type="time" id="inputTime" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instant Presets -->
+                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <span id="lbl-presets" class="block text-xxs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">快捷时刻选择</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setBaseToPreset('now')" id="btn-preset-now" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">当前时刻</button>
+                        <button onclick="setBaseToPreset('work-start')" id="btn-preset-work-start" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">工作开始 (09:00)</button>
+                        <button onclick="setBaseToPreset('noon')" id="btn-preset-noon" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">正午 (12:00)</button>
+                        <button onclick="setBaseToPreset('work-end')" id="btn-preset-work-end" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">下班时间 (18:00)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 2: Comparative Timezone Cards -->
+        <section>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <h3 id="lbl-results-title" class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">转换结果 (全球视窗)</h3>
+                <span id="lbl-click-anchor" class="text-xs text-slate-400">点击卡片内 <i class="ph ph-anchor-simple text-blue-500"></i> 一键设为基准 | 标签可自定义</span>
+            </div>
+            
+            <div id="activeCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Fixed 3 timezone comparison cards populated by JS -->
+            </div>
+        </section>
+
+        <!-- Panel 3: Interactive Visual Timeline (Meeting Planner) -->
+        <section class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 overflow-hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <span class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 w-fit">
+                        <i class="ph ph-calendar-check text-sm"></i> <span id="lbl-timeline-title">24小时全球会议规划盘</span>
+                    </span>
+                    <p id="lbl-timeline-desc" class="text-xs text-slate-400 mt-1">横向对比一整天时刻，点击时段即刻调整。快速判断团队何时重叠在线。</p>
+                </div>
+
+                <!-- Legend of Hours -->
+                <div class="flex flex-wrap gap-4 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 rounded-md bg-emerald-500/10 border border-emerald-500/20"></div>
+                        <span id="lbl-legend-work" class="text-slate-500 dark:text-slate-400 font-medium">工作 (09-17)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 rounded-md bg-amber-500/10 border border-amber-500/20"></div>
+                        <span id="lbl-legend-personal" class="text-slate-500 dark:text-slate-400 font-medium">私人 (07-09, 17-22)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 rounded-md bg-slate-800 dark:bg-slate-950/50 border border-slate-700/20"></div>
+                        <span id="lbl-legend-sleep" class="text-slate-500 dark:text-slate-400 font-medium">睡眠 (22-07)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Timeline Grid -->
+            <div class="overflow-x-auto timeline-scroll pb-2">
+                <div class="min-w-[800px] space-y-4" id="timelineGridContainer">
+                    <!-- Dynamic timeline rows -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 4: Quick Share & Meeting Index -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Meeting Score Indicator -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 flex flex-col justify-between">
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+                        <i class="ph ph-heart-beat text-rose-500 text-lg"></i> <span id="lbl-meeting-score-title">会议黄金重叠指数 (Meeting Score)</span>
+                    </h4>
+                    <div class="flex items-center gap-6 my-4">
+                        <div class="relative flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" class="text-slate-100 dark:text-slate-800" fill="transparent"></circle>
+                                <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" class="text-emerald-500 transition-all duration-500" stroke-dasharray="251.2" stroke-dashoffset="0" fill="transparent"></circle>
+                            </svg>
+                            <span id="scoreText" class="absolute text-2xl font-black text-slate-800 dark:text-white font-mono">100%</span>
+                        </div>
+                        <div class="flex-1">
+                            <span id="scoreStatusBadge" class="inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400">绝佳时间</span>
+                            <p id="scoreDescription" class="text-xs text-slate-400 mt-2">该时间段内所有成员均处于理想的工作或苏醒状态，是绝佳的跨国会议时机。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                    <span id="lbl-optimal-time" class="text-slate-400">最佳建议时间:</span>
+                    <span id="optimalTimeSuggestion" class="font-bold text-blue-600 dark:text-blue-400">CST 08:00 - 10:00 | ET 19:00 - 21:00</span>
+                </div>
+            </div>
+
+            <!-- Meeting invite generator -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 flex flex-col justify-between">
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+                        <i class="ph ph-share-network text-blue-500 text-lg"></i> <span id="lbl-share-title">智能排班结果 & 日历邀约</span>
+                    </h4>
+                    <p id="lbl-share-desc" class="text-xs text-slate-400 mb-4">自动整合各地当前所选时间段，可直接复制发送给您的跨国成员：</p>
+                    <textarea id="meetingShareText" readonly class="w-full h-24 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl p-3 text-xs font-mono text-slate-600 dark:text-slate-300 focus:outline-none resize-none"></textarea>
+                </div>
+
+                <div class="mt-4 flex gap-3">
+                    <button id="copyInviteBtn" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
+                        <i class="ph ph-copy text-base"></i> 复制分享文本
+                    </button>
+                    <a id="googleCalBtn" target="_blank" class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/10 active:scale-95">
+                        <i class="ph ph-calendar text-base"></i> 谷歌日历预定
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-900 bg-white/50 dark:bg-slate-950/50 py-6 text-center text-xs text-slate-400">
+        <p id="footer-text">© 2026 KLN ZoneFlow. 支持任意夏令时转换与精确跨国会议规划.</p>
+    </footer>
+
+    <!-- Toast Notification Overlay (Avoid using standard window.alert) -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 dark:bg-slate-850 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-slate-800">
+        <i id="toastIcon" class="ph ph-check-circle text-emerald-400 text-lg"></i>
+        <span id="toastText" class="text-xs font-semibold"></span>
+    </div>
+
+    <script>
+        // --- 1. Multilingual Support Config ---
+        // Completely removed any city names (Beijing, New York, Los Angeles, Pékin etc.)
+        // and removed "CN", "US" references.
+        const translations = {
+            zh: {
+                title: "KLN ZoneFlow",
+                subtitle: "多方高效时区规划工作台",
+                liveSync: "实时同步中",
+                liveLocked: "已锁定时间",
+                baseRef: "基准参考点",
+                baseZone: "基准时区",
+                baseDate: "基准日期",
+                baseTime: "基准时间",
+                presetsTitle: "快捷时刻选择",
+                presetNow: "当前时刻",
+                presetWorkStart: "工作开始 (09:00)",
+                presetNoon: "正午 (12:00)",
+                presetWorkEnd: "下班时间 (18:00)",
+                resultsTitle: "转换结果 (全球视窗)",
+                clickToAnchor: "点击卡片内 <i class='ph ph-anchor-simple text-blue-500'></i> 一键设为基准 | 标签可自定义",
+                timelineTitle: "24小时全球会议规划盘",
+                timelineDesc: "横向对比一整天时刻，点击时段即刻调整。快速判断团队何时重叠在线。",
+                legendWork: "工作 (09-17)",
+                legendPersonal: "私人 (07-09, 17-22)",
+                legendSleep: "睡眠 (22-07)",
+                meetingScoreTitle: "会议黄金重叠指数 (Meeting Score)",
+                perfectTime: "完美开会时间",
+                fairTime: "勉强合适",
+                poorTime: "极差时间/有人处于睡眠中",
+                scorePerfectDesc: "绝佳！所有时区成员现在都处于清醒或常规在线状态下，是进行高效对话与研讨会的黄金期。",
+                scoreFairDesc: "部分时区成员正经历清晨、黄昏或晚间下班时间。请尽量缩短会议内容。",
+                scorePoorDesc: "警告：此时有团队成员正处于深夜或熟睡阶段。非极紧急事件建议推迟，以尊重彼此的作息规律。",
+                optimalTimeLabel: "最佳建议时间:",
+                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00",
+                shareTitle: "智能排班结果 & 日历邀约",
+                shareDesc: "自动整合各地当前所选时间段，可直接复制发送给您的跨国成员：",
+                copyBtn: "复制分享文本",
+                googleCalBtn: "谷歌日历预定",
+                footer: "© 2026 KLN ZoneFlow. 支持精密夏令时算法，服务多方无界协同。",
+                dayToday: "本日",
+                dayDays: "天",
+                isDST: "☀️ 夏令时",
+                isStandard: "❄️ 标准时",
+                sameAsBase: "与基准相同",
+                fasterThanBase: "比基准快",
+                slowerThanBase: "比基准慢",
+                alertCopySuccess: "排班文本已复制到剪贴板，可直接粘贴发给团队伙伴！",
+                alertCopyFail: "复制失败，请手动在文本框中复制。",
+                chinaTzName: "CST (UTC+8)",
+                nyTzName: "Eastern Time (ET)",
+                laTzName: "Pacific Time (PT)",
+                chinaTzFull: "CST (UTC+8)",
+                nyTzFull: "Eastern Time (ET)",
+                laTzFull: "Pacific Time (PT)",
+                labelPlaceholder: "例如: 地区代表",
+                inviteHeader: "📅 国际协调会议邀约计划"
+            },
+            en: {
+                title: "KLN ZoneFlow",
+                subtitle: "Multi-party Efficient Timezone Workspace",
+                liveSync: "Live Synced",
+                liveLocked: "Time Locked",
+                baseRef: "Base Reference",
+                baseZone: "Base Zone",
+                baseDate: "Base Date",
+                baseTime: "Base Time",
+                presetsTitle: "Quick Presets",
+                presetNow: "Current Time",
+                presetWorkStart: "Work Start (09:00)",
+                presetNoon: "Noon (12:00)",
+                presetWorkEnd: "Work End (18:00)",
+                resultsTitle: "Conversion Results (Global Window)",
+                clickToAnchor: "Click <i class='ph ph-anchor-simple text-blue-500'></i> to set as Base | Editable Labels",
+                timelineTitle: "24-Hour Global Meeting Planner",
+                timelineDesc: "Compare the entire day horizontally. Click any hour block to adjust instantly.",
+                legendWork: "Work (09-17)",
+                legendPersonal: "Personal (07-09, 17-22)",
+                legendSleep: "Sleep (22-07)",
+                meetingScoreTitle: "Meeting Score Index",
+                perfectTime: "Perfect Time",
+                fairTime: "Fair Time",
+                poorTime: "Poor Time / Sleep disruption",
+                scorePerfectDesc: "Excellent! All members are awake or during business hours. Ideal for global video calls.",
+                scoreFairDesc: "Some members are off-office, early morning, or late evening. Keep meetings short.",
+                scorePoorDesc: "Warning: Some members are sleeping. Reschedule unless extremely urgent to protect wellness.",
+                optimalTimeLabel: "Optimal Suggestion:",
+                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00",
+                shareTitle: "Smart Invite & Scheduler Output",
+                shareDesc: "Consolidated list of target local times ready to copy and share:",
+                copyBtn: "Copy Invite Text",
+                googleCalBtn: "Google Calendar",
+                footer: "© 2026 KLN ZoneFlow. Multi-party DST calculations without borders.",
+                dayToday: "Today",
+                dayDays: "days",
+                isDST: "☀️ DST Active",
+                isStandard: "❄️ Standard Time",
+                sameAsBase: "Same as Base",
+                fasterThanBase: "faster than Base",
+                slowerThanBase: "slower than Base",
+                alertCopySuccess: "Schedule text copied to clipboard!",
+                alertCopyFail: "Copy failed, please select and copy manually.",
+                chinaTzName: "CST (UTC+8)",
+                nyTzName: "Eastern Time (ET)",
+                laTzName: "Pacific Time (PT)",
+                chinaTzFull: "CST (UTC+8)",
+                nyTzFull: "Eastern Time (ET)",
+                laTzFull: "Pacific Time (PT)",
+                labelPlaceholder: "e.g., Lead Represent",
+                inviteHeader: "📅 Global Coordination Meeting"
+            },
+            fr: {
+                title: "KLN ZoneFlow",
+                subtitle: "Espace de Coordination Horaires Multi-parties",
+                liveSync: "Synchronisé",
+                liveLocked: "Temps Bloqué",
+                baseRef: "Référence de Base",
+                baseZone: "Fuseau de Base",
+                baseDate: "Date de Base",
+                baseTime: "Heure de Base",
+                presetsTitle: "Raccourcis Heure",
+                presetNow: "Maintenant",
+                presetWorkStart: "Début de travail (09:00)",
+                presetNoon: "Midi (12:00)",
+                presetWorkEnd: "Fin de travail (18:00)",
+                resultsTitle: "Résultats de Conversion",
+                clickToAnchor: "Cliquez sur <i class='ph ph-anchor-simple text-blue-500'></i> pour définir comme Base",
+                timelineTitle: "Planificateur de Réunion 24H",
+                timelineDesc: "Comparez toute la journée horizontalement. Cliquez sur un créneau pour ajuster l'heure.",
+                legendWork: "Travail (09-17)",
+                legendPersonal: "Personnel (07-09, 17-22)",
+                legendSleep: "Sommeil (22-07)",
+                meetingScoreTitle: "Indice de Réunion Globale",
+                perfectTime: "Créneau Parfait",
+                fairTime: "Créneau Moyen",
+                poorTime: "Mauvais Créneau / Sommeil",
+                scorePerfectDesc: "Excellent ! Tous les membres sont éveillés ou durant les heures normales. Idéal pour les réunions.",
+                scoreFairDesc: "Certains membres sont hors bureau, tôt le matin ou tard le soir. Soyez brefs.",
+                scorePoorDesc: "Attention: Certains membres dorment. Reportez la réunion sauf urgence absolue pour respecter leur rythme.",
+                optimalTimeLabel: "Suggestion Optimale:",
+                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00",
+                shareTitle: "Invitation Intelligente & Partage",
+                shareDesc: "Liste de vos créneaux locaux prête à être copiée et partagée :",
+                copyBtn: "Copier le texte",
+                googleCalBtn: "Google Agenda",
+                footer: "© 2026 KLN ZoneFlow. Calculs de l'heure d'été multi-parties, sans frontières.",
+                dayToday: "Aujourd'hui",
+                dayDays: "jours",
+                isDST: "☀️ Heure d'été",
+                isStandard: "❄️ Heure standard",
+                sameAsBase: "Identique à la base",
+                fasterThanBase: "plus rapide de",
+                slowerThanBase: "plus lent de",
+                alertCopySuccess: "Texte de réunion copié dans le presse-papiers !",
+                alertCopyFail: "Échec de copie, veuillez copier manuellement.",
+                chinaTzName: "CST (UTC+8)",
+                nyTzName: "Eastern Time (ET)",
+                laTzName: "Pacific Time (PT)",
+                chinaTzFull: "CST (UTC+8)",
+                nyTzFull: "Eastern Time (ET)",
+                laTzFull: "Pacific Time (PT)",
+                labelPlaceholder: "ex: Représentant de Zone",
+                inviteHeader: "📅 Plan de Réunion Internationale"
+            }
+        };
+
+        // Current Language state
+        let currentLang = 'zh';
+
+        // --- STREAMING_CHUNK: Initializing Timezones & Base Detection... ---
+        // Fixed three core neutral zones (CST, Eastern Time, Pacific Time)
+        // Replaced custom flag icons with modern Phosphor network/globe indicators
+        const ALL_WORLD_ZONES = [
+            { id: 'Asia/Shanghai', labelKey: 'chinaTzFull', nameKey: 'chinaTzName', defaultLabel: 'CST', iconClass: 'ph ph-globe-hemisphere-east' },
+            { id: 'America/New_York', labelKey: 'nyTzFull', nameKey: 'nyTzName', defaultLabel: 'ET', iconClass: 'ph ph-globe-hemisphere-west' },
+            { id: 'America/Los_Angeles', labelKey: 'laTzFull', nameKey: 'laTzName', defaultLabel: 'PT', iconClass: 'ph ph-globe-hemisphere-west' }
+        ];
+
+        let activeZones = [
+            { id: 'Asia/Shanghai', labelKey: 'chinaTzName', customLabel: '', iconClass: 'ph ph-globe-hemisphere-east' },
+            { id: 'America/New_York', labelKey: 'nyTzName', customLabel: '', iconClass: 'ph ph-globe-hemisphere-west' },
+            { id: 'America/Los_Angeles', labelKey: 'laTzName', customLabel: '', iconClass: 'ph ph-globe-hemisphere-west' }
+        ];
+
+        let baseZoneId = 'Asia/Shanghai';
+        let liveMode = true;
+        let liveTimerInterval = null;
+        let currentUTCTimestamp = Date.now();
+
+        // Safe Toast System to replace standard alert
+        function triggerToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastText');
+
+            text.innerText = message;
+            if (isError) {
+                icon.className = "ph ph-warning text-rose-500 text-lg";
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-rose-50 dark:bg-slate-900 text-rose-800 dark:text-rose-400 px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-rose-100 dark:border-rose-950/40";
+            } else {
+                icon.className = "ph ph-check-circle text-emerald-400 text-lg";
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-slate-900 dark:bg-slate-850 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-slate-800";
+            }
+
+            setTimeout(() => {
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 dark:bg-slate-850 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-slate-800";
+            }, 3500);
+        }
+
+        // Detect user's current physical timezone offset and map to the closest core coordinate dynamically
+        function findVisitorClosestZone() {
+            try {
+                const now = new Date();
+                const userOffset = now.getTimezoneOffset(); // Difference in minutes from UTC (negative for East, positive for West)
+                
+                function getZoneOffset(tz) {
+                    const tzString = now.toLocaleString('en-US', { timeZone: tz, timeZoneName: 'longOffset' });
+                    const match = tzString.match(/GMT([+-]\d+):(\d+)/);
+                    if (!match) return 0;
+                    const sign = match[1].startsWith('+') ? 1 : -1;
+                    const hrs = parseInt(match[1].slice(1));
+                    const mins = parseInt(match[2]);
+                    return -sign * (hrs * 60 + mins);
+                }
+
+                const offsets = {
+                    'Asia/Shanghai': getZoneOffset('Asia/Shanghai'),
+                    'America/New_York': getZoneOffset('America/New_York'),
+                    'America/Los_Angeles': getZoneOffset('America/Los_Angeles')
+                };
+
+                let closestZone = 'Asia/Shanghai';
+                let minDiff = Infinity;
+                for (const [zone, offset] of Object.entries(offsets)) {
+                    const diff = Math.abs(userOffset - offset);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestZone = zone;
+                    }
+                }
+                return closestZone;
+            } catch (e) {
+                return 'Asia/Shanghai'; // Fallback to China Standard
+            }
+        }
+
+        // Converts local YYYY-MM-DD HH:MM to UTC Epoch timestamp
+        function localToUTC(year, month, day, hour, minute, timeZone) {
+            let utcEstimate = Date.UTC(year, month - 1, day, hour, minute);
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: timeZone,
+                year: 'numeric', month: 'numeric', day: 'numeric',
+                hour: 'numeric', minute: 'numeric', second: 'numeric',
+                hour12: false
+            });
+            for (let i = 0; i < 3; i++) {
+                const parts = formatter.formatToParts(new Date(utcEstimate));
+                const p = {};
+                parts.forEach(part => { p[part.type] = part.value; });
+                let fHour = parseInt(p.hour);
+                if (fHour === 24) fHour = 0;
+                const formattedLocal = Date.UTC(
+                    parseInt(p.year),
+                    parseInt(p.month) - 1,
+                    parseInt(p.day),
+                    fHour,
+                    parseInt(p.minute)
+                );
+                const targetLocal = Date.UTC(year, month - 1, day, hour, minute);
+                const diff = targetLocal - formattedLocal;
+                if (diff === 0) break;
+                utcEstimate += diff;
+            }
+            return utcEstimate;
+        }
+
+        // Get details of a timestamp translated into a specific timezone
+        function getTimeDetails(utcTimestamp, timeZone) {
+            const date = new Date(utcTimestamp);
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: timeZone,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false,
+                timeZoneName: 'short'
+            });
+
+            const parts = formatter.formatToParts(date);
+            const p = {};
+            parts.forEach(part => { p[part.type] = part.value; });
+
+            let hour = parseInt(p.hour);
+            if (hour === 24) hour = 0;
+
+            const localHourStr = String(hour).padStart(2, '0');
+            const localMinStr = String(p.minute).padStart(2, '0');
+
+            // Calendar month translations
+            const monthNames = {
+                zh: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                en: ["Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "],
+                fr: ["janv ", "févr ", "mars ", "avr ", "mai ", "juin ", "juil ", "août ", "sept ", "oct ", "nov ", "déc "]
+            };
+            const mIdx = parseInt(p.month) - 1;
+            const dateLabel = currentLang === 'zh' 
+                ? `${monthNames.zh[mIdx]}${parseInt(p.day)}日` 
+                : `${monthNames[currentLang][mIdx]}${parseInt(p.day)}`;
+
+            const tzName = p.timeZoneName || '';
+            const isDST = tzName.includes('DT') || tzName.includes('Daylight') || (timeZone.startsWith('America') && tzName !== 'EST' && tzName !== 'PST');
+            const offsetStr = getOffsetString(date, timeZone);
+
+            return {
+                year: parseInt(p.year),
+                month: mIdx + 1,
+                day: parseInt(p.day),
+                hour: hour,
+                minute: parseInt(p.minute),
+                timeString: `${localHourStr}:${localMinStr}`,
+                dateString: dateLabel,
+                timezoneName: tzName,
+                isDST: isDST,
+                offsetStr: offsetStr
+            };
+        }
+
+        function getOffsetString(date, timeZone) {
+            const tzString = date.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'longOffset' });
+            const match = tzString.match(/GMT([+-]\d+:\d+|[+-]\d+)?/);
+            return match ? match[0] : 'GMT+0';
+        }
+
+        // --- STREAMING_CHUNK: Page Initialization Logic... ---
+        window.onload = function() {
+            detectDefaultLanguage();
+            
+            // System-level improvement: Smart default matching visitor's physical area
+            baseZoneId = findVisitorClosestZone();
+            
+            initTimezoneDropdown();
+            toggleLiveClock(true);
+
+            // Dark Mode Cache Checking
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = "ph ph-sun text-lg";
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIcon').className = "ph ph-moon text-lg";
+            }
+
+            // Bind Event Listeners
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('liveClockToggle').addEventListener('click', () => toggleLiveClock(!liveMode));
+            document.getElementById('baseZoneSelect').addEventListener('change', onBaseZoneChanged);
+            document.getElementById('inputDate').addEventListener('change', onManualDateTimeInput);
+            document.getElementById('inputTime').addEventListener('change', onManualDateTimeInput);
+            document.getElementById('langSelect').addEventListener('change', (e) => {
+                currentLang = e.target.value;
+                applyLanguageTranslations();
+                updateAllViews();
+            });
+
+            syncInputsWithTimestamp();
+            applyLanguageTranslations();
+            updateAllViews();
+        };
+
+        // Set default system interface language based on browser preference
+        function detectDefaultLanguage() {
+            const lang = navigator.language || navigator.userLanguage || 'en';
+            if (lang.startsWith('zh')) {
+                currentLang = 'zh';
+            } else if (lang.startsWith('fr')) {
+                currentLang = 'fr';
+            } else {
+                currentLang = 'en';
+            }
+            document.getElementById('langSelect').value = currentLang;
+        }
+
+        // Apply translations based on user's active choice
+        function applyLanguageTranslations() {
+            const t = translations[currentLang];
+            document.getElementById('nav-title').innerText = t.title;
+            document.getElementById('nav-subtitle').innerText = t.subtitle;
+            document.getElementById('lbl-base-ref').innerText = t.baseRef;
+            document.getElementById('lbl-base-zone').innerText = t.baseZone;
+            document.getElementById('lbl-base-date').innerText = t.baseDate;
+            document.getElementById('lbl-base-time').innerText = t.baseTime;
+            document.getElementById('lbl-presets').innerText = t.presetsTitle;
+            document.getElementById('btn-preset-now').innerText = t.presetNow;
+            document.getElementById('btn-preset-work-start').innerText = t.presetWorkStart;
+            document.getElementById('btn-preset-noon').innerText = t.presetNoon;
+            document.getElementById('btn-preset-work-end').innerText = t.presetWorkEnd;
+            document.getElementById('lbl-results-title').innerText = t.resultsTitle;
+            document.getElementById('lbl-click-anchor').innerHTML = t.clickToAnchor;
+            document.getElementById('lbl-timeline-title').innerText = t.timelineTitle;
+            document.getElementById('lbl-timeline-desc').innerText = t.timelineDesc;
+            document.getElementById('lbl-legend-work').innerText = t.legendWork;
+            document.getElementById('lbl-legend-personal').innerText = t.legendPersonal;
+            document.getElementById('lbl-legend-sleep').innerText = t.legendSleep;
+            document.getElementById('lbl-meeting-score-title').innerText = t.meetingScoreTitle;
+            document.getElementById('lbl-optimal-time').innerText = t.optimalTimeLabel;
+            document.getElementById('optimalTimeSuggestion').innerText = t.optimalTimeValue;
+            document.getElementById('lbl-share-title').innerText = t.shareTitle;
+            document.getElementById('lbl-share-desc').innerText = t.shareDesc;
+            document.getElementById('copyInviteBtn').innerHTML = `<i class="ph ph-copy text-base"></i> ` + t.copyBtn;
+            document.getElementById('googleCalBtn').innerHTML = `<i class="ph ph-calendar text-base"></i> ` + t.googleCalBtn;
+            document.getElementById('footer-text').innerText = t.footer;
+
+            initTimezoneDropdown();
+        }
+
+        // Setup base dropdown selector with neutral translation titles
+        function initTimezoneDropdown() {
+            const baseSelect = document.getElementById('baseZoneSelect');
+            const prevSelected = baseSelect.value || baseZoneId;
+            baseSelect.innerHTML = '';
+            ALL_WORLD_ZONES.forEach(z => {
+                const opt = document.createElement('option');
+                opt.value = z.id;
+                opt.text = `🌐 ${translations[currentLang][z.labelKey]}`;
+                if (z.id === prevSelected) opt.selected = true;
+                baseSelect.appendChild(opt);
+            });
+        }
+
+        // Toggle Dark/Light Theme appearance
+        function toggleTheme() {
+            const root = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (root.classList.contains('dark')) {
+                root.classList.remove('dark');
+                localStorage.theme = 'light';
+                icon.className = "ph ph-moon text-lg";
+            } else {
+                root.classList.add('dark');
+                localStorage.theme = 'dark';
+                icon.className = "ph ph-sun text-lg";
+            }
+        }
+
+        // Controls the Auto Live ticking mode
+        function toggleLiveClock(enable) {
+            liveMode = enable;
+            const btn = document.getElementById('liveClockToggle');
+            const statusDot = document.getElementById('liveStatusDot');
+            const text = document.getElementById('liveClockStatusText');
+            const t = translations[currentLang];
+
+            if (liveMode) {
+                btn.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 shadow-sm transition hover:scale-105 active:scale-95";
+                statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
+                text.innerText = t.liveSync;
+                
+                liveTimerInterval = setInterval(() => {
+                    currentUTCTimestamp = Date.now();
+                    syncInputsWithTimestamp();
+                    updateAllViews();
+                }, 1000);
+            } else {
+                btn.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition hover:scale-105 active:scale-95 text-slate-600 dark:text-slate-300";
+                statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-400 dark:bg-slate-500";
+                text.innerText = t.liveLocked;
+                
+                if (liveTimerInterval) clearInterval(liveTimerInterval);
+            }
+        }
+
+        function syncInputsWithTimestamp() {
+            const baseDetails = getTimeDetails(currentUTCTimestamp, baseZoneId);
+            const yr = baseDetails.year;
+            const mo = String(baseDetails.month).padStart(2, '0');
+            const dy = String(baseDetails.day).padStart(2, '0');
+            
+            if (document.activeElement !== document.getElementById('inputDate')) {
+                document.getElementById('inputDate').value = `${yr}-${mo}-${dy}`;
+            }
+            if (document.activeElement !== document.getElementById('inputTime')) {
+                document.getElementById('inputTime').value = baseDetails.timeString;
+            }
+        }
+
+        function onBaseZoneChanged() {
+            baseZoneId = document.getElementById('baseZoneSelect').value;
+            if (liveMode) {
+                currentUTCTimestamp = Date.now();
+            } else {
+                recalculateUTCFromInputs();
+            }
+            updateAllViews();
+        }
+
+        function onManualDateTimeInput() {
+            toggleLiveClock(false);
+            recalculateUTCFromInputs();
+            updateAllViews();
+        }
+
+        function recalculateUTCFromInputs() {
+            const dateStr = document.getElementById('inputDate').value;
+            const timeStr = document.getElementById('inputTime').value;
+            if (!dateStr || !timeStr) return;
+
+            const [y, m, d] = dateStr.split('-').map(Number);
+            const [hrs, mins] = timeStr.split(':').map(Number);
+
+            currentUTCTimestamp = localToUTC(y, m, d, hrs, mins, baseZoneId);
+        }
+
+        function setBaseToPreset(preset) {
+            toggleLiveClock(false);
+            const now = new Date();
+            const curDateStr = document.getElementById('inputDate').value || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const [y, m, d] = curDateStr.split('-').map(Number);
+
+            let hr = 12, min = 0;
+            if (preset === 'now') {
+                toggleLiveClock(true);
+                return;
+            } else if (preset === 'work-start') {
+                hr = 9;
+            } else if (preset === 'noon') {
+                hr = 12;
+            } else if (preset === 'work-end') {
+                hr = 18;
+            }
+
+            currentUTCTimestamp = localToUTC(y, m, d, hr, min, baseZoneId);
+            syncInputsWithTimestamp();
+            updateAllViews();
+        }
+
+        // --- STREAMING_CHUNK: Updating Comparative Results (City-free) ... ---
+        function updateAllViews() {
+            updateComparativeCards();
+            updateTimelinePlanner();
+            updateSchedulerUtility();
+            
+            const liveClock = new Date();
+            const t = translations[currentLang];
+            document.getElementById('currentTimeDisplay').innerText = `${t.presetNow}: ${liveClock.toLocaleTimeString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour12: false })}`;
+        }
+
+        // Render clean comparative cards (No cities or specific country flags)
+        function updateComparativeCards() {
+            const container = document.getElementById('activeCardsContainer');
+            container.innerHTML = '';
+
+            const baseTimeObj = getTimeDetails(currentUTCTimestamp, baseZoneId);
+            const t = translations[currentLang];
+
+            activeZones.forEach((z, idx) => {
+                const isBase = z.id === baseZoneId;
+                const details = getTimeDetails(currentUTCTimestamp, z.id);
+
+                // Relative Day Badge logic
+                let dayBadge = t.dayToday;
+                let badgeClass = 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
+                
+                const diffDays = Math.round((new Date(details.year, details.month - 1, details.day) - new Date(baseTimeObj.year, baseTimeObj.month - 1, baseTimeObj.day)) / 86400000);
+                if (diffDays > 0) {
+                    dayBadge = `+${diffDays} ${t.dayDays}`;
+                    badgeClass = 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400';
+                } else if (diffDays < 0) {
+                    dayBadge = `${diffDays} ${t.dayDays}`;
+                    badgeClass = 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400';
+                }
+
+                // Relative Offset logic
+                const baseOffset = getMinutesOffset(baseTimeObj.offsetStr);
+                const targetOffset = getMinutesOffset(details.offsetStr);
+                const offsetDiffMin = targetOffset - baseOffset;
+                const offsetDiffHrs = offsetDiffMin / 60;
+                let offsetLabel = '';
+                if (offsetDiffHrs === 0) {
+                    offsetLabel = t.sameAsBase;
+                } else {
+                    offsetLabel = offsetDiffHrs > 0 
+                        ? `${t.fasterThanBase} ${offsetDiffHrs}h` 
+                        : `${t.slowerThanBase} ${Math.abs(offsetDiffHrs)}h`;
+                }
+
+                // City-free generic Zone Name
+                const cardName = t[z.labelKey] || z.id;
+
+                const card = document.createElement('div');
+                card.className = `relative rounded-2xl p-6 bg-white dark:bg-slate-900 border transition-all duration-300 ${
+                    isBase 
+                    ? 'border-blue-500 dark:border-blue-500 shadow-[0_12px_30px_rgba(37,99,235,0.08)] ring-2 ring-blue-500/20' 
+                    : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 mb-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i class="${z.iconClass} text-slate-500 dark:text-slate-400 text-lg"></i>
+                                <h4 class="font-bold text-slate-800 dark:text-white truncate">${cardName}</h4>
+                                <span class="text-xxs px-1.5 py-0.5 rounded font-bold ${badgeClass}">${dayBadge}</span>
+                            </div>
+                            <input type="text" value="${z.customLabel}" onchange="onCustomLabelChange(${idx}, this.value)" 
+                                class="w-full text-xxs font-semibold bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-850 focus:border-blue-500 focus:outline-none text-slate-400 transition" 
+                                placeholder="${t.labelPlaceholder}">
+                        </div>
+                        
+                        <div class="flex items-center gap-1.5">
+                            ${!isBase ? `
+                                <button onclick="setAsBaseZone('${z.id}')" title="${t.baseRef}" class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-600 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-400 dark:text-slate-500 transition-all">
+                                    <i class="ph ph-anchor-simple text-sm"></i>
+                                </button>
+                            ` : `
+                                <span class="w-7 h-7 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
+                                    <i class="ph ph-anchor-simple text-sm"></i>
+                                </span>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="text-3xl font-black font-mono tracking-tight text-slate-800 dark:text-white flex items-baseline gap-1">
+                            ${details.timeString}
+                            <span class="text-xs text-slate-400 font-normal select-none">${details.timezoneName}</span>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                            <i class="ph ph-calendar-blank"></i>
+                            <span>${details.year} ${details.dateString}</span>
+                            <span>•</span>
+                            <span class="font-mono text-xxs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">${details.offsetStr}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xxs border-t border-slate-50 dark:border-slate-800/80 pt-3 text-slate-400">
+                        <span class="flex items-center gap-1">
+                            ${details.isDST ? t.isDST : t.isStandard}
+                        </span>
+                        <span class="font-medium">${offsetLabel}</span>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function getMinutesOffset(offsetStr) {
+            const cleaned = offsetStr.replace('GMT', '');
+            if (!cleaned) return 0;
+            const [hrsPart, minsPart] = cleaned.split(':');
+            const hours = parseInt(hrsPart) || 0;
+            const mins = parseInt(minsPart) || 0;
+            const sign = hours < 0 || Object.is(hours, -0) ? -1 : 1;
+            return (hours * 60) + (sign * mins);
+        }
+
+        function onCustomLabelChange(index, val) {
+            activeZones[index].customLabel = val;
+            updateAllViews();
+        }
+
+        function setAsBaseZone(zoneId) {
+            baseZoneId = zoneId;
+            initTimezoneDropdown();
+            recalculateUTCFromInputs();
+            updateAllViews();
+        }
+
+        // --- STREAMING_CHUNK: Rendering the Horizontal Timeline Comparison Grid... ---
+        function updateTimelinePlanner() {
+            const gridContainer = document.getElementById('timelineGridContainer');
+            gridContainer.innerHTML = '';
+
+            const baseTimeObj = getTimeDetails(currentUTCTimestamp, baseZoneId);
+            const t = translations[currentLang];
+
+            activeZones.forEach((z) => {
+                const details = getTimeDetails(currentUTCTimestamp, z.id);
+                const cardName = t[z.labelKey] || z.id;
+
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-4 py-2 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 rounded-xl transition duration-150 pr-4";
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = "w-44 flex-shrink-0 flex items-center gap-2 pl-2";
+                labelDiv.innerHTML = `
+                    <i class="${z.iconClass} text-slate-400 text-lg"></i>
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-800 dark:text-white truncate">${z.customLabel || cardName}</div>
+                        <div class="text-[10px] text-slate-400 truncate">${details.offsetStr}</div>
+                    </div>
+                `;
+                row.appendChild(labelDiv);
+
+                const hoursGrid = document.createElement('div');
+                hoursGrid.className = "flex-1 grid grid-cols-24 gap-1 select-none";
+                hoursGrid.style.display = "grid";
+                hoursGrid.style.gridTemplateColumns = "repeat(24, minmax(0, 1fr))";
+
+                const targetDayMidnightUTC = localToUTC(details.year, details.month, details.day, 0, 0, z.id);
+
+                for (let h = 0; h < 24; h++) {
+                    const blockUTC = targetDayMidnightUTC + (h * 3600000);
+                    const blockDetails = getTimeDetails(blockUTC, z.id);
+                    
+                    let hourColorClass = "";
+                    let isCurrentSelection = (blockDetails.hour === details.hour);
+                    const hr = blockDetails.hour;
+
+                    if (hr >= 9 && hr < 17) {
+                        hourColorClass = "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/10";
+                    } else if (hr >= 7 && hr < 9 || hr >= 17 && hr < 22) {
+                        hourColorClass = "bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/10";
+                    } else {
+                        hourColorClass = "bg-slate-800 dark:bg-slate-950/60 hover:bg-slate-700 dark:hover:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-700/20";
+                    }
+
+                    if (isCurrentSelection) {
+                        hourColorClass = "ring-2 ring-blue-500/60 ring-offset-2 dark:ring-offset-slate-900 font-bold " + hourColorClass;
+                    }
+
+                    const hourBlock = document.createElement('div');
+                    hourBlock.className = `h-9 border rounded-lg flex flex-col items-center justify-center text-xxs transition-all cursor-pointer ${hourColorClass}`;
+                    hourBlock.innerHTML = `<span class="font-mono text-xs font-semibold">${String(hr).padStart(2, '0')}</span>`;
+
+                    hourBlock.addEventListener('click', () => {
+                        toggleLiveClock(false);
+                        currentUTCTimestamp = blockUTC;
+                        syncInputsWithTimestamp();
+                        updateAllViews();
+                    });
+
+                    hourBlock.title = `${z.customLabel || cardName}: ${blockDetails.year} ${blockDetails.dateString} ${String(hr).padStart(2, '0')}:00 (${details.offsetStr})`;
+                    hoursGrid.appendChild(hourBlock);
+                }
+
+                row.appendChild(hoursGrid);
+                gridContainer.appendChild(row);
+            });
+        }
+
+        // --- STREAMING_CHUNK: Core Meeting Index Calculation & Sharing Utilities... ---
+        function updateSchedulerUtility() {
+            let totalScore = 100;
+            let deduction = 0;
+            const t = translations[currentLang];
+            
+            activeZones.forEach(z => {
+                const details = getTimeDetails(currentUTCTimestamp, z.id);
+                const hr = details.hour;
+                if (hr >= 22 || hr < 7) {
+                    deduction += 40;
+                } else if (hr >= 7 && hr < 9 || hr >= 17 && hr < 22) {
+                    deduction += 10;
+                }
+            });
+
+            totalScore = Math.max(0, totalScore - deduction);
+            document.getElementById('scoreText').innerText = `${totalScore}%`;
+            
+            const dashoffset = 251.2 - (251.2 * totalScore) / 100;
+            document.getElementById('scoreCircle').style.strokeDashoffset = dashoffset;
+
+            const badge = document.getElementById('scoreStatusBadge');
+            const desc = document.getElementById('scoreDescription');
+            const circle = document.getElementById('scoreCircle');
+
+            if (totalScore >= 80) {
+                badge.innerText = t.perfectTime;
+                badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400';
+                circle.className = 'text-emerald-500 transition-all duration-500';
+                desc.innerText = t.scorePerfectDesc;
+            } else if (totalScore >= 50) {
+                badge.innerText = t.fairTime;
+                badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400';
+                circle.className = 'text-amber-500 transition-all duration-500';
+                desc.innerText = t.scoreFairDesc;
+            } else {
+                badge.innerText = t.poorTime;
+                badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-rose-100 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400';
+                circle.className = 'text-rose-500 transition-all duration-500';
+                desc.innerText = t.scorePoorDesc;
+            }
+
+            // Copy invite generator content without specific city names
+            let shareText = `${t.inviteHeader}\n---------------------------------------\n`;
+            activeZones.forEach(z => {
+                const details = getTimeDetails(currentUTCTimestamp, z.id);
+                const cardName = t[z.labelKey] || z.id;
+                shareText += `📍 ${z.customLabel || cardName} : ${details.year}-${String(details.month).padStart(2,'0')}-${String(details.day).padStart(2,'0')} ${details.timeString} (${details.offsetStr})\n`;
+            });
+            shareText += `---------------------------------------\n💡 ZoneFlow Engine`;
+            document.getElementById('meetingShareText').value = shareText;
+
+            // Safe Copy Action (Uses document.execCommand for generic iframe sandbox environments)
+            document.getElementById('copyInviteBtn').onclick = function() {
+                const textInput = document.getElementById('meetingShareText');
+                textInput.select();
+                try {
+                    document.execCommand('copy');
+                    triggerToast(t.alertCopySuccess);
+                } catch (err) {
+                    triggerToast(t.alertCopyFail, true);
+                }
+            };
+
+            // Dynamic Calendar URL Generation
+            const startStr = new Date(currentUTCTimestamp).toISOString().replace(/-|:|\.\d\d\d/g, "");
+            const endStr = new Date(currentUTCTimestamp + 1800000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+            const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Multi-party+Coordination+Meeting&dates=${startStr}/${endStr}&details=Scheduled+via+KLN+ZoneFlow&sf=true&output=xml`;
+            document.getElementById('googleCalBtn').href = gCalUrl;
+        }
+    </script>
+</body>
+</html>
