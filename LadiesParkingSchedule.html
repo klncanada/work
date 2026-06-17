@@ -1,364 +1,799 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier de Stationnement</title>
-    <!-- 加载依赖库 -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Excel 解析库 SheetJS -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendrier de Stationnement</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --soft: #e2e8f0;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --green-bg: #dcfce7;
+      --green: #15803d;
+      --amber-soft: #fffbeb;
+      --amber: #d97706;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .lang-group {
+      display: flex;
+      gap: 4px;
+    }
+
+    .lang-btn {
+      border: 0;
+      background: white;
+      color: #94a3b8;
+      padding: 5px 8px;
+      border-radius: 9px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 21px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .date-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: white;
+      border: 1px solid var(--soft);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      white-space: nowrap;
+    }
+
+    .current-card {
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.10);
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      background: var(--blue);
+      color: white;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      padding: 7px 12px;
+      text-transform: uppercase;
+    }
+
+    .card-body {
+      padding: 22px 20px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+
+    .holder {
+      margin: 0 0 6px;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .range {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .status-box {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 13px;
+    }
+
+    .status-label {
+      margin: 0 0 5px;
+      color: #94a3b8;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      background: var(--green-bg);
+      color: var(--green);
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 9px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .week-value {
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .divider {
+      width: 1px;
+      background: var(--soft);
+    }
+
+    .next-card {
+      background: white;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      margin-bottom: 16px;
+    }
+
+    .next-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .arrow-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-label {
+      margin: 0 0 5px;
+      color: #94a3b8;
+      font-size: 9px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .next-name {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 950;
+      color: #334155;
+    }
+
+    .next-date {
+      text-align: right;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #475569;
+    }
+
+    .schedule-section {
+      border-top: 1px solid var(--soft);
+      padding-top: 12px;
+    }
+
+    .toggle {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #94a3b8;
+      padding: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chevron {
+      transition: transform 0.25s ease;
+    }
+
+    .chevron.open {
+      transform: rotate(180deg);
+    }
+
+    .table-wrap {
+      margin-top: 8px;
+      background: white;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      overflow: auto;
+      max-height: 260px;
+      box-shadow: inset 0 1px 4px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .table-wrap.show {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 10px;
+    }
+
+    thead {
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th {
+      color: #94a3b8;
+      padding: 8px 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-top: 1px solid #f8fafc;
+      font-weight: 700;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    tr.current {
+      background: #eff6ff;
+    }
+
+    tr.current td:last-child {
+      color: var(--blue);
+      font-weight: 950;
+    }
+
+    .now-badge {
+      margin-left: 5px;
+      background: var(--blue);
+      color: white;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 7px;
+      font-weight: 900;
+    }
+
+    footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 9px;
+      line-height: 1.5;
+      margin-top: 16px;
+      padding: 0 16px 16px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    svg {
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .error {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 16px;
+    }
+  </style>
 </head>
-<body class="bg-slate-50">
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+<body>
+  <div class="page">
+    <main class="app">
+      <div class="topbar">
+        <div class="lang-group">
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">ZH</button>
+        </div>
+      </div>
 
-        // 图标组件 (内联 SVG)
-        const IconParking = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><circle cx="12" cy="12" r="10"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>
-        );
-        const IconCheck = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500"><polyline points="20 6 9 17 4 12"/></svg>
-        );
-        const IconClock = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        );
-        const IconUser = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        );
-        const IconCalendar = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        );
-        const IconArrowRight = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        );
-        const IconInfo = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        );
-        const IconChevron = ({ isOpen }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.3s', transform: isOpen ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
-        );
+      <header>
+        <div>
+          <h1>
+            <span id="icon-parking"></span>
+            <span id="title"></span>
+          </h1>
+          <p class="subtitle" id="subtitle"></p>
+        </div>
+        <div class="date-pill">
+          <span id="icon-clock"></span>
+          <span id="today"></span>
+        </div>
+      </header>
 
-        const App = () => {
-            const getInitialLang = () => {
-                const browserLang = (navigator.language || 'fr').toLowerCase();
-                if (browserLang.startsWith('zh')) return 'zh';
-                if (browserLang.startsWith('fr')) return 'fr';
-                if (browserLang.startsWith('en')) return 'en';
-                return 'fr'; 
-            };
+      <section class="current-card">
+        <div class="card-title" id="currentHolderLabel"></div>
+        <div class="card-body">
+          <div class="avatar" id="icon-user"></div>
+          <h2 class="holder" id="currentName">...</h2>
+          <div class="range">
+            <span id="icon-calendar"></span>
+            <span id="currentRange">-</span>
+          </div>
 
-            const [lang, setLang] = useState(getInitialLang);
-            const [externalData, setExternalData] = useState(null);
-            const [lastSync, setLastSync] = useState(null);
-            const currentRowRef = useRef(null);
+          <div class="status-box">
+            <div>
+              <p class="status-label" id="statusLabel"></p>
+              <span class="badge" id="inUseLabel"></span>
+            </div>
+            <div class="divider"></div>
+            <div>
+              <p class="status-label" id="cycleLabel"></p>
+              <span class="week-value" id="currentWeek"></span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            useEffect(() => {
-                const savedData = localStorage.getItem('parking_custom_data');
-                const savedTime = localStorage.getItem('parking_last_sync');
-                if (savedData) {
-                    setExternalData(JSON.parse(savedData));
-                    setLastSync(savedTime);
-                }
-            }, []);
+      <section class="next-card">
+        <div class="next-left">
+          <div class="arrow-box" id="icon-arrow"></div>
+          <div>
+            <p class="mini-label" id="nextWeekLabel"></p>
+            <h3 class="next-name" id="nextName">-</h3>
+          </div>
+        </div>
+        <div class="next-date">
+          <p class="mini-label" id="startDateLabel"></p>
+          <div class="mono" id="nextStart">-</div>
+        </div>
+      </section>
 
-            // 辅助函数：手动格式化日期为 YYYY-MM-DD，避免时区偏移
-            const toDateString = (date) => {
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, '0');
-                const d = String(date.getDate()).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            };
+      <section class="schedule-section">
+        <button class="toggle" id="toggleSchedule" type="button">
+          <span class="toggle-left">
+            <span id="icon-info"></span>
+            <span id="viewFullLabel"></span>
+          </span>
+          <span class="chevron" id="icon-chevron"></span>
+        </button>
 
-            const allScheduleData = useMemo(() => {
-                if (externalData && externalData.length > 0) return externalData;
+        <div class="table-wrap" id="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th id="tableWeekLabel"></th>
+                <th id="tableRangeLabel"></th>
+                <th id="tableHolderLabel"></th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
+      </section>
 
-                const data = [];
-                const startWeek = 148;
-                // 注意：JS Date 月份从 0 开始，8月是 7
-                const baseStartDate = new Date(2025, 7, 11); 
-                const changeWeek = 184; 
-                const targetWeek = 207; 
+      <footer id="footer"></footer>
+      <div id="errorBox"></div>
+    </main>
+  </div>
 
-                // 184周之前的名单 (包含 Patricia)
-                const namesOld = ["Nathalie", "Patricia", "Stacy", "Liliana", "Lucy", "Marianella", "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing"];
-                
-                // 184周开始的新名单 (按用户提供序列)
-                const namesNew = ["Nathalie", "Stacy", "Liliana", "Lucy", "Marianella", "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing", "Ruby"];
+  <script>
+    (function () {
+      "use strict";
 
-                for (let w = startWeek; w <= targetWeek; w++) {
-                    const weeksDiff = w - startWeek;
-                    
-                    // 计算本周周一
-                    const monday = new Date(baseStartDate);
-                    monday.setDate(baseStartDate.getDate() + weeksDiff * 7);
-                    
-                    // 计算本周周五
-                    const friday = new Date(monday);
-                    friday.setDate(monday.getDate() + 4);
+      const icons = {
+        parking: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>',
+        clock: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+        user: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+        calendar: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+        arrow: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+        info: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+        chevron: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
+      };
 
-                    let name = "";
-                    if (w < changeWeek) {
-                        name = namesOld[weeksDiff % namesOld.length];
-                    } else {
-                        const weeksDiffAfterChange = w - changeWeek;
-                        name = namesNew[weeksDiffAfterChange % namesNew.length];
-                    }
+      const translations = {
+        fr: {
+          title: "Stationnement",
+          subtitle: "Auto-calculé (Cycle 12 pers.)",
+          currentHolder: "Détenteur Actuel",
+          nextWeek: "La Semaine Prochaine",
+          startDate: "Début",
+          status: "Statut",
+          inUse: "En cours",
+          cycle: "Cycle",
+          weekShort: "Sem.",
+          viewFull: "Voir le planning",
+          tableWeek: "Sem.",
+          tableRange: "Période",
+          tableHolder: "Titulaire",
+          footer: "Nouveau cycle dès la Sem. 184 avec Ruby. Patricia retirée.",
+          now: "ACTUEL",
+          error: "Une erreur est survenue, mais la page reste accessible."
+        },
+        en: {
+          title: "Parking App",
+          subtitle: "Auto-calculated (12-person cycle)",
+          currentHolder: "Current Holder",
+          nextWeek: "Next Week",
+          startDate: "Starts",
+          status: "Status",
+          inUse: "In Use",
+          cycle: "Week",
+          weekShort: "Wk",
+          viewFull: "Full Schedule",
+          tableWeek: "Wk",
+          tableRange: "Range",
+          tableHolder: "Holder",
+          footer: "New cycle starts Wk 184 including Ruby (Patricia removed).",
+          now: "NOW",
+          error: "Something went wrong, but the page is still accessible."
+        },
+        zh: {
+          title: "车位管家",
+          subtitle: "自动计算（12人循环模式）",
+          currentHolder: "本周持有",
+          nextWeek: "下周预告",
+          startDate: "开始日期",
+          status: "状态",
+          inUse: "使用中",
+          cycle: "周次",
+          weekShort: "周",
+          viewFull: "查看排期表",
+          tableWeek: "周次",
+          tableRange: "日期范围",
+          tableHolder: "持有人",
+          footer: "184周起正式加入 Ruby 并更新顺延规则（Patricia 退出）。",
+          now: "当前",
+          error: "页面遇到错误，但不会白屏。"
+        }
+      };
 
-                    data.push({
-                        week: w,
-                        start: toDateString(monday),
-                        end: toDateString(friday),
-                        name: name
-                    });
-                }
-                return data;
-            }, [externalData]);
+      let state = {
+        lang: getInitialLang(),
+        showFullSchedule: false
+      };
 
-            const currentIndex = useMemo(() => {
-                const now = new Date();
-                const index = allScheduleData.findIndex(item => {
-                    const start = new Date(item.start + "T00:00:00"); // 增加时间后缀确保以本地时间解析
-                    const nextMon = new Date(start);
-                    nextMon.setDate(start.getDate() + 7);
-                    return now >= start && now < nextMon;
-                });
-                if (index !== -1) return index;
-                const nextIdx = allScheduleData.findIndex(item => new Date(item.start + "T00:00:00") > now);
-                return nextIdx > 0 ? nextIdx - 1 : 0;
-            }, [allScheduleData]);
+      function $(id) {
+        return document.getElementById(id);
+      }
 
-            const displayedSchedule = useMemo(() => {
-                const startIdx = Math.max(0, currentIndex - 20);
-                const endIdx = Math.min(allScheduleData.length, currentIndex + 21);
-                return allScheduleData.slice(startIdx, endIdx);
-            }, [allScheduleData, currentIndex]);
+      function getInitialLang() {
+        const browserLang = (navigator.language || "fr").toLowerCase();
+        if (browserLang.startsWith("zh")) return "zh";
+        if (browserLang.startsWith("fr")) return "fr";
+        if (browserLang.startsWith("en")) return "en";
+        return "fr";
+      }
 
-            const translations = {
-                fr: {
-                    title: "Stationnement",
-                    subtitle: "Auto-calculé (Cycle 12 pers.)",
-                    currentHolder: "Détenteur Actuel",
-                    nextWeek: "La Semaine Prochaine",
-                    startDate: "Début",
-                    status: "Statut",
-                    inUse: "En cours",
-                    cycle: "Cycle",
-                    weekShort: "Sem.",
-                    viewFull: "Voir le planning",
-                    tableWeek: "Sem.",
-                    tableRange: "Période",
-                    tableHolder: "Titulaire",
-                    footer: "Nouveau cycle dès la Sem. 184 avec Ruby. Patricia retirée.",
-                    now: "ACTUEL"
-                },
-                en: {
-                    title: "Parking App",
-                    subtitle: "Auto-calculated (12-person cycle)",
-                    currentHolder: "Current Holder",
-                    nextWeek: "Next Week",
-                    startDate: "Starts",
-                    status: "Status",
-                    inUse: "In Use",
-                    cycle: "Week",
-                    weekShort: "Wk",
-                    viewFull: "Full Schedule",
-                    tableWeek: "Wk",
-                    tableRange: "Range",
-                    tableHolder: "Holder",
-                    footer: "New cycle starts Wk 184 including Ruby (Patricia removed).",
-                    now: "NOW"
-                },
-                zh: {
-                    title: "车位管家",
-                    subtitle: "自动计算 (12人循环模式)",
-                    currentHolder: "本周持有",
-                    nextWeek: "下周预告",
-                    startDate: "开始日期",
-                    status: "状态",
-                    inUse: "使用中",
-                    cycle: "周次",
-                    weekShort: "周",
-                    viewFull: "查看排期表",
-                    tableWeek: "周次",
-                    tableRange: "日期范围",
-                    tableHolder: "持有人",
-                    footer: "184周起正式加入 Ruby 并更新顺延规则 (Patricia 退出)。",
-                    now: "当前"
-                }
-            };
+      function toDateString(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+      }
 
-            const t = translations[lang];
-            const [today] = useState(new Date()); 
-            const [showFullSchedule, setShowFullSchedule] = useState(false);
+      function parseLocalDate(dateString) {
+        return new Date(dateString + "T00:00:00");
+      }
 
-            const current = allScheduleData[currentIndex] || null;
-            const next = allScheduleData[currentIndex + 1] || null;
+      function getExternalData() {
+        try {
+          const savedData = localStorage.getItem("parking_custom_data");
+          if (!savedData) return null;
 
-            useEffect(() => {
-                if (showFullSchedule && currentRowRef.current) {
-                    setTimeout(() => {
-                        currentRowRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
-                    }, 50);
-                }
-            }, [showFullSchedule]);
+          const parsed = JSON.parse(savedData);
+          if (!Array.isArray(parsed)) return null;
 
-            const formatDate = (dateValue) => {
-                if (!dateValue) return '';
-                const d = new Date(dateValue + "T00:00:00");
-                const locales = { fr: 'fr-FR', en: 'en-US', zh: 'zh-CN' };
-                return d.toLocaleDateString(locales[lang], { month: 'short', day: 'numeric' });
-            };
+          const valid = parsed.every(function (item) {
+            return item &&
+              typeof item.week !== "undefined" &&
+              typeof item.start === "string" &&
+              typeof item.end === "string" &&
+              typeof item.name === "string";
+          });
 
-            return (
-                <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 flex flex-col items-center">
-                    <div className="w-full max-w-md">
-                        {/* Top Bar */}
-                        <div className="flex justify-end items-center mb-3">
-                            <div className="flex gap-1">
-                                {['fr', 'en', 'zh'].map((l) => (
-                                    <button
-                                        key={l}
-                                        onClick={() => setLang(l)}
-                                        className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                                            lang === l ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400'
-                                        }`}
-                                    >
-                                        {l.toUpperCase()}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+          return valid ? parsed : null;
+        } catch (err) {
+          try {
+            localStorage.removeItem("parking_custom_data");
+            localStorage.removeItem("parking_last_sync");
+          } catch (_) {}
+          return null;
+        }
+      }
 
-                        {/* Header */}
-                        <header className="flex items-start justify-between mb-4">
-                            <div>
-                                <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
-                                    <IconParking />
-                                    {t.title}
-                                </h1>
-                                <p className="text-slate-500 text-[10px] font-medium leading-none mt-1">{t.subtitle}</p>
-                            </div>
-                            <div className="bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm text-[9px] font-bold flex items-center gap-1">
-                                <IconClock />
-                                {today.toLocaleDateString(lang === 'zh' ? 'zh-CN' : (lang === 'fr' ? 'fr-FR' : 'en-US'))}
-                            </div>
-                        </header>
+      function buildScheduleData() {
+        const externalData = getExternalData();
+        if (externalData && externalData.length > 0) return externalData;
 
-                        {/* Current Card */}
-                        <div className="bg-white rounded-2xl shadow-lg shadow-blue-100/40 border border-blue-50 overflow-hidden mb-3">
-                            <div className="bg-blue-600 px-4 py-1.5 text-white text-[9px] font-black tracking-widest uppercase text-center">
-                                {t.currentHolder}
-                            </div>
-                            <div className="p-5 text-center">
-                                <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 rounded-full mb-3">
-                                    <IconUser />
-                                </div>
-                                <h2 className="text-3xl font-black text-slate-800 mb-1 leading-tight tracking-tight">
-                                    {current ? current.name : "..."}
-                                </h2>
-                                <div className="flex items-center justify-center gap-2 text-slate-400 mb-4">
-                                    <IconCalendar />
-                                    <span className="text-xs font-bold tracking-tight">
-                                        {current ? `${formatDate(current.start)} - ${formatDate(current.end)}` : "-"}
-                                    </span>
-                                </div>
-                                
-                                <div className="bg-slate-50 rounded-xl p-3 flex justify-around">
-                                    <div className="text-center">
-                                        <p className="text-[9px] uppercase text-slate-400 font-bold mb-0.5">{t.status}</p>
-                                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-black uppercase tracking-wider">{t.inUse}</span>
-                                    </div>
-                                    <div className="w-px bg-slate-200" />
-                                    <div className="text-center">
-                                        <p className="text-[9px] uppercase text-slate-400 font-bold mb-0.5">{t.cycle}</p>
-                                        <span className="text-slate-700 text-[10px] font-black">{t.weekShort} {current?.week}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        const data = [];
+        const startWeek = 148;
+        const baseStartDate = new Date(2025, 7, 11);
+        const changeWeek = 184;
 
-                        {/* Next Card */}
-                        <div className="bg-white rounded-xl p-3.5 border border-slate-100 shadow-sm mb-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
-                                    <IconArrowRight />
-                                </div>
-                                <div>
-                                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-tighter leading-none mb-1">{t.nextWeek}</p>
-                                    <h3 className="text-base font-black text-slate-700 leading-tight">{next ? next.name : "-"}</h3>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-[9px] text-slate-400 font-black uppercase tracking-tighter mb-0.5">{t.startDate}</p>
-                                <p className="text-xs font-mono font-bold text-slate-600">{next ? formatDate(next.start) : "-"}</p>
-                            </div>
-                        </div>
+        const namesOld = [
+          "Nathalie", "Patricia", "Stacy", "Liliana", "Lucy", "Marianella",
+          "Marla", "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing"
+        ];
 
-                        {/* Expandable List */}
-                        <div className="border-t border-slate-200 pt-3">
-                            <button 
-                                onClick={() => setShowFullSchedule(!showFullSchedule)}
-                                className="w-full flex items-center justify-between text-slate-400 hover:text-slate-700 py-1.5 group"
-                            >
-                                <span className="text-[10px] font-black flex items-center gap-2 tracking-tight uppercase">
-                                    <IconInfo />
-                                    {t.viewFull}
-                                </span>
-                                <IconChevron isOpen={showFullSchedule} />
-                            </button>
+        const namesNew = [
+          "Nathalie", "Stacy", "Liliana", "Lucy", "Marianella", "Marla",
+          "MaryZhou", "Karim", "Yan", "Marie-Eve", "Qing", "Ruby"
+        ];
 
-                            {showFullSchedule && (
-                                <div className="mt-2 bg-white rounded-xl border border-slate-100 shadow-inner overflow-hidden max-h-60 overflow-y-auto transition-all scroll-smooth">
-                                    <table className="w-full text-left text-[10px] border-collapse">
-                                        <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
-                                            <tr>
-                                                <th className="px-3 py-1.5 font-black text-slate-400 uppercase">{t.tableWeek}</th>
-                                                <th className="px-3 py-1.5 font-black text-slate-400 uppercase">{t.tableRange}</th>
-                                                <th className="px-3 py-1.5 font-black text-slate-400 uppercase">{t.tableHolder}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-50">
-                                            {displayedSchedule.map((item, idx) => {
-                                                const isCurrent = item.week === current?.week && item.start === current?.start;
-                                                return (
-                                                    <tr 
-                                                        key={`${item.week}-${idx}`} 
-                                                        ref={isCurrent ? currentRowRef : null}
-                                                        className={`${isCurrent ? 'bg-blue-50/70' : ''}`}
-                                                    >
-                                                        <td className="px-3 py-2 font-mono text-slate-400 font-bold">{item.week}</td>
-                                                        <td className="px-3 py-2 text-slate-500 font-medium whitespace-nowrap">
-                                                            {formatDate(item.start)} - {formatDate(item.end)}
-                                                        </td>
-                                                        <td className={`px-3 py-2 font-black ${isCurrent ? 'text-blue-600' : 'text-slate-700'}`}>
-                                                            {item.name}
-                                                            {isCurrent && <span className="ml-1 text-[7px] bg-blue-600 text-white px-1 py-0.5 rounded-sm tracking-tighter">{t.now}</span>}
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-                        </div>
+        const today = new Date();
+        const futureEnd = new Date(today);
+        futureEnd.setFullYear(today.getFullYear() + 3);
 
-                        <p className="text-center text-slate-400 text-[9px] mt-4 leading-relaxed px-4 pb-4 font-medium italic">
-                            {t.footer}
-                        </p>
-                    </div>
-                </div>
-            );
-        };
+        const weeksToGenerate = Math.ceil((futureEnd - baseStartDate) / (7 * 24 * 60 * 60 * 1000));
+        const targetWeek = Math.max(startWeek + weeksToGenerate, 260);
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        for (let w = startWeek; w <= targetWeek; w++) {
+          const weeksDiff = w - startWeek;
+
+          const monday = new Date(baseStartDate);
+          monday.setDate(baseStartDate.getDate() + weeksDiff * 7);
+
+          const friday = new Date(monday);
+          friday.setDate(monday.getDate() + 4);
+
+          let name;
+          if (w < changeWeek) {
+            name = namesOld[weeksDiff % namesOld.length];
+          } else {
+            const weeksDiffAfterChange = w - changeWeek;
+            name = namesNew[weeksDiffAfterChange % namesNew.length];
+          }
+
+          data.push({
+            week: w,
+            start: toDateString(monday),
+            end: toDateString(friday),
+            name: name
+          });
+        }
+
+        return data;
+      }
+
+      function getCurrentIndex(schedule) {
+        const now = new Date();
+
+        const index = schedule.findIndex(function (item) {
+          const start = parseLocalDate(item.start);
+          const nextMon = new Date(start);
+          nextMon.setDate(start.getDate() + 7);
+          return now >= start && now < nextMon;
+        });
+
+        if (index !== -1) return index;
+
+        const nextIdx = schedule.findIndex(function (item) {
+          return parseLocalDate(item.start) > now;
+        });
+
+        if (nextIdx > 0) return nextIdx - 1;
+        return 0;
+      }
+
+      function formatDate(dateValue, lang) {
+        if (!dateValue) return "";
+        const d = parseLocalDate(dateValue);
+        const locales = { fr: "fr-FR", en: "en-US", zh: "zh-CN" };
+        return d.toLocaleDateString(locales[lang], { month: "short", day: "numeric" });
+      }
+
+      function render() {
+        try {
+          const t = translations[state.lang] || translations.fr;
+          const schedule = buildScheduleData();
+          const currentIndex = getCurrentIndex(schedule);
+          const current = schedule[currentIndex] || null;
+          const next = schedule[currentIndex + 1] || null;
+
+          $("title").textContent = t.title;
+          $("subtitle").textContent = t.subtitle;
+          $("currentHolderLabel").textContent = t.currentHolder;
+          $("statusLabel").textContent = t.status;
+          $("inUseLabel").textContent = t.inUse;
+          $("cycleLabel").textContent = t.cycle;
+          $("nextWeekLabel").textContent = t.nextWeek;
+          $("startDateLabel").textContent = t.startDate;
+          $("viewFullLabel").textContent = t.viewFull;
+          $("tableWeekLabel").textContent = t.tableWeek;
+          $("tableRangeLabel").textContent = t.tableRange;
+          $("tableHolderLabel").textContent = t.tableHolder;
+          $("footer").textContent = t.footer;
+
+          const todayLocale = state.lang === "zh" ? "zh-CN" : state.lang === "fr" ? "fr-FR" : "en-US";
+          $("today").textContent = new Date().toLocaleDateString(todayLocale);
+
+          $("currentName").textContent = current ? current.name : "...";
+          $("currentRange").textContent = current ? formatDate(current.start, state.lang) + " - " + formatDate(current.end, state.lang) : "-";
+          $("currentWeek").textContent = current ? t.weekShort + " " + current.week : "-";
+
+          $("nextName").textContent = next ? next.name : "-";
+          $("nextStart").textContent = next ? formatDate(next.start, state.lang) : "-";
+
+          document.querySelectorAll(".lang-btn").forEach(function (button) {
+            button.classList.toggle("active", button.dataset.lang === state.lang);
+          });
+
+          $("tableWrap").classList.toggle("show", state.showFullSchedule);
+          $("icon-chevron").classList.toggle("open", state.showFullSchedule);
+
+          const startIdx = Math.max(0, currentIndex - 20);
+          const endIdx = Math.min(schedule.length, currentIndex + 21);
+          const displayedSchedule = schedule.slice(startIdx, endIdx);
+
+          const tbody = $("scheduleBody");
+          tbody.innerHTML = "";
+
+          displayedSchedule.forEach(function (item) {
+            const isCurrent = current && item.week === current.week && item.start === current.start;
+
+            const tr = document.createElement("tr");
+            if (isCurrent) tr.className = "current";
+
+            const weekTd = document.createElement("td");
+            weekTd.textContent = item.week;
+
+            const rangeTd = document.createElement("td");
+            rangeTd.textContent = formatDate(item.start, state.lang) + " - " + formatDate(item.end, state.lang);
+
+            const holderTd = document.createElement("td");
+            holderTd.textContent = item.name;
+
+            if (isCurrent) {
+              const badge = document.createElement("span");
+              badge.className = "now-badge";
+              badge.textContent = t.now;
+              holderTd.appendChild(badge);
+            }
+
+            tr.appendChild(weekTd);
+            tr.appendChild(rangeTd);
+            tr.appendChild(holderTd);
+            tbody.appendChild(tr);
+
+            if (isCurrent && state.showFullSchedule) {
+              setTimeout(function () {
+                tr.scrollIntoView({ behavior: "auto", block: "start" });
+              }, 50);
+            }
+          });
+
+          $("errorBox").innerHTML = "";
+        } catch (err) {
+          const t = translations[state.lang] || translations.fr;
+          $("errorBox").innerHTML = '<div class="error">' + t.error + '</div>';
+          console.error(err);
+        }
+      }
+
+      function init() {
+        $("icon-parking").innerHTML = icons.parking;
+        $("icon-clock").innerHTML = icons.clock;
+        $("icon-user").innerHTML = icons.user;
+        $("icon-calendar").innerHTML = icons.calendar;
+        $("icon-arrow").innerHTML = icons.arrow;
+        $("icon-info").innerHTML = icons.info;
+        $("icon-chevron").innerHTML = icons.chevron;
+
+        document.querySelectorAll(".lang-btn").forEach(function (button) {
+          button.addEventListener("click", function () {
+            state.lang = button.dataset.lang;
+            render();
+          });
+        });
+
+        $("toggleSchedule").addEventListener("click", function () {
+          state.showFullSchedule = !state.showFullSchedule;
+          render();
+        });
+
+        render();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 </html>
