@@ -269,12 +269,14 @@
     }
 
     .cards {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
     }
 
     .card {
+      flex: 0 1 calc((100% - 40px) / 3);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -371,15 +373,17 @@
     }
 
     @media (max-width: 1100px) {
-      .visitor-row,
-      .cards {
+      .visitor-row {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card {
+        flex-basis: calc((100% - 20px) / 2);
       }
     }
 
     @media (max-width: 900px) {
       .visitor-row,
-      .cards,
       .hero-card,
       .timezone-grid {
         grid-template-columns: 1fr;
@@ -399,6 +403,10 @@
 
       .controls {
         width: 100%;
+      }
+
+      .card {
+        flex-basis: 100%;
       }
     }
   </style>
@@ -532,6 +540,16 @@
               <a class="btn btn-primary" href="https://tools.klncanada.com/Directory/" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
           </article>
+
+          <article class="card">
+            <div class="card-icon">✉️</div>
+            <h4 data-i18n="groupEmailTitle">HR Group Email</h4>
+            <p data-i18n="groupEmailDesc">Open the HR group email page for employee group email usage guidance.</p>
+            <div class="card-meta" data-i18n="groupEmailMeta">Page: HR / group email / instructions</div>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://tools.klncanada.com/HRGroupEmail" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -576,6 +594,9 @@
         directoryTitle: 'Employee Directory',
         directoryDesc: 'Open the directory homepage to access employee contact and directory information.',
         directoryMeta: 'Page: directory / contacts / lookup',
+        groupEmailTitle: 'HR Group Email',
+        groupEmailDesc: 'Open the HR group email page for employee group email usage guidance.',
+        groupEmailMeta: 'Page: HR / group email / instructions',
         openPage: 'Open page',
         footerLeft: 'KLN Canada Employee Portal',
         footerRight: 'Powered by OpenAI · GitHub · Cloudflare',
@@ -610,6 +631,9 @@
         directoryTitle: 'Répertoire des employés',
         directoryDesc: 'Ouvrez la page d’accueil du répertoire pour accéder aux coordonnées et informations des employés.',
         directoryMeta: 'Page : répertoire / contacts / recherche',
+        groupEmailTitle: 'Courriel de groupe RH',
+        groupEmailDesc: 'Ouvrez la page de courriel de groupe RH pour les consignes d’utilisation par les employés.',
+        groupEmailMeta: 'Page : RH / courriel de groupe / consignes',
         openPage: 'Ouvrir la page',
         footerLeft: 'Portail Employés KLN Canada',
         footerRight: 'Propulsé par OpenAI · GitHub · Cloudflare',
