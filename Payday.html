@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payroll Reminder</title>
+  <style>
+    :root {
+      --bg1: #f5f7fb;
+      --bg2: #eef3ff;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #6b7280;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --green: #16a34a;
+      --orange: #f97316;
+      --border: #e5e7eb;
+      --shadow: rgba(15, 23, 42, 0.08);
+    }
+
+    body.dark {
+      --bg1: #0f172a;
+      --bg2: #111827;
+      --card: #182235;
+      --text: #f8fafc;
+      --muted: #aab4c3;
+      --blue: #60a5fa;
+      --blue-soft: #1e3a5f;
+      --border: #2b3648;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 760px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: 0 24px 60px var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 10px 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero {
+      background: var(--blue-soft);
+      border-radius: 26px;
+      padding: 28px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .period {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .period-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .days {
+      font-size: 76px;
+      font-weight: 900;
+      color: var(--blue);
+      line-height: 1;
+    }
+
+    .days-label {
+      margin-top: 8px;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .payday-date {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .message {
+      margin-top: 18px;
+      display: inline-block;
+      background: rgba(255,255,255,.55);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    body.dark .message {
+      background: rgba(255,255,255,.06);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .mini {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(255,255,255,.35);
+    }
+
+    body.dark .mini {
+      background: rgba(255,255,255,.04);
+    }
+
+    .mini-title {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .mini-value {
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 850;
+      margin: 22px 0 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+    }
+
+    .row strong {
+      font-size: 15px;
+    }
+
+    .row span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tag {
+      background: rgba(107, 114, 128, .12);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    @media (max-width: 620px) {
+      .card {
+        padding: 22px;
+        border-radius: 24px;
+      }
+
+      h1 { font-size: 27px; }
+      .days { font-size: 58px; }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="card">
+    <div class="topbar">
+      <div class="eyebrow" data-i18n="eyebrow">Payroll Reminder</div>
+
+      <div class="controls">
+        <button id="langEn">EN</button>
+        <button id="langFr">FR</button>
+        <button id="themeAuto" data-i18n="auto">Auto</button>
+        <button id="themeLight" data-i18n="light">Light</button>
+        <button id="themeDark" data-i18n="dark">Dark</button>
+      </div>
+    </div>
+
+    <h1 data-i18n="title">Your next payday</h1>
+    <p class="subtitle" data-i18n="subtitle">
+      Payroll runs every two weeks. July 2, 2026 is Period 13.
+    </p>
+
+    <section class="hero">
+      <div class="period" id="currentPeriod">Period --</div>
+      <div class="period-sub" id="periodSub">Pay Period -- of 26</div>
+      <div class="days" id="daysLeft">--</div>
+      <div class="days-label" id="daysLabel">days remaining</div>
+      <div class="payday-date" id="nextPayday">Next payday: --</div>
+      <div class="message" id="paydayMessage">Plan ahead.</div>
+    </section>
+
+    <section class="grid">
+      <div class="mini">
+        <div class="mini-title" data-i18n="today">Today</div>
+        <div class="mini-value" id="todayDate">--</div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-title" data-i18n="cycle">Payroll Cycle</div>
+        <div class="mini-value" data-i18n="cycleValue">Every 2 weeks</div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-title" data-i18n="tipTitle">Employee Tip</div>
+        <div class="mini-value" data-i18n="tipValue">Review your time before payday.</div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-title" data-i18n="localTime">Local Time</div>
+        <div class="mini-value" id="localTime">--</div>
+      </div>
+    </section>
+
+    <div class="section-title" data-i18n="upcoming">Upcoming Paydays</div>
+    <div class="list" id="paydayList"></div>
+
+    <div class="note" data-i18n="note">
+      Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.
+    </div>
+  </main>
+
+  <script>
+    const basePayday = new Date(2026, 6, 2); // July 2, 2026 = Period 13
+    const basePeriod = 13;
+    const totalPeriods = 26;
+    const intervalDays = 14;
+
+    const i18n = {
+      en: {
+        eyebrow: "Payroll Reminder",
+        title: "Your next payday",
+        subtitle: "Payroll runs every two weeks. July 2, 2026 is Period 13.",
+        auto: "Auto",
+        light: "Light",
+        dark: "Dark",
+        today: "Today",
+        cycle: "Payroll Cycle",
+        cycleValue: "Every 2 weeks",
+        tipTitle: "Employee Tip",
+        tipValue: "Review your time before payday.",
+        localTime: "Local Time",
+        upcoming: "Upcoming Paydays",
+        note: "Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.",
+        period: "Period",
+        payPeriod: "Pay Period",
+        of: "of",
+        daysRemaining: "days remaining",
+        dayRemaining: "day remaining",
+        todayIsPayday: "Today is payday",
+        nextPayday: "Next payday",
+        payday: "Payday",
+        todayTag: "Today",
+        days: "days",
+        messageToday: "Payday is today.",
+        messageSoon: "Payday is coming soon.",
+        messageNormal: "Plan ahead.",
+        fromToday: "from today"
+      },
+      fr: {
+        eyebrow: "Rappel de paie",
+        title: "Votre prochaine paie",
+        subtitle: "La paie est versée toutes les deux semaines. Le 2 juillet 2026 correspond à la période 13.",
+        auto: "Auto",
+        light: "Clair",
+        dark: "Sombre",
+        today: "Aujourd’hui",
+        cycle: "Cycle de paie",
+        cycleValue: "Toutes les 2 semaines",
+        tipTitle: "Conseil employé",
+        tipValue: "Vérifiez vos heures avant la paie.",
+        localTime: "Heure locale",
+        upcoming: "Prochaines paies",
+        note: "Les dates et les numéros de période sont calculés automatiquement dans votre navigateur. Veuillez contacter la paie ou les RH en cas d’écart.",
+        period: "Période",
+        payPeriod: "Période de paie",
+        of: "sur",
+        daysRemaining: "jours restants",
+        dayRemaining: "jour restant",
+        todayIsPayday: "La paie est aujourd’hui",
+        nextPayday: "Prochaine paie",
+        payday: "Paie",
+        todayTag: "Aujourd’hui",
+        days: "jours",
+        messageToday: "La paie est aujourd’hui.",
+        messageSoon: "La paie arrive bientôt.",
+        messageNormal: "Planifiez à l’avance.",
+        fromToday: "à partir d’aujourd’hui"
+      }
+    };
+
+    let lang = localStorage.getItem("payrollLang") ||
+      (navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en");
+
+    let theme = localStorage.getItem("payrollTheme") || "auto";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    function addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    function diffDays(from, to) {
+      return Math.round((to - from) / (24 * 60 * 60 * 1000));
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString(lang === "fr" ? "fr-CA" : "en-CA", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+    function formatTime(date) {
+      return date.toLocaleTimeString(lang === "fr" ? "fr-CA" : "en-CA", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function getPeriodNumber(payday) {
+      const diffMs = payday - basePayday;
+      const diffPeriods = Math.round(diffMs / (intervalDays * 24 * 60 * 60 * 1000));
+      return basePeriod + diffPeriods;
+    }
+
+    function getDisplayPeriod(period) {
+      return ((period - 1) % totalPeriods) + 1;
+    }
+
+    function getNextPayday() {
+      let payday = new Date(basePayday);
+      while (payday < today) payday = addDays(payday, intervalDays);
+      return payday;
+    }
+
+    function applyLanguage() {
+      const t = i18n[lang];
+
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+
+      document.getElementById("langEn").classList.toggle("active", lang === "en");
+      document.getElementById("langFr").classList.toggle("active", lang === "fr");
+
+      render();
+    }
+
+    function applyTheme() {
+      const hour = new Date().getHours();
+      const autoDark = hour >= 18 || hour < 7;
+      const dark = theme === "dark" || (theme === "auto" && autoDark);
+
+      document.body.classList.toggle("dark", dark);
+
+      document.getElementById("themeAuto").classList.toggle("active", theme === "auto");
+      document.getElementById("themeLight").classList.toggle("active", theme === "light");
+      document.getElementById("themeDark").classList.toggle("active", theme === "dark");
+    }
+
+    function render() {
+      const t = i18n[lang];
+      const nextPayday = getNextPayday();
+      const daysLeft = diffDays(today, nextPayday);
+      const periodNumber = getPeriodNumber(nextPayday);
+      const displayPeriod = getDisplayPeriod(periodNumber);
+
+      document.getElementById("currentPeriod").textContent =
+        `${t.period} ${displayPeriod}`;
+
+      document.getElementById("periodSub").textContent =
+        `${t.payPeriod} ${displayPeriod} ${t.of} ${totalPeriods}`;
+
+      document.getElementById("daysLeft").textContent = daysLeft;
+
+      document.getElementById("daysLabel").textContent =
+        daysLeft === 0 ? t.todayIsPayday :
+        daysLeft === 1 ? t.dayRemaining :
+        t.daysRemaining;
+
+      document.getElementById("nextPayday").textContent =
+        daysLeft === 0
+          ? `${t.payday}: ${formatDate(nextPayday)}`
+          : `${t.nextPayday}: ${formatDate(nextPayday)}`;
+
+      document.getElementById("paydayMessage").textContent =
+        daysLeft === 0 ? t.messageToday :
+        daysLeft <= 3 ? t.messageSoon :
+        t.messageNormal;
+
+      document.getElementById("todayDate").textContent = formatDate(today);
+      document.getElementById("localTime").textContent = formatTime(new Date());
+
+      const list = document.getElementById("paydayList");
+      list.innerHTML = "";
+
+      for (let i = 0; i < 6; i++) {
+        const payday = addDays(nextPayday, i * intervalDays);
+        const remaining = diffDays(today, payday);
+        const period = getDisplayPeriod(getPeriodNumber(payday));
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        row.innerHTML = `
+          <div>
+            <strong>${t.period} ${period}</strong><br>
+            <span>${formatDate(payday)}</span>
+          </div>
+          <div class="tag">
+            ${remaining === 0 ? t.todayTag : remaining + " " + t.days}
+          </div>
+        `;
+
+        list.appendChild(row);
+      }
+    }
+
+    document.getElementById("langEn").onclick = () => {
+      lang = "en";
+      localStorage.setItem("payrollLang", lang);
+      applyLanguage();
+    };
+
+    document.getElementById("langFr").onclick = () => {
+      lang = "fr";
+      localStorage.setItem("payrollLang", lang);
+      applyLanguage();
+    };
+
+    document.getElementById("themeAuto").onclick = () => {
+      theme = "auto";
+      localStorage.setItem("payrollTheme", theme);
+      applyTheme();
+    };
+
+    document.getElementById("themeLight").onclick = () => {
+      theme = "light";
+      localStorage.setItem("payrollTheme", theme);
+      applyTheme();
+    };
+
+    document.getElementById("themeDark").onclick = () => {
+      theme = "dark";
+      localStorage.setItem("payrollTheme", theme);
+      applyTheme();
+    };
+
+    applyTheme();
+    applyLanguage();
+
+    setInterval(() => {
+      document.getElementById("localTime").textContent = formatTime(new Date());
+      if (theme === "auto") applyTheme();
+    }, 30000);
+  </script>
+
+</body>
+</html>
