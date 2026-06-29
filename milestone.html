@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KLN Canada Timeline</title>
+  <style>
+    :root {
+      --bg: #f6f9fd;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #d6e4f5;
+      --primary: #2563eb;
+      --primary-soft: #eaf2ff;
+      --border: #dbe7f5;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --hover-shadow: 0 24px 70px rgba(37, 99, 235, 0.16);
+    }
+
+    [data-theme="dark"] {
+      --bg: #07111f;
+      --panel: #0f1b2d;
+      --text: #e5eefc;
+      --muted: #93a4ba;
+      --line: #243b5a;
+      --primary: #60a5fa;
+      --primary-soft: rgba(96, 165, 250, 0.14);
+      --border: #233a58;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      --hover-shadow: 0 24px 70px rgba(96, 165, 250, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.11), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 24px 56px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      width: 88px;
+      height: 62px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #0b2d5e, #2563eb);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      letter-spacing: 2px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .intro {
+      margin: 28px 0 12px;
+      padding: 24px 28px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .intro strong {
+      font-size: 23px;
+      letter-spacing: -0.025em;
+    }
+
+    .intro p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .range {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 9px 15px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .timeline {
+      position: relative;
+      padding: 34px 0 0;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 150px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #2563eb, #8b5cf6, #10b981, #f97316, #14b8a6, #22c55e);
+      border-radius: 99px;
+    }
+
+    .item {
+      --cat: #2563eb;
+      --cat-soft: rgba(37, 99, 235, 0.12);
+      position: relative;
+      display: grid;
+      grid-template-columns: 120px 58px 1fr;
+      gap: 24px;
+      margin-bottom: 26px;
+      align-items: start;
+    }
+
+    .date {
+      text-align: right;
+      padding-top: 17px;
+    }
+
+    .year {
+      color: var(--cat);
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .month {
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .dot-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding-top: 8px;
+    }
+
+    .dot {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--cat);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 16px 32px color-mix(in srgb, var(--cat) 32%, transparent);
+      z-index: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .connector {
+      position: absolute;
+      top: 36px;
+      left: 52px;
+      width: 24px;
+      height: 2px;
+      background: var(--cat);
+      opacity: 0.75;
+    }
+
+    .dot svg {
+      width: 27px;
+      height: 27px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 24px 26px;
+      box-shadow: var(--shadow);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .item:hover .card {
+      transform: translateY(-5px);
+      box-shadow: var(--hover-shadow);
+      border-color: color-mix(in srgb, var(--cat) 45%, var(--border));
+    }
+
+    .item:hover .dot {
+      transform: scale(1.09) rotate(-3deg);
+      box-shadow: 0 20px 42px color-mix(in srgb, var(--cat) 42%, transparent);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      color: color-mix(in srgb, var(--cat) 55%, var(--text));
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: var(--cat-soft);
+      color: var(--cat);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .desc {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pill {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .quote-box {
+      margin-top: 36px;
+      position: relative;
+      overflow: hidden;
+      padding: 28px 30px;
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, var(--primary-soft), transparent),
+        var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .quote-symbol {
+      font-size: 46px;
+      line-height: 1;
+      color: var(--primary);
+      font-weight: 950;
+      opacity: 0.45;
+    }
+
+    .quote-text {
+      margin: 0;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height: 1.35;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .quote-fr {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .quote-source {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .quote-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .quote-dots {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quote-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 0;
+      padding: 0;
+      background: color-mix(in srgb, var(--primary) 25%, transparent);
+      cursor: pointer;
+    }
+
+    .quote-dot.active {
+      background: var(--primary);
+      transform: scale(1.25);
+    }
+
+    .quote-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .quote-nav button {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    .fade {
+      animation: fadeUp 0.32s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 24px 16px 40px; }
+
+      header,
+      .intro {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .controls { justify-content: flex-start; }
+
+      .timeline::before { left: 29px; }
+
+      .item {
+        grid-template-columns: 58px 1fr;
+        gap: 16px;
+      }
+
+      .date {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: left;
+        padding-top: 0;
+      }
+
+      .dot-wrap {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .connector { display: none; }
+
+      .card {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 20px;
+      }
+
+      .card-top { flex-direction: column; }
+
+      .title { font-size: 21px; }
+
+      .quote-actions {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo">KLN</div>
+        <div>
+          <h1 data-i18n="pageTitle">KLN Canada Timeline</h1>
+          <p class="subtitle" data-i18n="pageSubtitle">Key milestones in our Canadian journey.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="langEn">EN</button>
+        <button id="langFr">FR</button>
+        <button id="themeBtn">Dark</button>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <strong data-i18n="introTitle">Company Milestones</strong>
+        <p data-i18n="introText">
+          A simplified visual history of KLN Canada, from TLP’s founding to the KLN legal name transition.
+        </p>
+      </div>
+      <span class="range">1998 – 2025</span>
+    </section>
+
+    <main class="timeline" id="timeline"></main>
+
+    <section class="quote-box" aria-label="KLN quotes">
+      <div class="quote-symbol">“</div>
+      <p class="quote-text fade" id="quoteText"></p>
+      <p class="quote-fr fade" id="quoteTranslation"></p>
+      <div class="quote-source" id="quoteSource"></div>
+
+      <div class="quote-actions">
+        <div class="quote-dots" id="quoteDots"></div>
+        <div class="quote-nav">
+          <button id="quotePrev" aria-label="Previous quote">‹</button>
+          <button id="quoteNext" aria-label="Next quote">›</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        pageTitle: "KLN Canada Timeline",
+        pageSubtitle: "Key milestones in our Canadian journey.",
+        themeDark: "Dark",
+        themeLight: "Light",
+        introTitle: "Company Milestones",
+        introText: "A simplified visual history of KLN Canada, from TLP’s founding to the KLN legal name transition.",
+        milestone: "Milestone",
+        date: "Date",
+        category: "Category"
+      },
+      fr: {
+        pageTitle: "Chronologie de KLN Canada",
+        pageSubtitle: "Les grandes étapes de notre parcours au Canada.",
+        themeDark: "Sombre",
+        themeLight: "Clair",
+        introTitle: "Étapes importantes de l’entreprise",
+        introText: "Une histoire visuelle simplifiée de KLN Canada, de la fondation de TLP au changement de dénomination légale vers KLN.",
+        milestone: "Étape clé",
+        date: "Date",
+        category: "Catégorie"
+      }
+    };
+
+    const categoryStyles = {
+      "Foundation": {
+        color: "#2563eb",
+        soft: "rgba(37, 99, 235, 0.12)",
+        icon: "building"
+      },
+      "Corporate": {
+        color: "#2563eb",
+        soft: "rgba(37, 99, 235, 0.12)",
+        icon: "building"
+      },
+      "Legal Name": {
+        color: "#22c55e",
+        soft: "rgba(34, 197, 94, 0.13)",
+        icon: "file"
+      },
+      "Subsidiary": {
+        color: "#8b5cf6",
+        soft: "rgba(139, 92, 246, 0.13)",
+        icon: "network"
+      },
+      "Warehouse": {
+        color: "#14b8a6",
+        soft: "rgba(20, 184, 166, 0.13)",
+        icon: "warehouse"
+      },
+      "Ownership": {
+        color: "#f97316",
+        soft: "rgba(249, 115, 22, 0.13)",
+        icon: "handshake"
+      }
+    };
+
+    const icons = {
+      building: `
+        <svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M16 8h2a2 2 0 0 1 2 2v11"/><path d="M8 7h4M8 11h4M8 15h4M8 21v-3h4v3"/></svg>
+      `,
+      file: `
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 18h4"/></svg>
+      `,
+      network: `
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M10.5 7.6 6.5 16.4M13.5 7.6l4 8.8M8 19h8"/></svg>
+      `,
+      warehouse: `
+        <svg viewBox="0 0 24 24"><path d="M3 21V9l9-5 9 5v12"/><path d="M7 21v-8h10v8"/><path d="M7 13h10M7 17h10"/></svg>
+      `,
+      handshake: `
+        <svg viewBox="0 0 24 24"><path d="m11 17 2 2a3 3 0 0 0 4.2 0l3.3-3.3a3 3 0 0 0 0-4.2L17 8"/><path d="m13 7-4.5 4.5a2.1 2.1 0 0 0 3 3L14 12"/><path d="M3 12l5-5 4 4M21 12l-5-5-4 4"/></svg>
+      `
+    };
+
+    const events = [
+      {
+        date: "1998-07-22",
+        category: "Foundation",
+        title_en: "TLP Companies Founded",
+        title_fr: "Fondation des sociétés TLP",
+        desc_en: "Total Logistics Partner (TLP) Ocean Consolidators Inc. was founded by Peter Sancho and Lois Krupka, and Total Logistics Partner (TLP) Air Express Inc. was founded by Lois Krupka.",
+        desc_fr: "Total Logistics Partner (TLP) Ocean Consolidators Inc. a été fondée par Peter Sancho et Lois Krupka, et Total Logistics Partner (TLP) Air Express Inc. a été fondée par Lois Krupka."
+      },
+      {
+        date: "2015-01-01",
+        category: "Corporate",
+        title_en: "TLP Amalgamation and Kerry Investment",
+        title_fr: "Fusion de TLP et investissement de Kerry",
+        desc_en: "TLP Ocean Consolidators Inc. and TLP Air Express Inc. were amalgamated. Kerry Logistics Network (HK: 0636) took the majority shares of the new company, operating as Total Logistics Partner (TLP) Ocean Consolidators Inc. Peter Sancho became the first operation country head of Kerry Canada.",
+        desc_fr: "TLP Ocean Consolidators Inc. et TLP Air Express Inc. ont été fusionnées. Kerry Logistics Network (HK: 0636) a acquis la majorité des actions de la nouvelle société, exploitée sous le nom Total Logistics Partner (TLP) Ocean Consolidators Inc. Peter Sancho est devenu le premier responsable opérationnel national de Kerry Canada."
+      },
+      {
+        date: "2016-01-01",
+        category: "Legal Name",
+        title_en: "Legal Name Changed to Kerry Logistics (Canada) Inc.",
+        title_fr: "Changement de dénomination légale vers Kerry Logistics (Canada) Inc.",
+        desc_en: "Total Logistics Partner (TLP) Ocean Consolidators Inc. changed its legal name to Kerry Logistics (Canada) Inc.",
+        desc_fr: "Total Logistics Partner (TLP) Ocean Consolidators Inc. a changé sa dénomination légale pour Kerry Logistics (Canada) Inc."
+      },
+      {
+        date: "2017-03-01",
+        category: "Subsidiary",
+        title_en: "Kerry Brokerage (Canada) Inc. Founded",
+        title_fr: "Fondation de Kerry Brokerage (Canada) Inc.",
+        desc_en: "Kerry Brokerage (Canada) Inc. was founded as a 100% subsidiary of KLC. The company was in full operation after two months.",
+        desc_fr: "Kerry Brokerage (Canada) Inc. a été fondée comme filiale détenue à 100 % par KLC. La société était pleinement opérationnelle deux mois plus tard."
+      },
+      {
+        date: "2019-02-11",
+        category: "Subsidiary",
+        title_en: "Kerry Logistics Integrated Solutions Inc. Founded",
+        title_fr: "Fondation de Kerry Logistics Integrated Solutions Inc.",
+        desc_en: "Kerry Logistics Integrated Solutions Inc. was founded as a 100% subsidiary of KLC.",
+        desc_fr: "Kerry Logistics Integrated Solutions Inc. a été fondée comme filiale détenue à 100 % par KLC."
+      },
+      {
+        date: "2019-04-01",
+        category: "Warehouse",
+        title_en: "Lachine Warehouse in Full Operation",
+        title_fr: "Entrepôt de Lachine pleinement opérationnel",
+        desc_en: "The Lachine warehouse, with 67,200 sq. ft. of space, was in full operation under KLIS.",
+        desc_fr: "L’entrepôt de Lachine, d’une superficie de 67 200 pi², était pleinement opérationnel sous KLIS."
+      },
+      {
+        date: "2021-09-27",
+        category: "Ownership",
+        title_en: "S.F. Holding Took Majority Shares of Kerry Logistics Network",
+        title_fr: "S.F. Holding devient actionnaire majoritaire de Kerry Logistics Network",
+        desc_en: "S.F. Holding Co., Ltd took over the majority shares of Kerry Logistics Network.",
+        desc_fr: "S.F. Holding Co., Ltd a acquis la majorité des actions de Kerry Logistics Network."
+      },
+      {
+        date: "2022-03-15",
+        category: "Subsidiary",
+        title_en: "KEX Express (Canada) Limited Founded",
+        title_fr: "Fondation de KEX Express (Canada) Limited",
+        desc_en: "KEX Express (Canada) Limited was founded as a 100% subsidiary of KLC. The company entered full operation in April 2024.",
+        desc_fr: "KEX Express (Canada) Limited a été fondée comme filiale détenue à 100 % par KLC. La société est entrée en pleine opération en avril 2024."
+      },
+      {
+        date: "2024-11-01",
+        category: "Warehouse",
+        title_en: "Brampton Warehouse in Full Operation",
+        title_fr: "Entrepôt de Brampton pleinement opérationnel",
+        desc_en: "The Brampton warehouse, with 37,500 sq. ft. of space, was in full operation under KEX.",
+        desc_fr: "L’entrepôt de Brampton, d’une superficie de 37 500 pi², était pleinement opérationnel sous KEX."
+      },
+      {
+        date: "2025-04-01",
+        category: "Legal Name",
+        title_en: "All Kerry Canada Entities Renamed to KLN",
+        title_fr: "Toutes les entités Kerry Canada renommées KLN",
+        desc_en: "All Kerry Canada entities changed their legal names to KLN.",
+        desc_fr: "Toutes les entités Kerry Canada ont changé leur dénomination légale pour KLN."
+      }
+    ];
+
+    const quotes = [
+      {
+        en: "To inspire a world without boundaries by leading customer-centric, global supply chain solutions.",
+        fr: "Inspirer un monde sans frontières en dirigeant des solutions de chaîne d’approvisionnement mondiales centrées sur le client.",
+        source: "KLN Vision"
+      },
+      {
+        en: "Rooted in Asia, we deliver customer-centric, end-to-end supply chain solutions that connect markets and power global trade.",
+        fr: "Ancrés en Asie, nous offrons des solutions de chaîne d’approvisionnement complètes et centrées sur le client qui relient les marchés et soutiennent le commerce mondial.",
+        source: "KLN Mission"
+      },
+      {
+        en: "When you partner with KLN, you partner with a powerful network.",
+        fr: "En vous associant à KLN, vous vous associez à un réseau puissant.",
+        source: "KLN Philosophy"
+      },
+      {
+        en: "A commitment to success.",
+        fr: "Un engagement envers la réussite.",
+        source: "KLN Philosophy"
+      },
+      {
+        en: "We are committed to creating real value for our stakeholders through innovative solutions, sustainable results and long-term growth.",
+        fr: "Nous nous engageons à créer une réelle valeur pour nos parties prenantes grâce à des solutions innovantes, des résultats durables et une croissance à long terme.",
+        source: "KLN Philosophy"
+      },
+      {
+        en: "KLN is an Asia-rooted, global 3PL delivering customer-centric, end-to-end supply chain solutions that connect markets and power global trade.",
+        fr: "KLN est un fournisseur mondial de logistique tierce partie enraciné en Asie, offrant des solutions complètes centrées sur le client qui relient les marchés et soutiennent le commerce mondial.",
+        source: "KLN About Us"
+      }
+    ];
+
+    let currentLang = (navigator.language || "en").toLowerCase().startsWith("fr") ? "fr" : "en";
+    let currentTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    let quoteIndex = 0;
+    let quoteTimer;
+
+    const timeline = document.getElementById("timeline");
+    const langEn = document.getElementById("langEn");
+    const langFr = document.getElementById("langFr");
+    const themeBtn = document.getElementById("themeBtn");
+    const quoteText = document.getElementById("quoteText");
+    const quoteTranslation = document.getElementById("quoteTranslation");
+    const quoteSource = document.getElementById("quoteSource");
+    const quoteDots = document.getElementById("quoteDots");
+
+    function formatDate(dateString, lang) {
+      const date = new Date(dateString + "T00:00:00");
+      return {
+        year: date.getFullYear(),
+        month: date.toLocaleDateString(lang === "fr" ? "fr-CA" : "en-CA", { month: "short", day: "2-digit" }),
+        full: date.toLocaleDateString(lang === "fr" ? "fr-CA" : "en-CA", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        })
+      };
+    }
+
+    function renderTimeline() {
+      timeline.innerHTML = "";
+
+      events
+        .slice()
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach((event) => {
+          const d = formatDate(event.date, currentLang);
+          const style = categoryStyles[event.category] || categoryStyles.Foundation;
+
+          const item = document.createElement("article");
+          item.className = "item";
+          item.style.setProperty("--cat", style.color);
+          item.style.setProperty("--cat-soft", style.soft);
+
+          item.innerHTML = `
+            <div class="date">
+              <div class="year">${d.year}</div>
+              <div class="month">${d.month}</div>
+            </div>
+
+            <div class="dot-wrap">
+              <div class="dot">${icons[style.icon]}</div>
+              <div class="connector"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h2 class="title">${event["title_" + currentLang]}</h2>
+                <span class="tag">${event.category}</span>
+              </div>
+
+              <p class="desc">${event["desc_" + currentLang]}</p>
+
+              <div class="meta">
+                <span class="pill">${translations[currentLang].date}: ${d.full}</span>
+                <span class="pill">${translations[currentLang].category}: ${event.category}</span>
+              </div>
+            </div>
+          `;
+
+          timeline.appendChild(item);
+        });
+    }
+
+    function renderQuote() {
+      const q = quotes[quoteIndex];
+
+      quoteText.classList.remove("fade");
+      quoteTranslation.classList.remove("fade");
+      void quoteText.offsetWidth;
+
+      quoteText.textContent = currentLang === "fr" ? q.fr : q.en;
+      quoteTranslation.textContent = currentLang === "fr" ? q.en : q.fr;
+      quoteSource.textContent = "— " + q.source;
+
+      quoteText.classList.add("fade");
+      quoteTranslation.classList.add("fade");
+
+      quoteDots.innerHTML = "";
+      quotes.forEach((_, i) => {
+        const dot = document.createElement("button");
+        dot.className = "quote-dot" + (i === quoteIndex ? " active" : "");
+        dot.setAttribute("aria-label", "Quote " + (i + 1));
+        dot.addEventListener("click", () => {
+          quoteIndex = i;
+          renderQuote();
+          restartQuoteTimer();
+        });
+        quoteDots.appendChild(dot);
+      });
+    }
+
+    function nextQuote() {
+      quoteIndex = (quoteIndex + 1) % quotes.length;
+      renderQuote();
+    }
+
+    function prevQuote() {
+      quoteIndex = (quoteIndex - 1 + quotes.length) % quotes.length;
+      renderQuote();
+    }
+
+    function restartQuoteTimer() {
+      clearInterval(quoteTimer);
+      quoteTimer = setInterval(nextQuote, 5200);
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        el.textContent = translations[currentLang][key];
+      });
+
+      langEn.classList.toggle("active", currentLang === "en");
+      langFr.classList.toggle("active", currentLang === "fr");
+
+      applyTheme();
+      renderTimeline();
+      renderQuote();
+    }
+
+    function applyTheme() {
+      document.documentElement.setAttribute("data-theme", currentTheme);
+      themeBtn.textContent =
+        currentTheme === "dark"
+          ? translations[currentLang].themeLight
+          : translations[currentLang].themeDark;
+    }
+
+    langEn.addEventListener("click", () => {
+      currentLang = "en";
+      applyLanguage();
+    });
+
+    langFr.addEventListener("click", () => {
+      currentLang = "fr";
+      applyLanguage();
+    });
+
+    themeBtn.addEventListener("click", () => {
+      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      applyTheme();
+    });
+
+    document.getElementById("quoteNext").addEventListener("click", () => {
+      nextQuote();
+      restartQuoteTimer();
+    });
+
+    document.getElementById("quotePrev").addEventListener("click", () => {
+      prevQuote();
+      restartQuoteTimer();
+    });
+
+    applyTheme();
+    applyLanguage();
+    restartQuoteTimer();
+  </script>
+</body>
+</html>
