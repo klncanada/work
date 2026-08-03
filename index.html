@@ -118,6 +118,14 @@
       box-shadow: var(--shadow);
     }
 
+    .brand-logo {
+      width: 100px;
+      height: 46px;
+      padding: 3px 0;
+      display: block;
+      object-fit: contain;
+    }
+
     .brand-text h1 {
       margin: 0;
       font-size: 1.1rem;
@@ -440,6 +448,10 @@
         align-items: flex-start;
       }
 
+      .topbar-inner {
+        flex-wrap: wrap;
+      }
+
       .hero-card {
         padding: 20px;
       }
@@ -460,7 +472,7 @@
   <header class="topbar">
     <div class="container topbar-inner">
       <div class="brand">
-        <div class="brand-badge">KLN</div>
+        <img class="brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
         <div class="brand-text">
           <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
           <p data-i18n="brandSubtitle">A unified entry point for everyday employee services</p>
