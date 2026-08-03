@@ -269,14 +269,12 @@
     }
 
     .cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 20px;
     }
 
     .card {
-      flex: 0 1 calc((100% - 40px) / 3);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -284,7 +282,7 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      min-height: 240px;
+      min-height: 190px;
     }
 
     .card-icon {
@@ -304,23 +302,11 @@
       font-size: 1.15rem;
     }
 
-    .card p {
-      margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.65;
-      flex-grow: 1;
-    }
-
-    .card-meta {
-      font-size: 0.92rem;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
     .card-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-top: auto;
     }
 
     .btn {
@@ -377,16 +363,18 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .card {
-        flex-basis: calc((100% - 20px) / 2);
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 900px) {
-      .visitor-row,
-      .hero-card,
-      .timezone-grid {
+      .hero-card {
         grid-template-columns: 1fr;
+      }
+
+      .timezone-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -405,8 +393,10 @@
         width: 100%;
       }
 
-      .card {
-        flex-basis: 100%;
+      .visitor-row,
+      .timezone-grid,
+      .cards {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -504,8 +494,6 @@
           <article class="card">
             <div class="card-icon">📍</div>
             <h4 data-i18n="officeTitle">Office Locations</h4>
-            <p data-i18n="officeDesc">Find KLN Canada office locations, addresses, and map access for navigation and workplace reference.</p>
-            <div class="card-meta" data-i18n="officeMeta">Page: offices / maps / directions</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://klncanada.github.io/work/KLNCanadaOffices" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -514,8 +502,6 @@
           <article class="card">
             <div class="card-icon">🚗</div>
             <h4 data-i18n="parkingTitle">Ladies Parking Schedule</h4>
-            <p data-i18n="parkingDesc">Review time slots and parking arrangements for employees.</p>
-            <div class="card-meta" data-i18n="parkingMeta">Page: schedule / time slots / employee use</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://klncanada.github.io/work/LadiesParkingSchedule" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -524,8 +510,6 @@
           <article class="card">
             <div class="card-icon">🗓️</div>
             <h4 data-i18n="holidayTitle">Holiday Calendar</h4>
-            <p data-i18n="holidayDesc">Review statutory holiday information with regional views for planning attendance and time off.</p>
-            <div class="card-meta" data-i18n="holidayMeta">Page: holidays / region switch / yearly planning</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://klncanada.github.io/work/holiday" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -534,8 +518,6 @@
           <article class="card">
             <div class="card-icon">📇</div>
             <h4 data-i18n="directoryTitle">Employee Directory</h4>
-            <p data-i18n="directoryDesc">Open the directory homepage to access employee contact and directory information.</p>
-            <div class="card-meta" data-i18n="directoryMeta">Page: directory / contacts / lookup</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://tools.klncanada.com/Directory/" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -544,8 +526,6 @@
           <article class="card">
             <div class="card-icon">✉️</div>
             <h4 data-i18n="groupEmailTitle">HR Group Email</h4>
-            <p data-i18n="groupEmailDesc">Open the HR group email page for employee group email usage guidance.</p>
-            <div class="card-meta" data-i18n="groupEmailMeta">Page: HR / group email / instructions</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://tools.klncanada.com/HRGroupEmail" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -554,8 +534,6 @@
           <article class="card">
             <div class="card-icon">💵</div>
             <h4 data-i18n="paydayTitle">Payday Countdown</h4>
-            <p data-i18n="paydayDesc">Open the payroll countdown page to view upcoming payday timing and pay period information.</p>
-            <div class="card-meta" data-i18n="paydayMeta">Page: payroll / countdown / pay period</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://tools.klncanada.com/Payday" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -564,8 +542,6 @@
           <article class="card">
             <div class="card-icon">🏁</div>
             <h4 data-i18n="milestoneTitle">Company Milestones</h4>
-            <p data-i18n="milestoneDesc">Open the milestone page to review key company events and important timeline highlights.</p>
-            <div class="card-meta" data-i18n="milestoneMeta">Page: milestones / timeline / company history</div>
             <div class="card-actions">
               <a class="btn btn-primary" href="https://tools.klncanada.com/milestone" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
             </div>
@@ -603,26 +579,12 @@
         sectionTitle: 'Employee shortcuts',
         sectionDesc: 'Open the tools below.',
         officeTitle: 'Office Locations',
-        officeDesc: 'Find KLN Canada office locations, addresses, and map access for navigation and workplace reference.',
-        officeMeta: 'Page: offices / maps / directions',
         parkingTitle: 'Ladies Parking Schedule',
-        parkingDesc: 'Review time slots and parking arrangements for employees.',
-        parkingMeta: 'Page: schedule / time slots / employee use',
         holidayTitle: 'Holiday Calendar',
-        holidayDesc: 'Review statutory holiday information with regional views for planning attendance and time off.',
-        holidayMeta: 'Page: holidays / region switch / yearly planning',
         directoryTitle: 'Employee Directory',
-        directoryDesc: 'Open the directory homepage to access employee contact and directory information.',
-        directoryMeta: 'Page: directory / contacts / lookup',
         groupEmailTitle: 'HR Group Email',
-        groupEmailDesc: 'Open the HR group email page for employee group email usage guidance.',
-        groupEmailMeta: 'Page: HR / group email / instructions',
         paydayTitle: 'Payday Countdown',
-        paydayDesc: 'Open the payroll countdown page to view upcoming payday timing and pay period information.',
-        paydayMeta: 'Page: payroll / countdown / pay period',
         milestoneTitle: 'Company Milestones',
-        milestoneDesc: 'Open the milestone page to review key company events and important timeline highlights.',
-        milestoneMeta: 'Page: milestones / timeline / company history',
         openPage: 'Open page',
         footerLeft: 'KLN Canada Employee Portal',
         footerRight: 'Powered by OpenAI · GitHub · Cloudflare',
@@ -646,26 +608,12 @@
         sectionTitle: 'Accès employés',
         sectionDesc: 'Ouvrez les outils ci-dessous.',
         officeTitle: 'Emplacements des bureaux',
-        officeDesc: 'Consultez les emplacements, adresses et cartes des bureaux de KLN Canada pour faciliter les déplacements et les visites.',
-        officeMeta: 'Page : bureaux / cartes / itinéraires',
         parkingTitle: 'Horaire de stationnement',
-        parkingDesc: 'Consultez les plages horaires et l’organisation du stationnement pour les employés.',
-        parkingMeta: 'Page : horaire / plages horaires / usage employés',
         holidayTitle: 'Calendrier des congés',
-        holidayDesc: 'Consultez les jours fériés avec affichage par région pour mieux planifier la présence et les congés.',
-        holidayMeta: 'Page : congés / sélection de région / planification annuelle',
         directoryTitle: 'Répertoire des employés',
-        directoryDesc: 'Ouvrez la page d’accueil du répertoire pour accéder aux coordonnées et informations des employés.',
-        directoryMeta: 'Page : répertoire / contacts / recherche',
         groupEmailTitle: 'Courriel de groupe RH',
-        groupEmailDesc: 'Ouvrez la page de courriel de groupe RH pour les consignes d’utilisation par les employés.',
-        groupEmailMeta: 'Page : RH / courriel de groupe / consignes',
         paydayTitle: 'Compte à rebours de la paie',
-        paydayDesc: 'Ouvrez la page de compte à rebours de la paie pour consulter la prochaine date de paie et les informations de période.',
-        paydayMeta: 'Page : paie / compte à rebours / période de paie',
         milestoneTitle: 'Jalons de l’entreprise',
-        milestoneDesc: 'Ouvrez la page des jalons pour consulter les événements clés et les moments importants de l’entreprise.',
-        milestoneMeta: 'Page : jalons / chronologie / histoire de l’entreprise',
         openPage: 'Ouvrir la page',
         footerLeft: 'Portail Employés KLN Canada',
         footerRight: 'Propulsé par OpenAI · GitHub · Cloudflare',
