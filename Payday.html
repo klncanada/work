@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payroll Reminder</title>
+  <script>
+    (() => {
+      const hour = new Date().getHours();
+      const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
+      try {
+        const savedMode = localStorage.getItem('kln-portal-theme-mode') || localStorage.getItem('payrollTheme');
+        const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
+        document.documentElement.dataset.theme = mode === 'auto' ? automaticTheme : mode;
+      } catch (error) {
+        document.documentElement.dataset.theme = automaticTheme;
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg1: #f5f7fb;
@@ -17,9 +30,14 @@
       --orange: #f97316;
       --border: #e5e7eb;
       --shadow: rgba(15, 23, 42, 0.08);
+      --topbar-bg: rgba(255, 255, 255, 0.82);
+      --topbar-border: rgba(219, 227, 240, 0.9);
+      --switcher-bg: #f3f6fc;
+      --active-control-bg: #ffffff;
     }
 
-    body.dark {
+    html[data-theme="dark"] {
+      color-scheme: dark;
       --bg1: #0f172a;
       --bg2: #111827;
       --card: #182235;
@@ -29,6 +47,10 @@
       --blue-soft: #1e3a5f;
       --border: #2b3648;
       --shadow: rgba(0, 0, 0, 0.35);
+      --topbar-bg: rgba(7, 17, 31, 0.86);
+      --topbar-border: rgba(41, 65, 95, 0.9);
+      --switcher-bg: #101f33;
+      --active-control-bg: #1b304a;
     }
 
     * { box-sizing: border-box; }
@@ -39,11 +61,21 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: linear-gradient(135deg, var(--bg1), var(--bg2));
       color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 22px;
+      padding: 0 22px;
+      transition: background .25s ease, color .25s ease;
     }
+
+    .portal-topbar { position: sticky; top: 0; z-index: 30; margin: 0 -22px; backdrop-filter: blur(10px); background: var(--topbar-bg); border-bottom: 1px solid var(--topbar-border); }
+    .portal-topbar-inner { width: min(calc(100% - 32px), 1180px); min-height: 72px; margin: 0 auto; padding: 12px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .portal-brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
+    .portal-brand-logo { width: 100px; height: 46px; padding: 3px 0; object-fit: contain; flex: 0 0 auto; }
+    .portal-brand h1 { margin: 0; font-size: 1.1rem; line-height: 1.2; }
+    .portal-brand p { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
+    .portal-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .portal-lang-switcher, .portal-theme-switcher { display: inline-flex; gap: 6px; background: var(--switcher-bg); padding: 6px; border: 1px solid var(--border); border-radius: 999px; }
+    .lang-btn, .theme-btn { border: 0; background: transparent; color: var(--muted); padding: 8px 14px; border-radius: 999px; font-size: .92rem; font-weight: 600; cursor: pointer; }
+    .lang-btn.active, .theme-btn.active { background: var(--active-control-bg); color: var(--blue); box-shadow: 0 2px 10px rgba(37,99,235,.12); }
+    .lang-btn:focus-visible, .theme-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
     .card {
       width: 100%;
@@ -53,29 +85,7 @@
       border-radius: 30px;
       padding: 28px;
       box-shadow: 0 24px 60px var(--shadow);
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .eyebrow {
-      color: var(--blue);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      margin: 26px auto;
     }
 
     button {
@@ -95,7 +105,7 @@
     }
 
     h1 {
-      margin: 0;
+      margin: 0 0 16px;
       font-size: 34px;
       line-height: 1.15;
     }
@@ -109,16 +119,24 @@
     .hero {
       background: var(--blue-soft);
       border-radius: 26px;
-      padding: 28px;
-      text-align: center;
+      padding: 22px 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 28px;
       margin-bottom: 18px;
     }
+
+    .hero-period, .hero-actions { min-width: 0; }
+    .hero-actions { text-align: right; }
+
+    .days-block { min-width: 175px; text-align: center; }
 
     .period {
       font-size: 20px;
       font-weight: 900;
       color: var(--blue);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .period-sub {
@@ -128,7 +146,7 @@
     }
 
     .days {
-      font-size: 76px;
+      font-size: 68px;
       font-weight: 900;
       color: var(--blue);
       line-height: 1;
@@ -141,13 +159,13 @@
     }
 
     .payday-date {
-      margin-top: 10px;
+      margin-top: 0;
       color: var(--muted);
       font-size: 15px;
     }
 
     .message {
-      margin-top: 18px;
+      margin-top: 12px;
       display: inline-block;
       background: rgba(255,255,255,.55);
       border: 1px solid var(--border);
@@ -157,7 +175,7 @@
       font-weight: 700;
     }
 
-    body.dark .message {
+    html[data-theme="dark"] .message {
       background: rgba(255,255,255,.06);
     }
 
@@ -175,7 +193,7 @@
       background: rgba(255,255,255,.35);
     }
 
-    body.dark .mini {
+    html[data-theme="dark"] .mini {
       background: rgba(255,255,255,.04);
     }
 
@@ -241,6 +259,10 @@
     }
 
     @media (max-width: 620px) {
+      body { padding: 0 16px; }
+      .portal-topbar { margin: 0 -16px; }
+      .portal-topbar-inner { align-items: flex-start; flex-wrap: wrap; }
+      .portal-controls { width: 100%; }
       .card {
         padding: 22px;
         border-radius: 24px;
@@ -248,6 +270,16 @@
 
       h1 { font-size: 27px; }
       .days { font-size: 58px; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 22px;
+        text-align: center;
+      }
+
+      .days-block { min-width: 0; }
+      .hero-actions { text-align: center; }
 
       .grid {
         grid-template-columns: 1fr;
@@ -261,31 +293,45 @@
 </head>
 <body>
 
-  <main class="card">
-    <div class="topbar">
-      <div class="eyebrow" data-i18n="eyebrow">Payroll Reminder</div>
-
-      <div class="controls">
-        <button id="langEn">EN</button>
-        <button id="langFr">FR</button>
-        <button id="themeAuto" data-i18n="auto">Auto</button>
-        <button id="themeLight" data-i18n="light">Light</button>
-        <button id="themeDark" data-i18n="dark">Dark</button>
+  <header class="portal-topbar">
+    <div class="portal-topbar-inner">
+      <a class="portal-brand" href="https://tools.klncanada.com/" data-i18n-aria-label="homeLinkLabel">
+        <img class="portal-brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
+        <div>
+          <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
+          <p data-i18n="brandSubtitle">Payday</p>
+        </div>
+      </a>
+      <div class="portal-controls">
+        <div class="portal-lang-switcher" role="group" aria-label="Language switcher" data-i18n-aria-label="languageSwitcherLabel">
+          <button id="langEn" class="lang-btn" type="button">EN</button>
+          <button id="langFr" class="lang-btn" type="button">FR</button>
+        </div>
+        <div class="portal-theme-switcher" role="group" aria-label="Display mode" data-i18n-aria-label="themeModeLabel">
+          <button id="themeAuto" class="theme-btn" type="button" data-i18n="auto">Auto</button>
+          <button id="themeLight" class="theme-btn" type="button" data-i18n="light">Light</button>
+          <button id="themeDark" class="theme-btn" type="button" data-i18n="dark">Dark</button>
+        </div>
       </div>
     </div>
+  </header>
 
-    <h1 data-i18n="title">Your next payday</h1>
-    <p class="subtitle" data-i18n="subtitle">
-      Payroll runs every two weeks. July 2, 2026 is Period 13.
-    </p>
+  <main class="card">
+    <h1 data-i18n="title">Next payday</h1>
 
     <section class="hero">
-      <div class="period" id="currentPeriod">Period --</div>
-      <div class="period-sub" id="periodSub">Pay Period -- of 26</div>
-      <div class="days" id="daysLeft">--</div>
-      <div class="days-label" id="daysLabel">days remaining</div>
-      <div class="payday-date" id="nextPayday">Next payday: --</div>
-      <div class="message" id="paydayMessage">Plan ahead.</div>
+      <div class="hero-period">
+        <div class="period" id="currentPeriod">Period --</div>
+        <div class="period-sub" id="periodSub">Pay Period -- of 26</div>
+      </div>
+      <div class="days-block">
+        <div class="days" id="daysLeft">--</div>
+        <div class="days-label" id="daysLabel">days remaining</div>
+      </div>
+      <div class="hero-actions">
+        <div class="payday-date" id="nextPayday">--</div>
+        <div class="message" id="paydayMessage">Plan ahead.</div>
+      </div>
     </section>
 
     <section class="grid">
@@ -296,17 +342,7 @@
 
       <div class="mini">
         <div class="mini-title" data-i18n="cycle">Payroll Cycle</div>
-        <div class="mini-value" data-i18n="cycleValue">Every 2 weeks</div>
-      </div>
-
-      <div class="mini">
-        <div class="mini-title" data-i18n="tipTitle">Employee Tip</div>
-        <div class="mini-value" data-i18n="tipValue">Review your time before payday.</div>
-      </div>
-
-      <div class="mini">
-        <div class="mini-title" data-i18n="localTime">Local Time</div>
-        <div class="mini-value" id="localTime">--</div>
+        <div class="mini-value" id="cycleRange">--</div>
       </div>
     </section>
 
@@ -326,18 +362,17 @@
 
     const i18n = {
       en: {
-        eyebrow: "Payroll Reminder",
-        title: "Your next payday",
-        subtitle: "Payroll runs every two weeks. July 2, 2026 is Period 13.",
+        brandTitle: "KLN Employee Portal",
+        brandSubtitle: "Payday",
+        homeLinkLabel: "Go to the KLN Employee Portal homepage",
+        languageSwitcherLabel: "Language switcher",
+        themeModeLabel: "Display mode",
+        title: "Next payday",
         auto: "Auto",
         light: "Light",
         dark: "Dark",
         today: "Today",
         cycle: "Payroll Cycle",
-        cycleValue: "Every 2 weeks",
-        tipTitle: "Employee Tip",
-        tipValue: "Review your time before payday.",
-        localTime: "Local Time",
         upcoming: "Upcoming Paydays",
         note: "Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.",
         period: "Period",
@@ -346,8 +381,6 @@
         daysRemaining: "days remaining",
         dayRemaining: "day remaining",
         todayIsPayday: "Today is payday",
-        nextPayday: "Next payday",
-        payday: "Payday",
         todayTag: "Today",
         days: "days",
         messageToday: "Payday is today.",
@@ -356,18 +389,17 @@
         fromToday: "from today"
       },
       fr: {
-        eyebrow: "Rappel de paie",
-        title: "Votre prochaine paie",
-        subtitle: "La paie est versée toutes les deux semaines. Le 2 juillet 2026 correspond à la période 13.",
+        brandTitle: "Portail Employés KLN",
+        brandSubtitle: "Paie",
+        homeLinkLabel: "Aller à la page d’accueil du Portail Employés KLN",
+        languageSwitcherLabel: "Sélecteur de langue",
+        themeModeLabel: "Mode d’affichage",
+        title: "Prochaine paie",
         auto: "Auto",
         light: "Clair",
         dark: "Sombre",
         today: "Aujourd’hui",
         cycle: "Cycle de paie",
-        cycleValue: "Toutes les 2 semaines",
-        tipTitle: "Conseil employé",
-        tipValue: "Vérifiez vos heures avant la paie.",
-        localTime: "Heure locale",
         upcoming: "Prochaines paies",
         note: "Les dates et les numéros de période sont calculés automatiquement dans votre navigateur. Veuillez contacter la paie ou les RH en cas d’écart.",
         period: "Période",
@@ -376,8 +408,6 @@
         daysRemaining: "jours restants",
         dayRemaining: "jour restant",
         todayIsPayday: "La paie est aujourd’hui",
-        nextPayday: "Prochaine paie",
-        payday: "Paie",
         todayTag: "Aujourd’hui",
         days: "jours",
         messageToday: "La paie est aujourd’hui.",
@@ -387,10 +417,12 @@
       }
     };
 
-    let lang = localStorage.getItem("payrollLang") ||
+    const languageStorageKey = "kln-portal-lang";
+    const themeStorageKey = "kln-portal-theme-mode";
+    let lang = localStorage.getItem(languageStorageKey) || localStorage.getItem("payrollLang") ||
       (navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en");
 
-    let theme = localStorage.getItem("payrollTheme") || "auto";
+    let theme = localStorage.getItem(themeStorageKey) || localStorage.getItem("payrollTheme") || "auto";
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -437,6 +469,22 @@
       return payday;
     }
 
+    function getPayPeriodRange(payday) {
+      const end = addDays(payday, -5);
+      const start = addDays(end, -13);
+      return { start, end };
+    }
+
+    function formatPayPeriodRange(payday) {
+      const { start, end } = getPayPeriodRange(payday);
+      const locale = lang === "fr" ? "fr-CA" : "en-CA";
+      const monthDay = { month: "short", day: "numeric" };
+      const monthDayYear = { month: "short", day: "numeric", year: "numeric" };
+      const startText = start.toLocaleDateString(locale, start.getFullYear() === end.getFullYear() ? monthDay : monthDayYear);
+      const endText = end.toLocaleDateString(locale, monthDayYear);
+      return `${startText} – ${endText}`;
+    }
+
     function applyLanguage() {
       const t = i18n[lang];
 
@@ -446,22 +494,33 @@
         if (t[key]) el.textContent = t[key];
       });
 
+      document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
+        const key = el.getAttribute("data-i18n-aria-label");
+        if (t[key]) el.setAttribute("aria-label", t[key]);
+      });
+
       document.getElementById("langEn").classList.toggle("active", lang === "en");
       document.getElementById("langFr").classList.toggle("active", lang === "fr");
+      document.getElementById("langEn").setAttribute("aria-pressed", String(lang === "en"));
+      document.getElementById("langFr").setAttribute("aria-pressed", String(lang === "fr"));
 
       render();
     }
 
     function applyTheme() {
       const hour = new Date().getHours();
-      const autoDark = hour >= 18 || hour < 7;
+      const autoDark = hour >= 19 || hour < 7;
       const dark = theme === "dark" || (theme === "auto" && autoDark);
 
-      document.body.classList.toggle("dark", dark);
+      document.documentElement.dataset.themeMode = theme;
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
 
       document.getElementById("themeAuto").classList.toggle("active", theme === "auto");
       document.getElementById("themeLight").classList.toggle("active", theme === "light");
       document.getElementById("themeDark").classList.toggle("active", theme === "dark");
+      document.getElementById("themeAuto").setAttribute("aria-pressed", String(theme === "auto"));
+      document.getElementById("themeLight").setAttribute("aria-pressed", String(theme === "light"));
+      document.getElementById("themeDark").setAttribute("aria-pressed", String(theme === "dark"));
     }
 
     function render() {
@@ -484,10 +543,7 @@
         daysLeft === 1 ? t.dayRemaining :
         t.daysRemaining;
 
-      document.getElementById("nextPayday").textContent =
-        daysLeft === 0
-          ? `${t.payday}: ${formatDate(nextPayday)}`
-          : `${t.nextPayday}: ${formatDate(nextPayday)}`;
+      document.getElementById("nextPayday").textContent = formatDate(nextPayday);
 
       document.getElementById("paydayMessage").textContent =
         daysLeft === 0 ? t.messageToday :
@@ -495,7 +551,7 @@
         t.messageNormal;
 
       document.getElementById("todayDate").textContent = formatDate(today);
-      document.getElementById("localTime").textContent = formatTime(new Date());
+      document.getElementById("cycleRange").textContent = formatPayPeriodRange(nextPayday);
 
       const list = document.getElementById("paydayList");
       list.innerHTML = "";
@@ -524,30 +580,35 @@
 
     document.getElementById("langEn").onclick = () => {
       lang = "en";
+      localStorage.setItem(languageStorageKey, lang);
       localStorage.setItem("payrollLang", lang);
       applyLanguage();
     };
 
     document.getElementById("langFr").onclick = () => {
       lang = "fr";
+      localStorage.setItem(languageStorageKey, lang);
       localStorage.setItem("payrollLang", lang);
       applyLanguage();
     };
 
     document.getElementById("themeAuto").onclick = () => {
       theme = "auto";
+      localStorage.setItem(themeStorageKey, theme);
       localStorage.setItem("payrollTheme", theme);
       applyTheme();
     };
 
     document.getElementById("themeLight").onclick = () => {
       theme = "light";
+      localStorage.setItem(themeStorageKey, theme);
       localStorage.setItem("payrollTheme", theme);
       applyTheme();
     };
 
     document.getElementById("themeDark").onclick = () => {
       theme = "dark";
+      localStorage.setItem(themeStorageKey, theme);
       localStorage.setItem("payrollTheme", theme);
       applyTheme();
     };
@@ -556,9 +617,8 @@
     applyLanguage();
 
     setInterval(() => {
-      document.getElementById("localTime").textContent = formatTime(new Date());
       if (theme === "auto") applyTheme();
-    }, 30000);
+    }, 60000);
   </script>
 
 </body>
