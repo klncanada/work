@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>2026 KLN Calendar</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        (() => {
+            const hour = new Date().getHours();
+            const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
+
+            try {
+                const savedMode = localStorage.getItem('kln-portal-theme-mode');
+                const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
+                document.documentElement.dataset.theme = mode === 'auto' ? automaticTheme : mode;
+            } catch (error) {
+                document.documentElement.dataset.theme = automaticTheme;
+            }
+        })();
+    </script>
     <style>
         :root {
             --apple-blue: #007aff;
@@ -16,16 +30,80 @@
             --color-on: #34c759;
             --color-bc: #007aff;
             --color-qc: #af52de;
+            --portal-bg: #f5f7fb;
+            --portal-text: #1f2937;
+            --portal-muted: #6b7280;
+            --portal-line: #e5e7eb;
+            --portal-panel: #ffffff;
+            --portal-switcher: #f3f6fc;
+            --portal-active-control: #ffffff;
+            --portal-topbar: rgba(255, 255, 255, 0.82);
+            --portal-topbar-border: rgba(219, 227, 240, 0.9);
+            --portal-brand: #2563eb;
         }
 
-        body {
+        html[data-theme="dark"] {
+            color-scheme: dark;
+            --portal-bg: #07111f;
+            --portal-text: #e5eefc;
+            --portal-muted: #9babc1;
+            --portal-line: #29415f;
+            --portal-panel: #0f1b2d;
+            --portal-switcher: #101f33;
+            --portal-active-control: #1b304a;
+            --portal-topbar: rgba(7, 17, 31, 0.86);
+            --portal-topbar-border: rgba(41, 65, 95, 0.9);
+            --portal-brand: #60a5fa;
+        }
+        body.bg-white {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: white;
-            color: black;
+            background-color: var(--portal-bg);
+            color: var(--portal-text);
             user-select: none;
             -webkit-tap-highlight-color: transparent;
             position: relative;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
+
+        .portal-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(10px);
+            background: var(--portal-topbar);
+            border-bottom: 1px solid var(--portal-topbar-border);
+        }
+
+        .portal-topbar-inner {
+            width: min(calc(100% - 32px), 1152px);
+            min-height: 72px;
+            margin: 0 auto;
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .portal-brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
+        .portal-brand-logo { width: 100px; height: 46px; padding: 3px 0; object-fit: contain; flex: 0 0 auto; }
+        .portal-brand h1 { margin: 0; font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+        .portal-brand p { margin: 4px 0 0; color: var(--portal-muted); font-size: 0.92rem; }
+        .portal-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .portal-lang-switcher, .portal-theme-switcher { display: inline-flex; gap: 6px; padding: 6px; background: var(--portal-switcher); border: 1px solid var(--portal-line); border-radius: 999px; }
+        .lang-btn, .theme-btn { border: 0; background: transparent; color: var(--portal-muted); padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 0.92rem; transition: 0.2s ease; }
+        .lang-btn.active, .theme-btn.active { background: var(--portal-active-control); color: var(--portal-brand); box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12); font-weight: 600; }
+        .lang-btn:focus-visible, .theme-btn:focus-visible { outline: 2px solid var(--portal-brand); outline-offset: 2px; }
+
+        .calendar-context { width: min(calc(100% - 32px), 1152px); min-height: 48px; margin: 0 auto; padding: 12px 0 0; display: flex; align-items: center; justify-content: center; position: relative; }
+        .calendar-context h2 { margin: 0; color: var(--portal-text); font-size: 1.25rem; font-weight: 700; }
+        #back-btn { position: absolute; left: 0; color: var(--portal-brand); font-weight: 500; cursor: pointer; display: flex; align-items: center; transition: opacity 0.2s ease; }
+
+        html[data-theme="dark"] .bg-white { background-color: var(--portal-panel) !important; }
+        html[data-theme="dark"] .bg-gray-50, html[data-theme="dark"] .bg-gray-50\/50, html[data-theme="dark"] .bg-gray-100 { background-color: #132137 !important; }
+        html[data-theme="dark"] .border-gray-100, html[data-theme="dark"] .border-gray-50 { border-color: var(--portal-line) !important; }
+        html[data-theme="dark"] .text-gray-900, html[data-theme="dark"] .text-gray-800, html[data-theme="dark"] .text-gray-700 { color: var(--portal-text) !important; }
+        html[data-theme="dark"] .text-gray-400, html[data-theme="dark"] .text-gray-300 { color: var(--portal-muted) !important; }
 
         .view-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-view { display: none; opacity: 0; transform: scale(0.96); }
@@ -116,12 +194,6 @@
         .side-thumb { cursor: pointer; opacity: 0.4; transition: opacity 0.2s; margin-top: 8rem; }
         .side-thumb:hover { opacity: 1; }
 
-        .lang-btn {
-            padding: 4px 6px; font-size: 11px; border-radius: 6px; border: 1px solid #eee;
-            cursor: pointer; background: white; font-weight: 600;
-        }
-        .lang-btn.active { background-color: var(--apple-blue); color: white; border-color: var(--apple-blue); }
-
         /* Region Selection Buttons */
         .region-btn {
             padding: 6px 16px;
@@ -198,6 +270,12 @@
             .side-thumb { display: none; }
             .day-cell { font-size: 0.95rem; }
         }
+
+        @media (max-width: 640px) {
+            .portal-topbar-inner { align-items: flex-start; flex-wrap: wrap; }
+            .portal-controls { width: 100%; }
+            .calendar-context { min-height: 42px; }
+        }
     </style>
 </head>
 <body class="bg-white min-h-screen">
@@ -225,26 +303,39 @@
         </div>
     </div>
 
-    <header class="sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-gray-100 shadow-sm">
-        <div class="header-content max-w-6xl mx-auto h-16 flex items-center justify-between px-4">
-            <div class="flex items-center gap-2">
-                <div id="back-btn" class="text-blue-500 font-medium cursor-pointer flex items-center invisible transition-opacity">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span id="back-text" class="text-lg">2026</span>
+    <header class="portal-topbar">
+        <div class="portal-topbar-inner">
+            <a class="portal-brand" href="https://tools.klncanada.com/" data-i18n-aria-label="homeLinkLabel">
+                <img class="portal-brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
+                <div>
+                    <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
+                    <p data-i18n="brandSubtitle">Holiday Calendar</p>
                 </div>
-            </div>
-            
-            <h1 id="main-title" class="text-xl font-bold absolute left-1/2 -translate-x-1/2 text-gray-800">2026</h1>
-            
-            <div class="flex gap-1">
-                <button onclick="setLang('en')" id="btn-en" class="lang-btn">EN</button>
-                <button onclick="setLang('fr')" id="btn-fr" class="lang-btn">FR</button>
-                <button onclick="setLang('zh')" id="btn-zh" class="lang-btn">ZH</button>
+            </a>
+            <div class="portal-controls">
+                <div class="portal-lang-switcher" role="group" aria-label="Language switcher" data-i18n-aria-label="languageSwitcherLabel">
+                    <button onclick="setLang('en')" id="btn-en" class="lang-btn" type="button">EN</button>
+                    <button onclick="setLang('fr')" id="btn-fr" class="lang-btn" type="button">FR</button>
+                    <button onclick="setLang('zh')" id="btn-zh" class="lang-btn" type="button">ZH</button>
+                </div>
+                <div class="portal-theme-switcher" role="group" aria-label="Display mode" data-i18n-aria-label="themeModeLabel">
+                    <button class="theme-btn" type="button" data-theme-mode="auto" data-i18n="themeAuto">Auto</button>
+                    <button class="theme-btn" type="button" data-theme-mode="light" data-i18n="themeLight">Light</button>
+                    <button class="theme-btn" type="button" data-theme-mode="dark" data-i18n="themeDark">Dark</button>
+                </div>
             </div>
         </div>
     </header>
+
+    <div class="calendar-context">
+        <button id="back-btn" class="invisible" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span id="back-text">2026</span>
+        </button>
+        <h2 id="main-title">2026</h2>
+    </div>
 
     <main id="year-view" class="p-4 active-view view-transition max-w-6xl mx-auto text-center">
         <!-- 省份快捷按钮 -->
@@ -281,6 +372,14 @@
     <script>
         const translations = {
             en: {
+                brandTitle: "KLN Employee Portal",
+                brandSubtitle: "Holiday Calendar",
+                homeLinkLabel: "Go to the KLN Employee Portal homepage",
+                languageSwitcherLabel: "Language switcher",
+                themeModeLabel: "Display mode",
+                themeAuto: "Auto",
+                themeLight: "Light",
+                themeDark: "Dark",
                 months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January 2027"],
                 days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
                 daysShort: ["S", "M", "T", "W", "T", "F", "S"],
@@ -291,6 +390,14 @@
                 holidayTitle: " Holidays"
             },
             fr: {
+                brandTitle: "Portail Employés KLN",
+                brandSubtitle: "Calendrier des jours fériés",
+                homeLinkLabel: "Aller à la page d’accueil du Portail Employés KLN",
+                languageSwitcherLabel: "Sélecteur de langue",
+                themeModeLabel: "Mode d’affichage",
+                themeAuto: "Auto",
+                themeLight: "Clair",
+                themeDark: "Sombre",
                 months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre", "Janvier 2027"],
                 days: ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"],
                 daysShort: ["D", "L", "M", "M", "J", "V", "S"],
@@ -301,6 +408,14 @@
                 holidayTitle: " Vacances"
             },
             zh: {
+                brandTitle: "KLN 员工门户",
+                brandSubtitle: "假期日历",
+                homeLinkLabel: "前往 KLN 员工门户首页",
+                languageSwitcherLabel: "语言切换",
+                themeModeLabel: "显示模式",
+                themeAuto: "自动",
+                themeLight: "浅色",
+                themeDark: "深色",
                 months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "2027年一月"],
                 days: ["日", "一", "二", "三", "四", "五", "六"],
                 daysShort: ["日", "一", "二", "三", "四", "五", "六"],
@@ -355,8 +470,19 @@
         let selectedRegion = 'QC';
         let activePopoverDay = null;
         const popover = document.getElementById('holiday-popover');
+        const supportedLanguages = ['en', 'fr', 'zh'];
+        const supportedThemeModes = ['auto', 'light', 'dark'];
+        const languageStorageKey = 'kln-holiday-lang';
+        const themeStorageKey = 'kln-portal-theme-mode';
 
         function detectLanguage() {
+            try {
+                const saved = localStorage.getItem(languageStorageKey);
+                if (supportedLanguages.includes(saved)) return saved;
+            } catch (error) {
+                // Fall back to the browser language when storage is unavailable.
+            }
+
             const navLang = navigator.language.toLowerCase();
             if (navLang.startsWith('zh')) return 'zh';
             if (navLang.startsWith('fr')) return 'fr';
@@ -364,13 +490,74 @@
         }
 
         function setLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${lang}`).classList.add('active');
+            currentLang = supportedLanguages.includes(lang) ? lang : 'en';
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const isActive = btn.id === `btn-${currentLang}`;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', String(isActive));
+            });
+            renderHeader();
             document.getElementById('add-calendar-text').innerText = translations[currentLang].addCalendar;
             hidePopover();
             if (isMonthView) renderMonthDetail(currentFocusedMonth);
             else initYearView();
+            try {
+                localStorage.setItem(languageStorageKey, currentLang);
+            } catch (error) {
+                // Keep the selected language for this page even when storage is unavailable.
+            }
+        }
+
+        function renderHeader() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = translations[currentLang][el.dataset.i18n];
+            });
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+                el.setAttribute('aria-label', translations[currentLang][el.dataset.i18nAriaLabel]);
+            });
+        }
+
+        function getAutomaticTheme(date = new Date()) {
+            const hour = date.getHours();
+            return hour >= 19 || hour < 7 ? 'dark' : 'light';
+        }
+
+        function detectInitialThemeMode() {
+            try {
+                const saved = localStorage.getItem(themeStorageKey);
+                return supportedThemeModes.includes(saved) ? saved : 'auto';
+            } catch (error) {
+                return 'auto';
+            }
+        }
+
+        function getCurrentThemeMode() {
+            return document.documentElement.dataset.themeMode || detectInitialThemeMode();
+        }
+
+        function applyTheme(mode, persist = true) {
+            const selected = supportedThemeModes.includes(mode) ? mode : 'auto';
+            document.documentElement.dataset.themeMode = selected;
+            document.documentElement.dataset.theme = selected === 'auto' ? getAutomaticTheme() : selected;
+
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                const isActive = btn.dataset.themeMode === selected;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', String(isActive));
+            });
+
+            if (persist) {
+                try {
+                    localStorage.setItem(themeStorageKey, selected);
+                } catch (error) {
+                    // Keep the selected mode for this page even when storage is unavailable.
+                }
+            }
+        }
+
+        function refreshAutomaticTheme() {
+            if (getCurrentThemeMode() === 'auto') applyTheme('auto', false);
         }
 
         function getSequentialWeekNumber(d) {
@@ -691,8 +878,13 @@
 
         document.getElementById('back-btn').onclick = showYear;
         window.onload = () => {
+            applyTheme(detectInitialThemeMode());
             setLang(detectLanguage());
             initYearView();
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.onclick = () => applyTheme(btn.dataset.themeMode);
+            });
+            setInterval(refreshAutomaticTheme, 60000);
         };
     </script>
 </body>
