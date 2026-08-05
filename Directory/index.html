@@ -164,17 +164,27 @@
             });
         }
 
+        const remoteContactsCsvUrl = 'https://docs.google.com/spreadsheets/d/1jVLfocQFEKC6o8MxtHFWqI1trbCTL0vTrqwQ4x2AFcY/export?format=csv';
+
+        async function loadCsvSource(csvUrl, sourceLabelText) {
+            const response = await fetch(csvUrl);
+            if (!response.ok) throw new Error('CSV load failed');
+            const csvString = await response.text();
+            processData(csvString, sourceLabelText);
+        }
+
         async function fetchCSV() {
             const badge = document.getElementById('syncStatus');
             try {
-                const csvPath = new URL('./contacts.csv', window.location.href).href;
-                const response = await fetch(csvPath);
-                if (!response.ok) throw new Error("Auto-load failed");
-                const csvString = await response.text();
-                processData(csvString, "Live Data: contacts.csv");
+                await loadCsvSource(remoteContactsCsvUrl, 'Live Data: Google Sheet');
             } catch (err) {
-                badge.innerText = "Manual Ready";
-                badge.className = "bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-blue-200 shadow-sm";
+                try {
+                    const localCsvPath = new URL('./contacts.csv', window.location.href).href;
+                    await loadCsvSource(localCsvPath, 'Backup Data: contacts.csv');
+                } catch (fallbackError) {
+                    badge.innerText = "Manual Ready";
+                    badge.className = "bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-blue-200 shadow-sm";
+                }
             }
         }
 
