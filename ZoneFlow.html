@@ -24,6 +24,19 @@
             }
         }
     </script>
+    <script>
+        (() => {
+            const hour = new Date().getHours();
+            const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
+            try {
+                const savedMode = localStorage.getItem('kln-portal-theme-mode');
+                const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
+                document.documentElement.classList.toggle('dark', mode === 'auto' ? automaticTheme === 'dark' : mode === 'dark');
+            } catch (error) {
+                document.documentElement.classList.toggle('dark', automaticTheme === 'dark');
+            }
+        })();
+    </script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -49,31 +62,41 @@
         .tabular-nums {
             font-variant-numeric: tabular-nums;
         }
+        .portal-brand-logo { width: 100px; height: 46px; padding: 3px 0; object-fit: contain; flex: 0 0 auto; }
+        .portal-theme-switcher { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid rgb(226 232 240); border-radius: 999px; background: rgb(248 250 252); }
+        .dark .portal-theme-switcher { border-color: rgb(30 41 59); background: rgb(15 23 42); }
+        .portal-language-switcher { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid rgb(226 232 240); border-radius: 999px; background: rgb(248 250 252); }
+        .dark .portal-language-switcher { border-color: rgb(30 41 59); background: rgb(15 23 42); }
+        .lang-btn { border: 0; border-radius: 999px; padding: 7px 11px; background: transparent; color: rgb(100 116 139); font-size: .75rem; font-weight: 600; cursor: pointer; }
+        .dark .lang-btn { color: rgb(148 163 184); }
+        .lang-btn.is-active { color: rgb(37 99 235); background: white; box-shadow: 0 2px 10px rgba(37, 99, 235, .12); }
+        .dark .lang-btn.is-active { color: rgb(96 165 250); background: rgb(30 41 59); }
+        .theme-btn { border: 0; border-radius: 999px; padding: 7px 11px; background: transparent; color: rgb(100 116 139); font-size: .75rem; font-weight: 600; cursor: pointer; }
+        .dark .theme-btn { color: rgb(148 163 184); }
+        .theme-btn.is-active { color: rgb(37 99 235); background: white; box-shadow: 0 2px 10px rgba(37, 99, 235, .12); }
+        .dark .theme-btn.is-active { color: rgb(96 165 250); background: rgb(30 41 59); }
+        .theme-btn:focus-visible { outline: 2px solid rgb(59 130 246); outline-offset: 2px; }
+        @media (max-width: 640px) { .portal-nav-inner { min-height: 74px; height: auto; padding-top: 10px; padding-bottom: 10px; align-items: flex-start; flex-wrap: wrap; } .portal-controls { width: 100%; justify-content: space-between; } }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-300">
 
     <!-- Navigation Bar -->
     <nav class="border-b border-slate-200/80 dark:border-slate-900 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                    <i class="ph ph-globe-hemisphere-west text-xl"></i>
-                </div>
+        <div class="portal-nav-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+            <a href="https://tools.klncanada.com/" aria-label="Go to the KLN Employee Portal homepage" class="flex items-center gap-3 min-w-0">
+                <img class="portal-brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
                 <div>
-                    <h1 id="nav-title" class="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">KLN ZoneFlow</h1>
-                    <p id="nav-subtitle" class="text-xxs text-slate-400 font-medium">四方高效时区规划工作台</p>
+                    <h1 id="nav-title" class="text-lg font-bold tracking-tight text-slate-800 dark:text-slate-100">KLN Employee Portal</h1>
+                    <p id="nav-subtitle" class="text-xs text-slate-400 font-medium">KLN ZoneFlow</p>
                 </div>
-            </div>
+            </a>
             
-            <div class="flex items-center gap-3">
-                <!-- Manual Language Switcher -->
-                <div class="relative inline-block text-left">
-                    <select id="langSelect" class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer">
-                        <option value="zh">🇨🇳 简体中文</option>
-                        <option value="en">🇺🇸 English</option>
-                        <option value="fr">🇫🇷 Français</option>
-                    </select>
+            <div class="portal-controls flex items-center gap-3">
+                <div class="portal-language-switcher" role="group" aria-label="Language switcher">
+                    <button class="lang-btn" type="button" data-lang="zh">中文</button>
+                    <button class="lang-btn" type="button" data-lang="en">EN</button>
+                    <button class="lang-btn" type="button" data-lang="fr">FR</button>
                 </div>
 
                 <!-- Live Clock Toggle -->
@@ -85,10 +108,11 @@
                     <span id="liveClockStatusText">实时同步中</span>
                 </button>
 
-                <!-- Dark Mode Toggle -->
-                <button id="themeToggle" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all duration-200">
-                    <i id="themeIcon" class="ph ph-moon text-lg"></i>
-                </button>
+                <div class="portal-theme-switcher" role="group" aria-label="Display mode">
+                    <button id="themeAuto" class="theme-btn" type="button">Auto</button>
+                    <button id="themeLight" class="theme-btn" type="button">Light</button>
+                    <button id="themeDark" class="theme-btn" type="button">Dark</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -268,6 +292,7 @@
         // --- 1. Multilingual Support Config ---
         const translations = {
             zh: {
+                portalTitle: "KLN 员工门户",
                 title: "KLN ZoneFlow",
                 subtitle: "四方高效时区规划工作台",
                 liveSync: "实时同步中",
@@ -323,6 +348,7 @@
                 inviteHeader: "📅 国际协调会议邀约计划"
             },
             en: {
+                portalTitle: "KLN Employee Portal",
                 title: "KLN ZoneFlow",
                 subtitle: "Multi-party Efficient Timezone Workspace",
                 liveSync: "Live Synced",
@@ -378,6 +404,7 @@
                 inviteHeader: "📅 Global Coordination Meeting"
             },
             fr: {
+                portalTitle: "Portail Employés KLN",
                 title: "KLN ZoneFlow",
                 subtitle: "Espace de Coordination Horaires Multi-parties",
                 liveSync: "Synchronisé",
@@ -701,26 +728,30 @@
             initTimezoneDropdown();
             toggleLiveClock(true);
 
-            // Dark Mode Cache Checking
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('themeIcon').className = "ph ph-sun text-lg";
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('themeIcon').className = "ph ph-moon text-lg";
-            }
+            currentThemeMode = savedThemeMode();
+            applyTheme(currentThemeMode, false);
 
             // Bind Event Listeners
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            ['Auto', 'Light', 'Dark'].forEach(label => {
+                document.getElementById(`theme${label}`).addEventListener('click', () => {
+                    currentThemeMode = label.toLowerCase();
+                    applyTheme(currentThemeMode);
+                });
+            });
             document.getElementById('liveClockToggle').addEventListener('click', () => toggleLiveClock(!liveMode));
             document.getElementById('baseZoneSelect').addEventListener('change', onBaseZoneChanged);
             document.getElementById('inputDate').addEventListener('change', onManualDateTimeInput);
             document.getElementById('inputTime').addEventListener('change', onManualDateTimeInput);
-            document.getElementById('langSelect').addEventListener('change', (e) => {
-                currentLang = e.target.value;
+            document.querySelectorAll('.lang-btn').forEach(button => button.addEventListener('click', () => {
+                currentLang = button.dataset.lang;
+                try {
+                    localStorage.setItem('kln-portal-lang', currentLang);
+                } catch (error) {
+                    // Continue without persistence when browser storage is unavailable.
+                }
                 applyLanguageTranslations();
                 updateAllViews();
-            });
+            }));
 
             // Add Left/Right Keyboard Arrow Controls
             document.addEventListener('keydown', function(e) {
@@ -782,24 +813,37 @@
             updateAllViews();
         };
 
+        setInterval(() => {
+            if (currentThemeMode === 'auto') applyTheme('auto', false);
+        }, 60000);
+
         // Set default system interface language based on browser preference
         function detectDefaultLanguage() {
-            const lang = navigator.language || navigator.userLanguage || 'en';
-            if (lang.startsWith('zh')) {
-                currentLang = 'zh';
-            } else if (lang.startsWith('fr')) {
-                currentLang = 'fr';
-            } else {
-                currentLang = 'en';
+            try {
+                const savedLanguage = localStorage.getItem('kln-portal-lang');
+                if (['zh', 'en', 'fr'].includes(savedLanguage)) {
+                    currentLang = savedLanguage;
+                } else {
+                    const lang = navigator.language || navigator.userLanguage || 'en';
+                    currentLang = lang.startsWith('zh') ? 'zh' : lang.startsWith('fr') ? 'fr' : 'en';
+                }
+            } catch (error) {
+                const lang = navigator.language || navigator.userLanguage || 'en';
+                currentLang = lang.startsWith('zh') ? 'zh' : lang.startsWith('fr') ? 'fr' : 'en';
             }
-            document.getElementById('langSelect').value = currentLang;
         }
 
         // Apply translations based on user's active choice
         function applyLanguageTranslations() {
             const t = translations[currentLang];
-            document.getElementById('nav-title').innerText = t.title;
-            document.getElementById('nav-subtitle').innerText = t.subtitle;
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : currentLang;
+            document.querySelectorAll('.lang-btn').forEach(button => {
+                const isSelected = button.dataset.lang === currentLang;
+                button.classList.toggle('is-active', isSelected);
+                button.setAttribute('aria-pressed', String(isSelected));
+            });
+            document.getElementById('nav-title').innerText = t.portalTitle;
+            document.getElementById('nav-subtitle').innerText = t.title;
             document.getElementById('lbl-base-ref').innerText = t.baseRef;
             document.getElementById('lbl-base-zone').innerText = t.baseZone;
             document.getElementById('lbl-base-date').innerText = t.baseDate;
@@ -842,18 +886,41 @@
             });
         }
 
-        // Toggle Dark/Light Theme appearance
-        function toggleTheme() {
-            const root = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            if (root.classList.contains('dark')) {
-                root.classList.remove('dark');
-                localStorage.theme = 'light';
-                icon.className = "ph ph-moon text-lg";
-            } else {
-                root.classList.add('dark');
-                localStorage.theme = 'dark';
-                icon.className = "ph ph-sun text-lg";
+        const themeStorageKey = 'kln-portal-theme-mode';
+        const themeModes = ['auto', 'light', 'dark'];
+        let currentThemeMode = 'auto';
+
+        function automaticTheme() {
+            const hour = new Date().getHours();
+            return hour >= 19 || hour < 7 ? 'dark' : 'light';
+        }
+
+        function savedThemeMode() {
+            try {
+                const savedMode = localStorage.getItem(themeStorageKey);
+                return themeModes.includes(savedMode) ? savedMode : 'auto';
+            } catch (error) {
+                return 'auto';
+            }
+        }
+
+        function applyTheme(mode, shouldSave = true) {
+            const selectedMode = themeModes.includes(mode) ? mode : 'auto';
+            document.documentElement.classList.toggle('dark', (selectedMode === 'auto' ? automaticTheme() : selectedMode) === 'dark');
+
+            ['Auto', 'Light', 'Dark'].forEach(label => {
+                const button = document.getElementById(`theme${label}`);
+                const isSelected = label.toLowerCase() === selectedMode;
+                button.classList.toggle('is-active', isSelected);
+                button.setAttribute('aria-pressed', String(isSelected));
+            });
+
+            if (shouldSave) {
+                try {
+                    localStorage.setItem(themeStorageKey, selectedMode);
+                } catch (error) {
+                    // Continue without persistence when browser storage is unavailable.
+                }
             }
         }
 
