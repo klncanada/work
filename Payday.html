@@ -209,6 +209,70 @@
       font-weight: 850;
     }
 
+    .calendar-module {
+      margin: 18px 0 22px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.35);
+    }
+
+    html[data-theme="dark"] .calendar-module { background: rgba(255,255,255,.04); }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .calendar-title { font-size: 14px; font-weight: 850; }
+
+    .calendar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .legend-dot { width: 11px; height: 11px; border-radius: 4px; flex: 0 0 auto; }
+    .legend-cycle { background: rgba(37,99,235,.2); }
+    .legend-today { background: transparent; border: 2px solid var(--orange); }
+    .legend-payday { background: var(--green); }
+
+    .calendar-months {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .calendar-month:only-child { max-width: 340px; width: 100%; margin: 0 auto; }
+    .calendar-month-title { margin-bottom: 10px; text-align: center; font-size: 14px; font-weight: 850; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+    .calendar-weekday { padding-bottom: 4px; color: var(--muted); text-align: center; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+
+    .calendar-day {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      aspect-ratio: 1;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .calendar-day.empty { visibility: hidden; }
+    .calendar-day.in-cycle { background: rgba(37,99,235,.16); color: var(--blue); }
+    .calendar-day.is-payday { background: var(--green); color: white; font-weight: 900; }
+    .calendar-day.is-today { box-shadow: inset 0 0 0 2px var(--orange); color: var(--text); font-weight: 900; }
+    .calendar-day.is-payday.is-today { box-shadow: inset 0 0 0 2px var(--orange), inset 0 0 0 4px var(--card); }
+
     .section-title {
       font-size: 14px;
       font-weight: 850;
@@ -285,6 +349,10 @@
         grid-template-columns: 1fr;
       }
 
+      .calendar-header { align-items: flex-start; flex-direction: column; }
+      .calendar-legend { justify-content: flex-start; }
+      .calendar-months { grid-template-columns: 1fr; }
+
       .row {
         align-items: flex-start;
       }
@@ -346,6 +414,18 @@
       </div>
     </section>
 
+    <section class="calendar-module" aria-labelledby="calendarTitle">
+      <div class="calendar-header">
+        <div class="calendar-title" id="calendarTitle" data-i18n="calendarTitle">Pay cycle calendar</div>
+        <div class="calendar-legend" aria-label="Calendar legend" data-i18n-aria-label="calendarLegendLabel">
+          <span class="legend-item"><span class="legend-dot legend-cycle"></span><span data-i18n="cycleLegend">Payroll cycle</span></span>
+          <span class="legend-item"><span class="legend-dot legend-today"></span><span data-i18n="today">Today</span></span>
+          <span class="legend-item"><span class="legend-dot legend-payday"></span><span data-i18n="paydayLegend">Payday</span></span>
+        </div>
+      </div>
+      <div class="calendar-months" id="calendarMonths"></div>
+    </section>
+
     <div class="section-title" data-i18n="upcoming">Upcoming Paydays</div>
     <div class="list" id="paydayList"></div>
 
@@ -373,6 +453,10 @@
         dark: "Dark",
         today: "Today",
         cycle: "Payroll Cycle",
+        calendarTitle: "Pay cycle calendar",
+        calendarLegendLabel: "Calendar legend",
+        cycleLegend: "Payroll cycle",
+        paydayLegend: "Payday",
         upcoming: "Upcoming Paydays",
         note: "Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.",
         period: "Period",
@@ -400,6 +484,10 @@
         dark: "Sombre",
         today: "Aujourd’hui",
         cycle: "Cycle de paie",
+        calendarTitle: "Calendrier du cycle de paie",
+        calendarLegendLabel: "L\u00e9gende du calendrier",
+        cycleLegend: "Cycle de paie",
+        paydayLegend: "Jour de paie",
         upcoming: "Prochaines paies",
         note: "Les dates et les numéros de période sont calculés automatiquement dans votre navigateur. Veuillez contacter la paie ou les RH en cas d’écart.",
         period: "Période",
@@ -485,6 +573,77 @@
       return `${startText} – ${endText}`;
     }
 
+    function sameDate(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
+    }
+
+    function renderCalendar(payday) {
+      const t = i18n[lang];
+      const locale = lang === "fr" ? "fr-CA" : "en-CA";
+      const { start, end } = getPayPeriodRange(payday);
+      const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+      const lastMonth = new Date(payday.getFullYear(), payday.getMonth(), 1);
+      const months = [];
+
+      for (let month = new Date(firstMonth); month <= lastMonth; month.setMonth(month.getMonth() + 1)) {
+        months.push(new Date(month));
+      }
+
+      const weekdayFormatter = new Intl.DateTimeFormat(locale, { weekday: "narrow" });
+      const weekdays = Array.from({ length: 7 }, (_, index) =>
+        weekdayFormatter.format(new Date(2026, 7, 2 + index))
+      );
+      const container = document.getElementById("calendarMonths");
+      container.innerHTML = "";
+
+      months.forEach(monthDate => {
+        const month = document.createElement("div");
+        month.className = "calendar-month";
+
+        const title = document.createElement("div");
+        title.className = "calendar-month-title";
+        title.textContent = monthDate.toLocaleDateString(locale, { month: "long", year: "numeric" });
+        month.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "calendar-grid";
+        weekdays.forEach(label => {
+          const weekday = document.createElement("div");
+          weekday.className = "calendar-weekday";
+          weekday.textContent = label;
+          grid.appendChild(weekday);
+        });
+
+        const leadingDays = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay();
+        const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+
+        for (let i = 0; i < leadingDays; i++) {
+          const empty = document.createElement("div");
+          empty.className = "calendar-day empty";
+          grid.appendChild(empty);
+        }
+
+        for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber++) {
+          const date = new Date(monthDate.getFullYear(), monthDate.getMonth(), dayNumber);
+          const day = document.createElement("div");
+          const states = [];
+
+          day.className = "calendar-day";
+          if (date >= start && date <= end) { day.classList.add("in-cycle"); states.push(t.cycleLegend); }
+          if (sameDate(date, today)) { day.classList.add("is-today"); states.push(t.today); }
+          if (sameDate(date, payday)) { day.classList.add("is-payday"); states.push(t.paydayLegend); }
+          day.textContent = dayNumber;
+          day.setAttribute("aria-label", `${formatDate(date)}${states.length ? `: ${states.join(", ")}` : ""}`);
+          grid.appendChild(day);
+        }
+
+        month.appendChild(grid);
+        container.appendChild(month);
+      });
+    }
+
     function applyLanguage() {
       const t = i18n[lang];
 
@@ -552,6 +711,7 @@
 
       document.getElementById("todayDate").textContent = formatDate(today);
       document.getElementById("cycleRange").textContent = formatPayPeriodRange(nextPayday);
+      renderCalendar(nextPayday);
 
       const list = document.getElementById("paydayList");
       list.innerHTML = "";
