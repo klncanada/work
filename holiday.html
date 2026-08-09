@@ -252,14 +252,20 @@
             padding: 20px;
         }
         .modal-content {
-            background: white;
+            background: var(--portal-panel);
+            color: var(--portal-text);
             width: 100%;
             max-width: 450px;
             border-radius: 20px;
             overflow: hidden;
+            border: 1px solid var(--portal-line);
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             animation: modalPop 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28);
         }
+        .modal-content .text-gray-500 { color: var(--portal-muted) !important; }
+        .modal-content button.text-gray-400:hover { color: var(--portal-text) !important; }
+        html[data-theme="dark"] .modal-overlay { background: rgba(2, 8, 18, 0.72); }
+        html[data-theme="dark"] .modal-content { box-shadow: 0 24px 56px rgba(0,0,0,0.52); }
         @keyframes modalPop {
             from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
