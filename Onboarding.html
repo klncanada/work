@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Employee Onboarding | KLN Employee Portal</title>
+  <script>
+    (() => {
+      const hour = new Date().getHours();
+      const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
+      try {
+        const savedMode = localStorage.getItem('kln-portal-theme-mode');
+        const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
+        document.documentElement.dataset.theme = mode === 'auto' ? automaticTheme : mode;
+      } catch (error) {
+        document.documentElement.dataset.theme = automaticTheme;
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --page-top: #f8fbff;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #e5eaf2;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --green: #16a34a;
+      --green-soft: #e9f8ef;
+      --shadow: 0 18px 50px rgba(20, 33, 61, 0.08);
+      --topbar-bg: rgba(255, 255, 255, 0.82);
+      --topbar-border: rgba(219, 227, 240, 0.9);
+      --switcher-bg: #f3f6fc;
+      --active-control-bg: #ffffff;
+      --maxw: 1100px;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #07111f;
+      --page-top: #0b1728;
+      --card: #0f1b2d;
+      --text: #e5eefc;
+      --muted: #9babc1;
+      --border: #29415f;
+      --blue: #60a5fa;
+      --blue-soft: #172a42;
+      --green: #4ade80;
+      --green-soft: #123326;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
+      --topbar-bg: rgba(7, 17, 31, 0.86);
+      --topbar-border: rgba(41, 65, 95, 0.9);
+      --switcher-bg: #101f33;
+      --active-control-bg: #1b304a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--page-top), var(--bg));
+      color: var(--text);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(calc(100% - 32px), var(--maxw));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: var(--topbar-bg);
+      border-bottom: 1px solid var(--topbar-border);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 100px;
+      height: 46px;
+      padding: 3px 0;
+      display: block;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .brand-text p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lang-switcher,
+    .theme-switcher {
+      display: inline-flex;
+      gap: 6px;
+      background: var(--switcher-bg);
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .lang-btn,
+    .theme-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: 0.2s ease;
+    }
+
+    .lang-btn.active,
+    .theme-btn.active {
+      background: var(--active-control-bg);
+      color: var(--blue);
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
+      font-weight: 600;
+    }
+
+    .lang-btn:focus-visible,
+    .theme-btn:focus-visible,
+    .reset:focus-visible,
+    .item:focus-within {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .page {
+      width: min(calc(100% - 32px), 1080px);
+      margin: 0 auto;
+      padding: 28px 0;
+    }
+
+    .hero { margin-bottom: 22px; }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 54px);
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 680px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress { margin-bottom: 16px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .progress-count { color: var(--blue); }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: var(--blue);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .checklist { display: grid; gap: 10px; }
+
+    .item {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .item:hover,
+    .item.active {
+      border-color: color-mix(in srgb, var(--blue) 45%, transparent);
+      background: var(--blue-soft);
+    }
+
+    .item.done {
+      background: var(--green-soft);
+      border-color: color-mix(in srgb, var(--green) 30%, transparent);
+    }
+
+    .item.done .title {
+      color: var(--green);
+      text-decoration: line-through;
+    }
+
+    .item input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .title { font-weight: 850; line-height: 1.35; }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .guide {
+      min-height: 420px;
+      position: sticky;
+      top: 98px;
+    }
+
+    .guide.done { opacity: 0.58; }
+
+    .guide-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .guide.done .guide-status {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .guide h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .guide p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .steps {
+      margin-top: 20px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .guide-actions {
+      margin-top: 18px;
+    }
+
+    .resource-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #ffffff;
+      font-weight: 800;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .resource-link:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+
+    .resource-link:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 3px;
+    }
+
+    .reset {
+      margin-top: 16px;
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .guide { position: static; min-height: auto; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner { align-items: flex-start; flex-wrap: wrap; }
+      .controls { width: 100%; }
+      .page { padding-top: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="https://tools.klncanada.com/" aria-label="KLN Employee Portal home" data-i18n-aria-label="homeLabel">
+        <img class="brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
+        <div class="brand-text">
+          <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
+          <p data-i18n="brandSubtitle">New Employee Onboarding</p>
+        </div>
+      </a>
+      <div class="controls">
+        <span class="sr-only" data-i18n="languageLabel">Language</span>
+        <div class="lang-switcher" role="group" aria-label="Language switcher" data-i18n-aria-label="languageLabel">
+          <button class="lang-btn" type="button" data-lang="en">EN</button>
+          <button class="lang-btn" type="button" data-lang="fr">FR</button>
+        </div>
+        <span class="sr-only" data-i18n="themeModeLabel">Display mode</span>
+        <div class="theme-switcher" role="group" aria-label="Display mode" data-i18n-aria-label="themeModeLabel">
+          <button class="theme-btn" type="button" data-theme-mode="auto" data-i18n="themeAuto">Auto</button>
+          <button class="theme-btn" type="button" data-theme-mode="light" data-i18n="themeLight">Light</button>
+          <button class="theme-btn" type="button" data-theme-mode="dark" data-i18n="themeDark">Dark</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow" data-i18n="eyebrow">New Employee Starter Kit</div>
+      <h2 data-i18n="pageTitle">First week checklist</h2>
+      <p class="subtitle" data-i18n="subtitle">Click a title to view the guide. Check the box when the task is completed. Your progress is saved in this browser.</p>
+    </section>
+
+    <section class="layout">
+      <div class="card">
+        <div class="progress">
+          <div class="progress-top">
+            <span data-i18n="progress">Progress</span>
+            <span class="progress-count" id="progressText">0 / 7</span>
+          </div>
+          <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="progressBar">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+        </div>
+
+        <div class="checklist" id="checklist"></div>
+        <button class="reset" type="button" id="resetButton" data-i18n="reset">Reset checklist</button>
+      </div>
+
+      <aside class="card guide" id="guide">
+        <div class="guide-status" id="guideStatus">Selected task</div>
+        <h2 id="guideTitle"></h2>
+        <p id="guideIntro"></p>
+        <div class="steps" id="guideSteps"></div>
+        <div class="guide-actions" id="guideActions"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const content = {
+      en: {
+        brandTitle: 'KLN Employee Portal',
+        brandSubtitle: 'New Employee Onboarding',
+        homeLabel: 'KLN Employee Portal home',
+        languageLabel: 'Language',
+        themeModeLabel: 'Display mode',
+        themeAuto: 'Auto',
+        themeLight: 'Light',
+        themeDark: 'Dark',
+        eyebrow: 'New Employee Starter Kit',
+        pageTitle: 'Onboarding checklist',
+        subtitle: 'Click a title to view the details. Check the box when the task is completed. Your progress is saved in this browser.',
+        progress: 'Progress',
+        reset: 'Reset checklist',
+        selectedTask: 'Selected task',
+        completed: 'Completed',
+        tasks: [
+          {
+            id: 'offer-letter',
+            title: 'Confirm your Offer Letter has been signed',
+            note: 'Verify that your signed Offer Letter has been received.',
+            intro: 'Confirm that your Offer Letter is complete and properly submitted.',
+            steps: [
+              'Make sure you have reviewed and signed your Offer Letter.',
+              'Confirm that the signed copy has been submitted as instructed.',
+              'If you are unsure whether it was received, check your onboarding records or contact HR.'
+            ]
+          },
+          {
+            id: 'scanned-documents',
+            title: 'Ensure all required scanned documents have been submitted',
+            note: 'Check that every requested document is complete and legible.',
+            intro: 'Verify that all required identification and employment documents have been provided.',
+            steps: [
+              'Confirm that you have provided all requested identification and employment-related documents.',
+              'Make sure each scanned copy is complete, clear, and legible.',
+              'Check that no requested documents are still outstanding.'
+            ]
+          },
+          {
+            id: 'employee-information-form',
+            title: 'Complete the New Employee Information Form',
+            note: 'Provide accurate personal and emergency contact information.',
+            intro: 'Complete and review the New Employee Information Form before submitting it.',
+            steps: [
+              'Fill out the New Employee Information Form with the requested personal and contact information.',
+              'Review your personal details and emergency contact information for accuracy.',
+              'Make sure all required fields are completed before submitting the form.'
+            ]
+          },
+          {
+            id: 'source-deduction-forms',
+            title: 'Complete the Source Deduction Forms',
+            note: 'Submit the required federal and provincial forms.',
+            intro: 'Complete all applicable source deduction forms accurately.',
+            steps: [
+              'Complete all required federal and provincial source deduction forms.',
+              'Review the information entered to make sure it is accurate and complete.',
+              'Ensure the completed forms have been submitted as instructed.'
+            ]
+          },
+          {
+            id: 'duo-desktop',
+            title: 'Test Duo Mobile MFA and desktop access',
+            note: 'Confirm secure access to your company computer.',
+            intro: 'Verify that Duo Mobile and your assigned desktop credentials work correctly.',
+            steps: [
+              'Confirm that Duo Mobile has been successfully activated for multi-factor authentication.',
+              'Sign in to your company computer using your assigned credentials.',
+              'Complete the Duo authentication prompt and make sure you can access the desktop successfully.'
+            ]
+          },
+          {
+            id: 'outlook',
+            title: 'Access your Outlook account',
+            note: 'Confirm that your company mailbox works normally.',
+            intro: 'Test the essential functions of your Outlook account.',
+            steps: [
+              'Sign in to Outlook using your company account.',
+              'Make sure you can send, receive, search, and open emails normally.',
+              'Send a short test email to confirm that your mailbox is working properly.'
+            ]
+          },
+          {
+            id: 'teams',
+            title: 'Get started with Microsoft Teams',
+            note: 'Test communication tools and required team access.',
+            intro: 'Make sure Microsoft Teams is ready for daily communication and meetings.',
+            steps: [
+              'Open Microsoft Teams and make sure your company account is connected correctly.',
+              'Test chat, notifications, microphone, camera, and speakers as applicable.',
+              'Check that you can access the Teams and channels required for your role.'
+            ]
+          },
+          {
+            id: 'wifi',
+            title: 'Connect additional devices to the company WiFi',
+            note: 'Connect approved devices to the correct office network.',
+            intro: 'Use the company WiFi instructions to connect any approved additional devices.',
+            steps: [
+              'Connect any approved additional devices to the appropriate office WiFi network.',
+              'Follow the provided password or sign-in instructions.',
+              'Make sure the connected devices can access the required company services normally.'
+            ],
+            link: 'https://tools.klncanada.com/WiFiPassword.html',
+            linkLabel: 'Open WiFi information'
+          },
+          {
+            id: 'hr-email',
+            title: 'Become familiar with the HR Group Email and its proper use',
+            note: 'Know when and how to contact the HR group.',
+            intro: 'Review the correct and secure use of the HR Group Email.',
+            steps: [
+              'Understand when to use the HR Group Email and what types of requests should be sent there.',
+              'Be aware of information that should not be shared through regular email.',
+              'Save the HR Group Email address for future reference.'
+            ],
+            link: 'https://tools.klncanada.com/HRGroupEmail',
+            linkLabel: 'Open HR Group Email guide'
+          },
+          {
+            id: 'office-info',
+            title: 'Get familiar with company office locations',
+            note: 'Review addresses and practical information for each office.',
+            intro: 'Learn the locations and access details needed for visits, meetings, and deliveries.',
+            steps: [
+              'Review the addresses of the company’s different office locations.',
+              'Become familiar with relevant entrances, parking or transit information, and office hours where applicable.',
+              'Know which location to use when arranging visits, meetings, deliveries, or internal correspondence.'
+            ],
+            link: 'https://tools.klncanada.com/KLNCanadaOffices',
+            linkLabel: 'Open office locations'
+          },
+          {
+            id: 'directory',
+            title: 'Navigate the employee directory and save key contacts',
+            note: 'Find colleagues and save frequently used contacts.',
+            intro: 'Use the employee directory to locate colleagues and important support contacts.',
+            steps: [
+              'Learn how to search for colleagues and their contact information in the employee directory.',
+              'Identify key contacts such as your manager, HR, IT, payroll, and other relevant support teams.',
+              'Save frequently used contacts so they are easy to access when needed.'
+            ],
+            link: 'https://tools.klncanada.com/Directory/',
+            linkLabel: 'Open employee directory'
+          },
+          {
+            id: 'emergency',
+            title: 'Review emergency procedures and workplace safety information',
+            note: 'Know the emergency and safety procedures for your workplace.',
+            intro: 'Review the locations, contacts, and reporting steps needed during an emergency or safety incident.',
+            steps: [
+              'Locate emergency exits, assembly points, first-aid supplies, and posted evacuation information.',
+              'Understand who to contact and what steps to follow during an emergency or workplace safety incident.',
+              'Know how to report hazards, injuries, near misses, or other safety concerns.'
+            ]
+          },
+          {
+            id: 'milestones',
+            title: 'Discover key milestones in the company’s history',
+            note: 'Learn how the organization has developed over time.',
+            intro: 'Explore the events and achievements that have shaped the company.',
+            steps: [
+              'Explore the company’s background and major milestones in its development.',
+              'Become familiar with significant events, growth stages, and achievements that have shaped the organization.',
+              'Use this overview to better understand the company’s history and development.'
+            ],
+            link: 'https://tools.klncanada.com/milestone',
+            linkLabel: 'Open company milestones'
+          }
+        ]
+      },
+      fr: {
+        brandTitle: 'Portail des employés KLN',
+        brandSubtitle: 'Intégration des nouveaux employés',
+        homeLabel: 'Accueil du portail des employés KLN',
+        languageLabel: 'Langue',
+        themeModeLabel: 'Mode d’affichage',
+        themeAuto: 'Auto',
+        themeLight: 'Clair',
+        themeDark: 'Sombre',
+        eyebrow: 'Trousse de départ du nouvel employé',
+        pageTitle: 'Liste de vérification de l’intégration',
+        subtitle: 'Cliquez sur un titre pour consulter les détails. Cochez la case lorsque la tâche est terminée. Votre progression est enregistrée dans ce navigateur.',
+        progress: 'Progression',
+        reset: 'Réinitialiser la liste',
+        selectedTask: 'Tâche sélectionnée',
+        completed: 'Terminée',
+        tasks: [
+          {
+            id: 'offer-letter',
+            title: 'Confirmer que votre lettre d’offre a été signée',
+            note: 'Vérifiez que votre lettre d’offre signée a été reçue.',
+            intro: 'Confirmez que votre lettre d’offre est complète et a été correctement transmise.',
+            steps: [
+              'Assurez-vous d’avoir lu et signé votre lettre d’offre.',
+              'Confirmez que la copie signée a été transmise conformément aux instructions.',
+              'Si vous ne savez pas si elle a été reçue, consultez votre dossier d’intégration ou communiquez avec les RH.'
+            ]
+          },
+          {
+            id: 'scanned-documents',
+            title: 'Vérifier que tous les documents numérisés requis ont été soumis',
+            note: 'Vérifiez que chaque document demandé est complet et lisible.',
+            intro: 'Confirmez que toutes les pièces d’identité et tous les documents d’emploi requis ont été fournis.',
+            steps: [
+              'Confirmez que vous avez fourni toutes les pièces d’identité et tous les documents liés à l’emploi demandés.',
+              'Assurez-vous que chaque copie numérisée est complète, claire et lisible.',
+              'Vérifiez qu’aucun document demandé n’est encore manquant.'
+            ]
+          },
+          {
+            id: 'employee-information-form',
+            title: 'Remplir le formulaire de renseignements du nouvel employé',
+            note: 'Fournissez des renseignements personnels et d’urgence exacts.',
+            intro: 'Remplissez et vérifiez le formulaire de renseignements du nouvel employé avant de le transmettre.',
+            steps: [
+              'Remplissez le formulaire de renseignements du nouvel employé avec les renseignements personnels et les coordonnées demandés.',
+              'Vérifiez l’exactitude de vos renseignements personnels et de votre personne à contacter en cas d’urgence.',
+              'Assurez-vous que tous les champs obligatoires sont remplis avant de transmettre le formulaire.'
+            ]
+          },
+          {
+            id: 'source-deduction-forms',
+            title: 'Remplir les formulaires de retenues à la source',
+            note: 'Soumettez les formulaires fédéraux et provinciaux requis.',
+            intro: 'Remplissez avec exactitude tous les formulaires de retenues à la source applicables.',
+            steps: [
+              'Remplissez tous les formulaires fédéraux et provinciaux de retenues à la source requis.',
+              'Vérifiez les renseignements saisis afin de vous assurer qu’ils sont exacts et complets.',
+              'Assurez-vous que les formulaires remplis ont été transmis conformément aux instructions.'
+            ]
+          },
+          {
+            id: 'duo-desktop',
+            title: 'Tester l’AMF Duo Mobile et l’accès au poste de travail',
+            note: 'Confirmez l’accès sécurisé à votre ordinateur professionnel.',
+            intro: 'Vérifiez que Duo Mobile et les identifiants attribués pour votre poste de travail fonctionnent correctement.',
+            steps: [
+              'Confirmez que Duo Mobile a été activé avec succès pour l’authentification multifacteur.',
+              'Connectez-vous à votre ordinateur professionnel avec les identifiants qui vous ont été attribués.',
+              'Répondez à la demande d’authentification Duo et assurez-vous de pouvoir accéder au poste de travail.'
+            ]
+          },
+          {
+            id: 'outlook',
+            title: 'Accéder à votre compte Outlook',
+            note: 'Confirmez que votre boîte aux lettres professionnelle fonctionne.',
+            intro: 'Testez les fonctions essentielles de votre compte Outlook.',
+            steps: [
+              'Connectez-vous à Outlook avec votre compte professionnel.',
+              'Assurez-vous de pouvoir envoyer, recevoir, rechercher et ouvrir des courriels normalement.',
+              'Envoyez un court courriel de test pour confirmer le bon fonctionnement de votre boîte aux lettres.'
+            ]
+          },
+          {
+            id: 'teams',
+            title: 'Commencer à utiliser Microsoft Teams',
+            note: 'Testez les outils de communication et l’accès aux équipes requises.',
+            intro: 'Assurez-vous que Microsoft Teams est prêt pour les communications et les réunions quotidiennes.',
+            steps: [
+              'Ouvrez Microsoft Teams et assurez-vous que votre compte professionnel est correctement connecté.',
+              'Testez la messagerie, les notifications, le microphone, la caméra et les haut-parleurs, selon le cas.',
+              'Vérifiez que vous avez accès aux équipes et aux canaux nécessaires à votre rôle.'
+            ]
+          },
+          {
+            id: 'wifi',
+            title: 'Connecter des appareils supplémentaires au WiFi de l’entreprise',
+            note: 'Connectez les appareils approuvés au bon réseau du bureau.',
+            intro: 'Utilisez les instructions WiFi de l’entreprise pour connecter tout appareil supplémentaire approuvé.',
+            steps: [
+              'Connectez tout appareil supplémentaire approuvé au réseau WiFi approprié du bureau.',
+              'Suivez les instructions fournies concernant le mot de passe ou la connexion.',
+              'Assurez-vous que les appareils connectés peuvent accéder normalement aux services de l’entreprise requis.'
+            ],
+            link: 'https://tools.klncanada.com/WiFiPassword.html',
+            linkLabel: 'Ouvrir les renseignements WiFi'
+          },
+          {
+            id: 'hr-email',
+            title: 'Se familiariser avec le courriel de groupe des RH et son utilisation appropriée',
+            note: 'Sachez quand et comment communiquer avec le groupe des RH.',
+            intro: 'Examinez l’utilisation correcte et sécuritaire du courriel de groupe des RH.',
+            steps: [
+              'Comprenez quand utiliser le courriel de groupe des RH et quels types de demandes doivent y être envoyés.',
+              'Sachez quels renseignements ne doivent pas être communiqués par courriel ordinaire.',
+              'Enregistrez l’adresse du courriel de groupe des RH pour consultation future.'
+            ],
+            link: 'https://tools.klncanada.com/HRGroupEmail',
+            linkLabel: 'Ouvrir le guide du courriel des RH'
+          },
+          {
+            id: 'office-info',
+            title: 'Se familiariser avec les bureaux de l’entreprise',
+            note: 'Consultez les adresses et les renseignements pratiques de chaque bureau.',
+            intro: 'Apprenez les emplacements et les détails d’accès nécessaires pour les visites, les réunions et les livraisons.',
+            steps: [
+              'Consultez les adresses des différents bureaux de l’entreprise.',
+              'Familiarisez-vous, selon le cas, avec les entrées, le stationnement ou le transport en commun et les heures d’ouverture.',
+              'Sachez quel emplacement utiliser pour organiser des visites, des réunions, des livraisons ou de la correspondance interne.'
+            ],
+            link: 'https://tools.klncanada.com/KLNCanadaOffices',
+            linkLabel: 'Ouvrir les emplacements des bureaux'
+          },
+          {
+            id: 'directory',
+            title: 'Parcourir le répertoire des employés et enregistrer les contacts clés',
+            note: 'Trouvez vos collègues et enregistrez les contacts fréquents.',
+            intro: 'Utilisez le répertoire des employés pour trouver des collègues et des contacts de soutien importants.',
+            steps: [
+              'Apprenez à rechercher des collègues et leurs coordonnées dans le répertoire des employés.',
+              'Repérez les contacts clés, notamment votre gestionnaire, les RH, le service TI, la paie et les autres équipes de soutien pertinentes.',
+              'Enregistrez les contacts fréquemment utilisés afin de pouvoir y accéder facilement.'
+            ],
+            link: 'https://tools.klncanada.com/Directory/',
+            linkLabel: 'Ouvrir le répertoire des employés'
+          },
+          {
+            id: 'emergency',
+            title: 'Consulter les procédures d’urgence et les renseignements sur la sécurité au travail',
+            note: 'Connaissez les procédures d’urgence et de sécurité de votre lieu de travail.',
+            intro: 'Examinez les emplacements, les contacts et les étapes de signalement nécessaires lors d’une urgence ou d’un incident de sécurité.',
+            steps: [
+              'Repérez les sorties de secours, les points de rassemblement, le matériel de premiers soins et les consignes d’évacuation affichées.',
+              'Comprenez qui contacter et quelles étapes suivre lors d’une urgence ou d’un incident de sécurité au travail.',
+              'Sachez comment signaler les dangers, les blessures, les incidents évités de justesse ou toute autre préoccupation de sécurité.'
+            ]
+          },
+          {
+            id: 'milestones',
+            title: 'Découvrir les principales étapes de l’histoire de l’entreprise',
+            note: 'Découvrez comment l’organisation s’est développée au fil du temps.',
+            intro: 'Explorez les événements et les réalisations qui ont façonné l’entreprise.',
+            steps: [
+              'Explorez les origines de l’entreprise et les principales étapes de son développement.',
+              'Familiarisez-vous avec les événements marquants, les phases de croissance et les réalisations qui ont façonné l’organisation.',
+              'Utilisez cet aperçu pour mieux comprendre l’histoire et l’évolution de l’entreprise.'
+            ],
+            link: 'https://tools.klncanada.com/milestone',
+            linkLabel: 'Ouvrir les jalons de l’entreprise'
+          }
+        ]
+      }
+    };
+    const supportedLangs = ['en', 'fr'];
+    const supportedThemeModes = ['auto', 'light', 'dark'];
+    const themeStorageKey = 'kln-portal-theme-mode';
+    let currentLanguage = 'en';
+    let selectedId = localStorage.getItem('starterSelected') || content.en.tasks[0].id;
+    if (!content.en.tasks.some((task) => task.id === selectedId)) {
+      selectedId = content.en.tasks[0].id;
+    }
+
+    function normalizeLang(lang) {
+      return lang && lang.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+    }
+
+    function detectInitialLanguage() {
+      try {
+        const saved = localStorage.getItem('kln-portal-lang');
+        if (supportedLangs.includes(saved)) return saved;
+      } catch (error) {}
+      const languages = Array.isArray(navigator.languages) && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+      return normalizeLang(languages[0]);
+    }
+
+    function getDoneMap() {
+      try {
+        const value = JSON.parse(localStorage.getItem('starterDone') || '{}');
+        return value && typeof value === 'object' ? value : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function saveDoneMap(doneMap) {
+      try { localStorage.setItem('starterDone', JSON.stringify(doneMap)); } catch (error) {}
+    }
+
+    function renderChecklist() {
+      const list = document.getElementById('checklist');
+      const doneMap = getDoneMap();
+      const tasks = content[currentLanguage].tasks;
+      list.replaceChildren();
+
+      tasks.forEach((task) => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        if (task.id === selectedId) item.classList.add('active');
+        if (doneMap[task.id]) item.classList.add('done');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = !!doneMap[task.id];
+        checkbox.setAttribute('aria-label', task.title);
+
+        const copy = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = task.title;
+        const note = document.createElement('div');
+        note.className = 'small';
+        note.textContent = task.note;
+        copy.append(title, note);
+        item.append(checkbox, copy);
+
+        item.addEventListener('click', () => {
+          selectedId = task.id;
+          try { localStorage.setItem('starterSelected', selectedId); } catch (error) {}
+          renderAll();
+        });
+
+        checkbox.addEventListener('click', (event) => {
+          event.stopPropagation();
+          doneMap[task.id] = checkbox.checked;
+          saveDoneMap(doneMap);
+          selectedId = task.id;
+          try { localStorage.setItem('starterSelected', selectedId); } catch (error) {}
+          renderAll();
+        });
+
+        list.appendChild(item);
+      });
+    }
+
+    function renderGuide() {
+      const dictionary = content[currentLanguage];
+      const task = dictionary.tasks.find((entry) => entry.id === selectedId) || dictionary.tasks[0];
+      const isDone = !!getDoneMap()[task.id];
+      document.getElementById('guide').classList.toggle('done', isDone);
+      document.getElementById('guideStatus').textContent = isDone ? dictionary.completed : dictionary.selectedTask;
+      document.getElementById('guideTitle').textContent = task.title;
+      document.getElementById('guideIntro').textContent = task.intro;
+
+      const steps = document.getElementById('guideSteps');
+      steps.replaceChildren();
+      task.steps.forEach((stepText) => {
+        const step = document.createElement('div');
+        step.className = 'step';
+        step.textContent = stepText;
+        steps.appendChild(step);
+      });
+
+      const actions = document.getElementById('guideActions');
+      actions.replaceChildren();
+      if (task.link) {
+        const link = document.createElement('a');
+        link.className = 'resource-link';
+        link.href = task.link;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = task.linkLabel;
+        actions.appendChild(link);
+      }
+    }
+
+    function renderProgress() {
+      const doneMap = getDoneMap();
+      const tasks = content[currentLanguage].tasks;
+      const done = tasks.filter((task) => doneMap[task.id]).length;
+      const total = tasks.length;
+      const percent = Math.round((done / total) * 100);
+      document.getElementById('progressText').textContent = `${done} / ${total}`;
+      document.getElementById('barFill').style.width = `${percent}%`;
+      const progressBar = document.getElementById('progressBar');
+      progressBar.setAttribute('aria-valuemax', total);
+      progressBar.setAttribute('aria-valuenow', done);
+    }
+
+    function renderAll() {
+      renderChecklist();
+      renderGuide();
+      renderProgress();
+    }
+
+    function applyLanguage(lang, persist = true) {
+      currentLanguage = supportedLangs.includes(lang) ? lang : 'en';
+      const dictionary = content[currentLanguage];
+      document.documentElement.lang = currentLanguage;
+      document.title = currentLanguage === 'fr' ? 'Intégration des nouveaux employés | Portail des employés KLN' : 'New Employee Onboarding | KLN Employee Portal';
+
+      document.querySelectorAll('[data-i18n]').forEach((element) => {
+        const value = dictionary[element.dataset.i18n];
+        if (value) element.textContent = value;
+      });
+      document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+        const value = dictionary[element.dataset.i18nAriaLabel];
+        if (value) element.setAttribute('aria-label', value);
+      });
+      document.querySelectorAll('.lang-btn').forEach((button) => {
+        const active = button.dataset.lang === currentLanguage;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (persist) {
+        try { localStorage.setItem('kln-portal-lang', currentLanguage); } catch (error) {}
+      }
+      renderAll();
+    }
+
+    function getAutomaticTheme(date = new Date()) {
+      const hour = date.getHours();
+      return hour >= 19 || hour < 7 ? 'dark' : 'light';
+    }
+
+    function detectInitialThemeMode() {
+      try {
+        const saved = localStorage.getItem(themeStorageKey);
+        return supportedThemeModes.includes(saved) ? saved : 'auto';
+      } catch (error) {
+        return 'auto';
+      }
+    }
+
+    function applyTheme(mode, persist = true) {
+      const selected = supportedThemeModes.includes(mode) ? mode : 'auto';
+      document.documentElement.dataset.themeMode = selected;
+      document.documentElement.dataset.theme = selected === 'auto' ? getAutomaticTheme() : selected;
+      document.querySelectorAll('.theme-btn').forEach((button) => {
+        const active = button.dataset.themeMode === selected;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (persist) {
+        try { localStorage.setItem(themeStorageKey, selected); } catch (error) {}
+      }
+    }
+
+    function resetChecklist() {
+      try { localStorage.removeItem('starterDone'); } catch (error) {}
+      renderAll();
+    }
+
+    document.querySelectorAll('.lang-btn').forEach((button) => button.addEventListener('click', () => applyLanguage(button.dataset.lang)));
+    document.querySelectorAll('.theme-btn').forEach((button) => button.addEventListener('click', () => applyTheme(button.dataset.themeMode)));
+    document.getElementById('resetButton').addEventListener('click', resetChecklist);
+
+    const initialThemeMode = detectInitialThemeMode();
+    applyTheme(initialThemeMode, false);
+    applyLanguage(detectInitialLanguage(), false);
+    setInterval(() => {
+      if (document.documentElement.dataset.themeMode === 'auto') applyTheme('auto', false);
+    }, 60000);
+  </script>
+</body>
+</html>
