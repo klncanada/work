@@ -116,7 +116,7 @@
     font-weight:700;
     color:var(--navy);
   }
-  input[type=text], textarea{
+  input[type=text], textarea, .grow-field{
     font-family:inherit;
     font-size:13px;
     border:none;
@@ -126,20 +126,31 @@
     width:100%;
     color:#111;
   }
-  input[type=text]:focus, textarea:focus{
+  input[type=text]:focus, textarea:focus, .grow-field:focus{
     outline:none;
     border-bottom:1.5px solid var(--orange);
     background:#fff8f0;
   }
-  textarea{
-    resize:vertical;
+  textarea, .grow-field{
     line-height:1.5;
     border:1px solid #cfd8e3;
     border-radius:4px;
     padding:6px 8px;
     background:#fbfcfe;
   }
-  textarea:focus{ border-color:var(--orange); }
+  textarea{ resize:vertical; }
+  textarea:focus, .grow-field:focus{ border-color:var(--orange); }
+  .grow-field{
+    display:block;
+    min-height:1.5em;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+  }
+  .grow-field:empty::before{
+    content: attr(data-placeholder);
+    color:#aab4c2;
+  }
 
   .grid2{
     display:grid;
@@ -322,58 +333,19 @@
     margin-top:10px;
   }
 
-  .print-only{ display:none; }
-
   @media print{
     body{ background:#fff; padding:0; margin:0; }
     .toolbar{ display:none; }
-    .screen-only{ display:none !important; }
-    .print-only{ display:block !important; }
     .sheet{
       box-shadow:none;
       max-width:100%;
       margin:0;
-      padding:4mm 7mm 3mm;
-      border-top:4px solid var(--orange);
+      padding:14mm 14mm 10mm;
+      border-top:5px solid var(--orange);
     }
-    .head{ margin-bottom:2px; }
-    .head h1{ font-size:14px; margin:0 0 1px; }
-    .logo{ height:26px; }
-    .confidential{ font-size:9.5px; margin-top:1px; }
-    .note{ font-size:8px; line-height:1.35; margin:4px 0 6px; }
-    .note strong{ display:inline; margin-right:4px; }
-    .sr-row{ font-size:10px; margin-bottom:3px; }
-    label.lbl{ font-size:9.5px; }
-    input[type=text], textarea{ font-size:9.5px; padding:1px 2px; }
-    .grid2{ gap:1px 16px; margin:4px 0 5px; }
-    .field{ margin-bottom:2px; }
-    .section, .allcases{ padding:5px 8px 6px; margin-bottom:5px; border-width:1px; }
-    .section-title, .allcases-title{ margin-bottom:3px; font-size:10px; }
-    .radio-dot{ width:10px; height:10px; }
-    .radio-dot.active::after{ width:5px; height:5px; }
-    .numitem{ margin-bottom:3px; }
-    .numitem .lbl{ margin-bottom:1px; }
-    textarea{ padding:2px 5px; line-height:1.25; border-width:1px; }
-    textarea[name="additional_reasons"], textarea[name="repl_reasons"], textarea[name="internal_candidate"]{ height:18px; }
-    textarea[name="additional_jd"]{ height:26px; }
-    .allcases p{ font-size:8.5px; margin:0 0 2px; line-height:1.3; }
-    .terms-row{ margin:1.5px 0; font-size:9px; gap:5px; }
-    .terms-row .term-label{ width:56px; }
-    .checkbox{ width:10px; height:10px; }
-    .ds-row{ margin-top:2px; }
-    .sig-grid{ margin-bottom:5px; border-width:1px; }
-    .sig-cell{ padding:4px 6px 5px; min-height:42px; }
-    .sig-space{ min-height:8px; }
-    .name-hint{ font-size:6.5px; margin-bottom:0; }
-    .sig-line{ margin-bottom:2px; }
-    .date-row{ font-size:8.5px; }
-    .hr-only .bar{ font-size:9.5px; padding:2px 8px; }
-    .hr-body{ padding:4px 8px 5px; }
-    .hr-row{ font-size:8.5px; margin-bottom:2px; gap:4px; }
-    .footer-code{ font-size:7px; margin-top:2px; }
-    textarea, input[type=text]{ background:transparent !important; }
+    textarea, input[type=text], .grow-field{ background:transparent !important; }
     .section, .allcases, .sig-grid, .hr-only{ break-inside:avoid; }
-    @page{ size:letter; margin:5mm; }
+    @page{ size:letter; margin:8mm; }
   }
 
   @media (max-width:700px){
@@ -403,7 +375,7 @@
     </div>
     <div class="confidential">CONFIDENTIAL</div>
 
-    <div class="note screen-only">
+    <div class="note">
       <strong>(Each form to cover ONE category of position only.)</strong>
       <strong style="margin-top:8px;">Procedures:</strong>
       <ol>
@@ -411,10 +383,6 @@
         <li>HR&amp;A will → review the requisition → pass the requisition to KLHO SAP (if necessary) for final approval → notify Dept / BUL Head, via email / phone, whether requisition is approved.</li>
         <li>For headcount charge back clients, please attach Temporary Rate Sheet approved by Director of respective Co. / BU.</li>
       </ol>
-    </div>
-    <div class="note print-only">
-      <strong>(Each form to cover ONE category of position only.)</strong>
-      Procedures: (A) Requested party completes this form → Dept/BUL Head → Director → HR&amp;A. (B) HR&amp;A reviews → KLHO SAP (if necessary) for final approval → notifies Dept/BUL Head. (C) For charge-back clients, attach the Director-approved Temporary Rate Sheet.
     </div>
 
     <div class="sr-row">
@@ -436,11 +404,11 @@
       </div>
       <div class="numitem">
         <span class="lbl">1. Reasons for additional post :</span>
-        <textarea name="additional_reasons" rows="2"></textarea>
+        <div class="grow-field" contenteditable="true" data-field="additional_reasons" data-placeholder=""></div>
       </div>
       <div class="numitem">
         <span class="lbl">2. Job Description (please attach new organizational chart) :</span>
-        <textarea name="additional_jd" rows="3"></textarea>
+        <div class="grow-field" contenteditable="true" data-field="additional_jd" data-placeholder=""></div>
       </div>
       <div class="numitem" style="margin-bottom:0;">
         <span class="lbl">3. Report duty to :</span>
@@ -464,7 +432,7 @@
       </div>
       <div class="numitem" style="margin-bottom:0;">
         <span class="lbl">3. Reasons :</span>
-        <textarea name="repl_reasons" rows="2"></textarea>
+        <div class="grow-field" contenteditable="true" data-field="repl_reasons" data-placeholder=""></div>
       </div>
     </div>
 
@@ -472,7 +440,7 @@
     <div class="allcases">
       <div class="allcases-title">* For All Cases *</div>
       <p>Please first consider if the post can be filled by internal promotion or transfer. Please specify the name of staff recommended to fill the vacancy and the reasons therefore :</p>
-      <textarea name="internal_candidate" rows="2" style="margin-bottom:12px;"></textarea>
+      <div class="grow-field" contenteditable="true" data-field="internal_candidate" data-placeholder="" style="margin-bottom:12px;"></div>
 
       <p style="margin-bottom:6px;"><strong>If new staff is to be recruited, please specify employment terms :</strong></p>
 
@@ -613,6 +581,7 @@
   function resetForm(){
     if(!confirm('清空所有已填内容？')) return;
     document.getElementById('reqForm').reset();
+    document.querySelectorAll('.grow-field').forEach(el=>el.textContent='');
     document.querySelectorAll('.radio-dot.active, .checkbox.active').forEach(el=>el.classList.remove('active'));
     document.getElementById('sec-additional').classList.remove('dim');
     document.getElementById('sec-replacement').classList.remove('dim');
