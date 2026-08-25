@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KLN Staff Requisition</title>
+<style>
+  :root{
+    --navy:#0B2545;
+    --orange:#F5821F;
+    --line:#0B2545;
+    --paper:#ffffff;
+    --muted:#5b6b80;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#e8ecf1;
+    margin:0;
+    padding:24px 0 60px;
+    color:#1a1a1a;
+  }
+
+  /* ---------- toolbar (screen only) ---------- */
+  .toolbar{
+    max-width:850px;
+    margin:0 auto 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:0 4px;
+  }
+  .toolbar .hint{
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .toolbar button{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    font-size:14px;
+    font-weight:600;
+    border-radius:6px;
+    cursor:pointer;
+    letter-spacing:.2px;
+  }
+  .toolbar button:hover{ background:#123566; }
+  .toolbar button.secondary{
+    background:#fff;
+    color:var(--navy);
+    border:1.5px solid var(--navy);
+  }
+  .toolbar button.secondary:hover{ background:#eef2f7; }
+  .toolbar .btns{ display:flex; gap:10px; }
+
+  /* ---------- page/sheet ---------- */
+  .sheet{
+    max-width:850px;
+    margin:0 auto;
+    background:var(--paper);
+    padding:34px 40px 30px;
+    box-shadow:0 2px 14px rgba(11,37,69,.15);
+    border-top:5px solid var(--orange);
+  }
+
+  .head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:6px;
+  }
+  .head h1{
+    font-size:20px;
+    letter-spacing:.5px;
+    margin:0 0 4px;
+    color:var(--navy);
+  }
+  .logo{
+    height:44px;
+    width:auto;
+    object-fit:contain;
+  }
+  .confidential{
+    text-align:right;
+    font-weight:700;
+    text-decoration:underline;
+    font-size:13px;
+    margin-top:6px;
+  }
+
+  .note{
+    font-size:11px;
+    line-height:1.5;
+    color:#333;
+    margin:10px 0 14px;
+  }
+  .note strong{ display:block; margin-bottom:2px; }
+  .note ol{ margin:2px 0 0 16px; padding:0; }
+
+  .sr-row{
+    display:flex;
+    justify-content:flex-end;
+    align-items:baseline;
+    gap:6px;
+    font-size:12.5px;
+    margin-bottom:10px;
+  }
+  .sr-row input{ width:110px !important; flex:none; }
+
+  /* ---------- field styles ---------- */
+  label.lbl{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--navy);
+  }
+  input[type=text], textarea{
+    font-family:inherit;
+    font-size:13px;
+    border:none;
+    border-bottom:1px solid #24406b;
+    background:transparent;
+    padding:2px 3px;
+    width:100%;
+    color:#111;
+  }
+  input[type=text]:focus, textarea:focus{
+    outline:none;
+    border-bottom:1.5px solid var(--orange);
+    background:#fff8f0;
+  }
+  textarea{
+    resize:vertical;
+    line-height:1.5;
+    border:1px solid #cfd8e3;
+    border-radius:4px;
+    padding:6px 8px;
+    background:#fbfcfe;
+  }
+  textarea:focus{ border-color:var(--orange); }
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px 24px;
+    margin:12px 0 16px;
+  }
+  .field{ margin-bottom:8px; }
+  .field-inline{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .field-inline .lbl{ white-space:nowrap; }
+
+  /* ---------- section boxes ---------- */
+  .section{
+    border:1.5px solid var(--navy);
+    border-radius:6px;
+    padding:14px 16px 16px;
+    margin-bottom:14px;
+    position:relative;
+  }
+  .section.dim{ opacity:.55; }
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:800;
+    font-size:13.5px;
+    color:var(--navy);
+    margin-bottom:10px;
+  }
+  .radio-dot{
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid var(--navy);
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;
+  }
+  .radio-dot.active::after{
+    content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);
+  }
+  .numitem{ margin-bottom:10px; }
+  .numitem .lbl{ display:block; margin-bottom:3px; }
+
+  .allcases{
+    border:1.5px solid var(--navy);
+    border-radius:6px;
+    padding:14px 16px 16px;
+    margin-bottom:14px;
+  }
+  .allcases-title{
+    text-align:center;
+    font-weight:800;
+    font-size:13px;
+    color:var(--navy);
+    margin-bottom:8px;
+  }
+  .allcases p{
+    font-size:12px;
+    margin:0 0 8px;
+    line-height:1.5;
+  }
+
+  .terms-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:6px 0;
+    font-size:12.5px;
+    flex-wrap:wrap;
+  }
+  .terms-row .term-label{
+    width:78px;
+    font-weight:700;
+    color:var(--navy);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .terms-row input[type=text]{
+    display:inline-block;
+  }
+  .w-narrow{ width:60px !important; display:inline-block; }
+  .w-mid{ width:120px !important; display:inline-block; }
+  .checkbox{
+    width:13px;height:13px;
+    border:1.5px solid var(--navy);
+    display:inline-block;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .checkbox.active{ background:var(--orange); }
+
+  .ds-row{
+    display:flex;
+    gap:30px;
+    margin-top:10px;
+    font-size:12.5px;
+  }
+  .ds-row .field{ flex:1; margin-bottom:0; }
+
+  /* ---------- signature grid ---------- */
+  .sig-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border:1.5px solid var(--navy);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .sig-cell{
+    border-right:1px solid #b9c4d3;
+    padding:10px 12px 12px;
+    display:flex;
+    flex-direction:column;
+    min-height:150px;
+  }
+  .sig-cell:last-child{ border-right:none; }
+  .sig-cell .lbl{ display:block; }
+  .sig-cell .sub{ font-size:10.5px; color:var(--muted); display:block; margin:2px 0 0; }
+  .sig-space{
+    flex:1 1 auto;
+    min-height:34px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+  .name-hint{
+    font-size:9.5px;
+    color:#9aa5b3;
+    display:block;
+    margin-bottom:2px;
+  }
+  .sig-space input[type=text]{
+    margin-bottom:2px;
+  }
+  .sig-line{
+    border-bottom:1px solid #24406b;
+    height:1px;
+    margin-bottom:8px;
+  }
+  .date-row{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    font-size:11.5px;
+  }
+  .date-row input{ flex:1; min-width:0; }
+
+  /* ---------- HR use only ---------- */
+  .hr-only{
+    border:1.5px solid var(--navy);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .hr-only .bar{
+    background:var(--navy);
+    color:#fff;
+    font-weight:700;
+    font-size:12.5px;
+    padding:6px 12px;
+  }
+  .hr-body{ padding:12px 16px 14px; }
+  .hr-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12.5px;
+    margin-bottom:9px;
+    flex-wrap:wrap;
+  }
+  .hr-row .lbl{ flex-shrink:0; }
+  .hr-row input[type=text]{ flex:1; min-width:120px; }
+
+  .footer-code{
+    font-size:9.5px;
+    color:#8a94a3;
+    margin-top:10px;
+  }
+
+  .print-only{ display:none; }
+
+  @media print{
+    body{ background:#fff; padding:0; margin:0; }
+    .toolbar{ display:none; }
+    .screen-only{ display:none !important; }
+    .print-only{ display:block !important; }
+    .sheet{
+      box-shadow:none;
+      max-width:100%;
+      margin:0;
+      padding:4mm 7mm 3mm;
+      border-top:4px solid var(--orange);
+    }
+    .head{ margin-bottom:2px; }
+    .head h1{ font-size:14px; margin:0 0 1px; }
+    .logo{ height:26px; }
+    .confidential{ font-size:9.5px; margin-top:1px; }
+    .note{ font-size:8px; line-height:1.35; margin:4px 0 6px; }
+    .note strong{ display:inline; margin-right:4px; }
+    .sr-row{ font-size:10px; margin-bottom:3px; }
+    label.lbl{ font-size:9.5px; }
+    input[type=text], textarea{ font-size:9.5px; padding:1px 2px; }
+    .grid2{ gap:1px 16px; margin:4px 0 5px; }
+    .field{ margin-bottom:2px; }
+    .section, .allcases{ padding:5px 8px 6px; margin-bottom:5px; border-width:1px; }
+    .section-title, .allcases-title{ margin-bottom:3px; font-size:10px; }
+    .radio-dot{ width:10px; height:10px; }
+    .radio-dot.active::after{ width:5px; height:5px; }
+    .numitem{ margin-bottom:3px; }
+    .numitem .lbl{ margin-bottom:1px; }
+    textarea{ padding:2px 5px; line-height:1.25; border-width:1px; }
+    textarea[name="additional_reasons"], textarea[name="repl_reasons"], textarea[name="internal_candidate"]{ height:18px; }
+    textarea[name="additional_jd"]{ height:26px; }
+    .allcases p{ font-size:8.5px; margin:0 0 2px; line-height:1.3; }
+    .terms-row{ margin:1.5px 0; font-size:9px; gap:5px; }
+    .terms-row .term-label{ width:56px; }
+    .checkbox{ width:10px; height:10px; }
+    .ds-row{ margin-top:2px; }
+    .sig-grid{ margin-bottom:5px; border-width:1px; }
+    .sig-cell{ padding:4px 6px 5px; min-height:42px; }
+    .sig-space{ min-height:8px; }
+    .name-hint{ font-size:6.5px; margin-bottom:0; }
+    .sig-line{ margin-bottom:2px; }
+    .date-row{ font-size:8.5px; }
+    .hr-only .bar{ font-size:9.5px; padding:2px 8px; }
+    .hr-body{ padding:4px 8px 5px; }
+    .hr-row{ font-size:8.5px; margin-bottom:2px; gap:4px; }
+    .footer-code{ font-size:7px; margin-top:2px; }
+    textarea, input[type=text]{ background:transparent !important; }
+    .section, .allcases, .sig-grid, .hr-only{ break-inside:avoid; }
+    @page{ size:letter; margin:5mm; }
+  }
+
+  @media (max-width:700px){
+    .sheet{ padding:20px 16px; }
+    .grid2{ grid-template-columns:1fr; }
+    .sig-grid{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="hint">填好后点击"打印 / 导出 PDF"，在打印对话框里选择"另存为 PDF"即可。</div>
+    <div class="btns">
+      <button class="secondary" onclick="resetForm()">清空重填</button>
+      <button onclick="window.print()">打印 / 导出 PDF</button>
+    </div>
+  </div>
+
+  <form class="sheet" id="reqForm">
+
+    <div class="head">
+      <div>
+        <h1>STAFF REQUISITION</h1>
+      </div>
+      <img class="logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
+    </div>
+    <div class="confidential">CONFIDENTIAL</div>
+
+    <div class="note screen-only">
+      <strong>(Each form to cover ONE category of position only.)</strong>
+      <strong style="margin-top:8px;">Procedures:</strong>
+      <ol>
+        <li>Requested party should → complete this form → obtain the approval of concerned Dept / BUL Head → Director of respective Co. / BU → HR&amp;A</li>
+        <li>HR&amp;A will → review the requisition → pass the requisition to KLHO SAP (if necessary) for final approval → notify Dept / BUL Head, via email / phone, whether requisition is approved.</li>
+        <li>For headcount charge back clients, please attach Temporary Rate Sheet approved by Director of respective Co. / BU.</li>
+      </ol>
+    </div>
+    <div class="note print-only">
+      <strong>(Each form to cover ONE category of position only.)</strong>
+      Procedures: (A) Requested party completes this form → Dept/BUL Head → Director → HR&amp;A. (B) HR&amp;A reviews → KLHO SAP (if necessary) for final approval → notifies Dept/BUL Head. (C) For charge-back clients, attach the Director-approved Temporary Rate Sheet.
+    </div>
+
+    <div class="sr-row">
+      <span>S.R. No. :</span> <input type="text" name="sr_no">
+    </div>
+
+    <div class="grid2">
+      <div class="field field-inline"><span class="lbl">Company&nbsp;:</span><input type="text" name="company"></div>
+      <div class="field field-inline"><span class="lbl">Position&nbsp;:</span><input type="text" name="position"></div>
+      <div class="field field-inline"><span class="lbl">Dept / BU&nbsp;:</span><input type="text" name="dept_bu"></div>
+      <div class="field field-inline"><span class="lbl">Working Location&nbsp;:</span><input type="text" name="working_location"></div>
+    </div>
+
+    <!-- FOR ADDITIONAL POST -->
+    <div class="section" id="sec-additional">
+      <div class="section-title">
+        <span class="radio-dot" data-group="post-type" data-value="additional" onclick="selectPostType('additional')"></span>
+        For Additional Post
+      </div>
+      <div class="numitem">
+        <span class="lbl">1. Reasons for additional post :</span>
+        <textarea name="additional_reasons" rows="2"></textarea>
+      </div>
+      <div class="numitem">
+        <span class="lbl">2. Job Description (please attach new organizational chart) :</span>
+        <textarea name="additional_jd" rows="3"></textarea>
+      </div>
+      <div class="numitem" style="margin-bottom:0;">
+        <span class="lbl">3. Report duty to :</span>
+        <input type="text" name="additional_report_to">
+      </div>
+    </div>
+
+    <!-- FOR REPLACEMENT POST -->
+    <div class="section" id="sec-replacement">
+      <div class="section-title">
+        <span class="radio-dot" data-group="post-type" data-value="replacement" onclick="selectPostType('replacement')"></span>
+        For Replacement Post
+      </div>
+      <div class="grid2" style="margin:0 0 8px;">
+        <div class="field-inline"><span class="lbl">1. To replace&nbsp;:</span><input type="text" name="repl_to_replace"></div>
+        <div class="field-inline"><span class="lbl">Position&nbsp;:</span><input type="text" name="repl_position"></div>
+      </div>
+      <div class="numitem">
+        <span class="lbl">2. Resigned / Terminated / Transferred with effect from :</span>
+        <input type="text" name="repl_effective_date">
+      </div>
+      <div class="numitem" style="margin-bottom:0;">
+        <span class="lbl">3. Reasons :</span>
+        <textarea name="repl_reasons" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- FOR ALL CASES -->
+    <div class="allcases">
+      <div class="allcases-title">* For All Cases *</div>
+      <p>Please first consider if the post can be filled by internal promotion or transfer. Please specify the name of staff recommended to fill the vacancy and the reasons therefore :</p>
+      <textarea name="internal_candidate" rows="2" style="margin-bottom:12px;"></textarea>
+
+      <p style="margin-bottom:6px;"><strong>If new staff is to be recruited, please specify employment terms :</strong></p>
+
+      <div class="terms-row">
+        <span class="term-label"><span class="radio-dot" data-group="terms" data-value="permanent" onclick="selectTerm('permanent')"></span>Permanent</span>
+        <span>:</span>
+        <span class="checkbox" id="chk-chargeback" onclick="toggleCheck('chk-chargeback')"></span>
+        <span>Staff cost will charge back client</span>
+      </div>
+
+      <div class="terms-row">
+        <span class="term-label"><span class="radio-dot" data-group="terms" data-value="contract" onclick="selectTerm('contract')"></span>Contract</span>
+        <span>: For a period of</span>
+        <input type="text" class="w-narrow" name="contract_years"><span>year(s)</span>
+        <input type="text" class="w-narrow" name="contract_months"><span>month(s)</span>
+      </div>
+
+      <div class="terms-row">
+        <span class="term-label"><span class="radio-dot" data-group="terms" data-value="parttime" onclick="selectTerm('parttime')"></span>Part-time</span>
+        <span>: For a period from</span>
+        <input type="text" class="w-mid" name="pt_from"><span>to</span>
+        <input type="text" class="w-mid" name="pt_to">
+        <span>with working hours from</span>
+        <input type="text" class="w-narrow" name="pt_hours_from"><span>to</span>
+        <input type="text" class="w-narrow" name="pt_hours_to">
+      </div>
+
+      <div class="terms-row">
+        <span class="term-label"><span class="radio-dot" data-group="terms" data-value="temporary" onclick="selectTerm('temporary')"></span>Temporary</span>
+        <span>: For a period from</span>
+        <input type="text" class="w-mid" name="temp_from"><span>to</span>
+        <input type="text" class="w-mid" name="temp_to">
+      </div>
+
+      <div class="ds-row">
+        <div class="field field-inline"><span class="lbl">Date Required&nbsp;:</span><input type="text" name="date_required"></div>
+        <div class="field field-inline"><span class="lbl">Salary&nbsp;:</span><input type="text" name="salary"></div>
+      </div>
+    </div>
+
+    <!-- SIGNATURES -->
+    <div class="sig-grid">
+      <div class="sig-cell">
+        <span class="lbl">Submitted by :</span>
+        <div class="sig-space">
+          <span class="name-hint">Name</span>
+          <input type="text" name="submitted_name">
+        </div>
+        <div class="sig-line"></div>
+        <div class="date-row"><span class="date-lbl">Date :</span><input type="text" name="submitted_date"></div>
+      </div>
+      <div class="sig-cell">
+        <span class="lbl">Approved by :</span>
+        <div class="sig-space">
+          <span class="name-hint">Name</span>
+          <input type="text" name="approved1_name">
+        </div>
+        <div class="sig-line"></div>
+        <div class="date-row"><span class="date-lbl">Date :</span><input type="text" name="approved1_date"></div>
+      </div>
+      <div class="sig-cell">
+        <span class="lbl">Endorsed by :</span><span class="sub">Head of HR&amp;A</span>
+        <div class="sig-space">
+          <span class="name-hint">Name</span>
+          <input type="text" name="endorsed_name">
+        </div>
+        <div class="sig-line"></div>
+        <div class="date-row"><span class="date-lbl">Date :</span><input type="text" name="endorsed_date"></div>
+      </div>
+      <div class="sig-cell">
+        <span class="lbl">Approved by :</span>
+        <div class="sig-space">
+          <span class="name-hint">Name</span>
+          <input type="text" name="approved2_name">
+        </div>
+        <div class="sig-line"></div>
+        <div class="date-row"><span class="date-lbl">Date :</span><input type="text" name="approved2_date"></div>
+      </div>
+    </div>
+
+    <!-- FOR HR&A USE ONLY -->
+    <div class="hr-only">
+      <div class="bar">For HR&amp;A Use Only</div>
+      <div class="hr-body">
+        <div class="hr-row">
+          <span class="lbl">Requisition received on</span>
+          <input type="text" style="max-width:160px;">
+        </div>
+        <div class="hr-row">
+          <span class="radio-dot" data-group="hrmethod" data-value="ad" onclick="selectHrMethod('ad')"></span>
+          <span class="lbl">Ad placed on</span>
+          <input type="text" style="max-width:150px;">
+          <span class="lbl">from</span><input type="text" style="max-width:100px;">
+          <span class="lbl">to</span><input type="text" style="max-width:100px;">
+        </div>
+        <div class="hr-row">
+          <span class="radio-dot" data-group="hrmethod" data-value="agency" onclick="selectHrMethod('agency')"></span>
+          <span class="lbl">Through Agency</span>
+          <input type="text" style="max-width:150px;">
+          <span class="lbl">Total fee payable</span><input type="text" style="max-width:120px;">
+        </div>
+        <div class="hr-row">
+          <span class="lbl">Name of staff recruited</span>
+          <input type="text">
+          <span class="lbl">Date of report duty</span><input type="text" style="max-width:130px;">
+        </div>
+        <div class="hr-row">
+          <span class="lbl">Remarks</span>
+          <input type="text">
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-code">SF/HR/044/Ver.12</div>
+  </form>
+
+<script>
+  function selectPostType(val){
+    document.querySelectorAll('[data-group="post-type"]').forEach(el=>{
+      el.classList.toggle('active', el.dataset.value===val);
+    });
+    document.getElementById('sec-additional').classList.toggle('dim', val!=='additional');
+    document.getElementById('sec-replacement').classList.toggle('dim', val!=='replacement');
+  }
+  function selectTerm(val){
+    document.querySelectorAll('[data-group="terms"]').forEach(el=>{
+      el.classList.toggle('active', el.dataset.value===val);
+    });
+  }
+  function selectHrMethod(val){
+    document.querySelectorAll('[data-group="hrmethod"]').forEach(el=>{
+      el.classList.toggle('active', el.dataset.value===val);
+    });
+  }
+  function toggleCheck(id){
+    document.getElementById(id).classList.toggle('active');
+  }
+  function resetForm(){
+    if(!confirm('清空所有已填内容？')) return;
+    document.getElementById('reqForm').reset();
+    document.querySelectorAll('.radio-dot.active, .checkbox.active').forEach(el=>el.classList.remove('active'));
+    document.getElementById('sec-additional').classList.remove('dim');
+    document.getElementById('sec-replacement').classList.remove('dim');
+  }
+</script>
+
+</body>
+</html>
