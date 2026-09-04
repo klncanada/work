@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KLN Canada Office Directory</title>
+  <title>KEX Canada Office Directory</title>
   <script>
     (() => {
       const hour = new Date().getHours();
       const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
 
       try {
-        const savedMode = localStorage.getItem('new-company-office-map-theme-mode');
+        const savedMode = localStorage.getItem('kex-canada-office-map-theme-mode');
         const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
         document.documentElement.dataset.theme = mode === 'auto' ? automaticTheme : mode;
       } catch (error) {
@@ -256,9 +256,6 @@
     }
     .office-address { margin: 4px 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
     
-    .contact-item { font-size: 12px; display: flex; gap: 8px; margin-top: 1px; }
-    .contact-label { color: var(--muted); width: 24px; }
-
     @media (max-width: 980px) {
       html, body { overflow: auto; }
       .page { height: auto; }
@@ -336,36 +333,22 @@
   <script>
     const offices = [
       {
-        id: "hq",
-        name: "Montreal (Canada Headquarter)",
+        id: "toronto-brampton",
+        name: "Toronto Brampton",
         tag: "headquarter",
-        address: "1425 Trans Canada Route, Dorval, QC H9P 2W9, Canada",
-        phone: "+1 514 822 4448",
-        fax: "+1 514 822 4445"
+        address: "19 Armthorpe Rd, Brampton, ON L6T 5M4"
       },
       {
-        id: "wh",
-        name: "Montreal (Warehouse)",
+        id: "vancouber-richmond",
+        name: "Vancouber Richmond",
         tag: "warehouse",
-        address: "9942 Chemin de la Côte-de-Liesse, Lachine, QC H8T 1A1, Canada",
-        phone: "+1 514 420 0282",
-        fax: "+1 514 636 5976"
+        address: "13240 Worster Court, Richmond, BC V6V 2B8"
       },
       {
-        id: "to",
-        name: "Toronto Office",
-        tag: "office",
-        address: "1450 Meyerside Drive, Mississauga, ON L5T 2N5, Canada",
-        phone: "+1 905 565 8788",
-        fax: "+1 905 565 8783"
-      },
-      {
-        id: "van",
-        name: "Vancouver Office",
-        tag: "office",
-        address: "13431 Maycrest Way, Richmond, BC V6V 2M3, Canada",
-        phone: "N/A",
-        fax: "N/A"
+        id: "toronto-woodbridge",
+        name: "Toronto Woodbridge",
+        tag: "warehouse",
+        address: "9501 Hwy 50 Unit 4, Woodbridge, ON L4H 2B9"
       }
     ];
 
@@ -382,9 +365,7 @@
         listTitle: 'Offices',
         headquarter: 'Headquarter',
         warehouse: 'Warehouse',
-        office: 'Office',
-        tel: 'Tel',
-        fax: 'Fax'
+        office: 'Office'
       },
       fr: {
         brandTitle: 'Portail Employés KLN',
@@ -398,16 +379,14 @@
         listTitle: 'Nos Emplacements',
         headquarter: 'Siège Social',
         warehouse: 'Entrepôt',
-        office: 'Bureau',
-        tel: 'Tél',
-        fax: 'Fax'
+        office: 'Bureau'
       }
     };
 
     const supportedLangs = ['en', 'fr'];
     const supportedThemeModes = ['auto', 'light', 'dark'];
-    const languageStorageKey = 'new-company-office-map-lang';
-    const themeStorageKey = 'new-company-office-map-theme-mode';
+    const languageStorageKey = 'kex-canada-office-map-lang';
+    const themeStorageKey = 'kex-canada-office-map-theme-mode';
     let currentLang = 'en';
     let selectedOfficeId = offices[0].id;
 
@@ -427,8 +406,6 @@
           <span class="office-tag">${getText(office.tag)}</span>
           <h3 class="office-name">${office.name}</h3>
           <p class="office-address">${office.address}</p>
-          <div class="contact-item"><span class="contact-label">${getText('tel')}</span><span>${office.phone}</span></div>
-          <div class="contact-item"><span class="contact-label">${getText('fax')}</span><span>${office.fax}</span></div>
         `;
         card.onclick = () => selectOffice(office);
         container.appendChild(card);
