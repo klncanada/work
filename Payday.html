@@ -79,7 +79,7 @@
 
     .card {
       width: 100%;
-      max-width: 760px;
+      max-width: 1180px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 30px;
@@ -87,6 +87,52 @@
       box-shadow: 0 24px 60px var(--shadow);
       margin: 26px auto;
     }
+
+    .payday-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(300px, .75fr);
+      align-items: start;
+      gap: 26px;
+    }
+
+    .payday-details { min-width: 0; }
+
+    .upcoming-panel {
+      position: sticky;
+      top: 98px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.35);
+    }
+
+    html[data-theme="dark"] .upcoming-panel { background: rgba(255,255,255,.04); }
+
+    .period-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .period-nav { display: inline-flex; gap: 6px; }
+
+    .period-nav-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .period-nav-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .period-nav-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .period-nav-btn:disabled { cursor: default; opacity: .35; }
 
     button {
       border: 1px solid var(--border);
@@ -276,12 +322,19 @@
     .section-title {
       font-size: 14px;
       font-weight: 850;
-      margin: 22px 0 12px;
+      margin: 0;
     }
 
     .list {
+      position: relative;
       display: grid;
       gap: 10px;
+      height: 498px;
+      padding: 2px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scroll-snap-type: y proximity;
     }
 
     .row {
@@ -289,9 +342,35 @@
       justify-content: space-between;
       align-items: center;
       gap: 14px;
+      width: 100%;
+      min-height: 74px;
       padding: 14px 16px;
       border: 1px solid var(--border);
       border-radius: 17px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      scroll-snap-align: start;
+      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .row:hover {
+      border-color: color-mix(in srgb, var(--blue) 45%, var(--border));
+      background: color-mix(in srgb, var(--blue) 6%, transparent);
+      transform: translateY(-1px);
+    }
+
+    .row:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .row.selected {
+      border-color: var(--blue);
+      background: color-mix(in srgb, var(--blue) 10%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--blue) 22%, transparent);
     }
 
     .row strong {
@@ -320,6 +399,12 @@
       line-height: 1.55;
       border-top: 1px solid var(--border);
       padding-top: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .card { max-width: 760px; }
+      .payday-layout { grid-template-columns: 1fr; }
+      .upcoming-panel { position: static; }
     }
 
     @media (max-width: 620px) {
@@ -385,49 +470,61 @@
   </header>
 
   <main class="card">
-    <h1 data-i18n="title">Next payday</h1>
+    <div class="payday-layout">
+      <div class="payday-details">
+        <h1 id="pageTitle" data-i18n="title">Next payday</h1>
 
-    <section class="hero">
-      <div class="hero-period">
-        <div class="period" id="currentPeriod">Period --</div>
-        <div class="period-sub" id="periodSub">Pay Period -- of 26</div>
-      </div>
-      <div class="days-block">
-        <div class="days" id="daysLeft">--</div>
-        <div class="days-label" id="daysLabel">days remaining</div>
-      </div>
-      <div class="hero-actions">
-        <div class="payday-date" id="nextPayday">--</div>
-        <div class="message" id="paydayMessage">Plan ahead.</div>
-      </div>
-    </section>
+        <section class="hero" aria-live="polite">
+          <div class="hero-period">
+            <div class="period" id="currentPeriod">Period --</div>
+            <div class="period-sub" id="periodSub">Pay Period -- of 26</div>
+          </div>
+          <div class="days-block">
+            <div class="days" id="daysLeft">--</div>
+            <div class="days-label" id="daysLabel">days remaining</div>
+          </div>
+          <div class="hero-actions">
+            <div class="payday-date" id="nextPayday">--</div>
+            <div class="message" id="paydayMessage">Plan ahead.</div>
+          </div>
+        </section>
 
-    <section class="grid">
-      <div class="mini">
-        <div class="mini-title" data-i18n="today">Today</div>
-        <div class="mini-value" id="todayDate">--</div>
+        <section class="grid">
+          <div class="mini">
+            <div class="mini-title" data-i18n="today">Today</div>
+            <div class="mini-value" id="todayDate">--</div>
+          </div>
+
+          <div class="mini">
+            <div class="mini-title" data-i18n="cycle">Payroll Cycle</div>
+            <div class="mini-value" id="cycleRange">--</div>
+          </div>
+        </section>
+
+        <section class="calendar-module" aria-labelledby="calendarTitle">
+          <div class="calendar-header">
+            <div class="calendar-title" id="calendarTitle" data-i18n="calendarTitle">Pay cycle calendar</div>
+            <div class="calendar-legend" aria-label="Calendar legend" data-i18n-aria-label="calendarLegendLabel">
+              <span class="legend-item"><span class="legend-dot legend-cycle"></span><span data-i18n="cycleLegend">Payroll cycle</span></span>
+              <span class="legend-item"><span class="legend-dot legend-today"></span><span data-i18n="today">Today</span></span>
+              <span class="legend-item"><span class="legend-dot legend-payday"></span><span data-i18n="paydayLegend">Payday</span></span>
+            </div>
+          </div>
+          <div class="calendar-months" id="calendarMonths" aria-live="polite"></div>
+        </section>
       </div>
 
-      <div class="mini">
-        <div class="mini-title" data-i18n="cycle">Payroll Cycle</div>
-        <div class="mini-value" id="cycleRange">--</div>
-      </div>
-    </section>
-
-    <section class="calendar-module" aria-labelledby="calendarTitle">
-      <div class="calendar-header">
-        <div class="calendar-title" id="calendarTitle" data-i18n="calendarTitle">Pay cycle calendar</div>
-        <div class="calendar-legend" aria-label="Calendar legend" data-i18n-aria-label="calendarLegendLabel">
-          <span class="legend-item"><span class="legend-dot legend-cycle"></span><span data-i18n="cycleLegend">Payroll cycle</span></span>
-          <span class="legend-item"><span class="legend-dot legend-today"></span><span data-i18n="today">Today</span></span>
-          <span class="legend-item"><span class="legend-dot legend-payday"></span><span data-i18n="paydayLegend">Payday</span></span>
+      <aside class="upcoming-panel" aria-labelledby="upcomingTitle">
+        <div class="period-list-header">
+          <div class="section-title" id="upcomingTitle" data-i18n="payPeriods">Pay periods</div>
+          <div class="period-nav">
+            <button class="period-nav-btn" id="periodUp" type="button" aria-label="Earlier pay periods" data-i18n-aria-label="earlierPeriods">↑</button>
+            <button class="period-nav-btn" id="periodDown" type="button" aria-label="Later pay periods" data-i18n-aria-label="laterPeriods">↓</button>
+          </div>
         </div>
-      </div>
-      <div class="calendar-months" id="calendarMonths"></div>
-    </section>
-
-    <div class="section-title" data-i18n="upcoming">Upcoming Paydays</div>
-    <div class="list" id="paydayList"></div>
+        <div class="list" id="paydayList"></div>
+      </aside>
+    </div>
 
     <div class="note" data-i18n="note">
       Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.
@@ -448,6 +545,7 @@
         languageSwitcherLabel: "Language switcher",
         themeModeLabel: "Display mode",
         title: "Next payday",
+        selectedTitle: "Selected payday",
         auto: "Auto",
         light: "Light",
         dark: "Dark",
@@ -457,6 +555,10 @@
         calendarLegendLabel: "Calendar legend",
         cycleLegend: "Payroll cycle",
         paydayLegend: "Payday",
+        selectPaydayLabel: "Show payday details",
+        payPeriods: "Pay periods",
+        earlierPeriods: "Earlier pay periods",
+        laterPeriods: "Later pay periods",
         upcoming: "Upcoming Paydays",
         note: "Dates and period numbers are calculated automatically in your browser. Please contact Payroll or HR if you notice any discrepancy.",
         period: "Period",
@@ -464,10 +566,13 @@
         of: "of",
         daysRemaining: "days remaining",
         dayRemaining: "day remaining",
+        daysSincePayday: "days since payday",
+        daySincePayday: "day since payday",
         todayIsPayday: "Today is payday",
         todayTag: "Today",
         days: "days",
         messageToday: "Payday is today.",
+        messagePast: "This payday has passed.",
         messageSoon: "Payday is coming soon.",
         messageNormal: "Plan ahead.",
         fromToday: "from today"
@@ -479,6 +584,7 @@
         languageSwitcherLabel: "Sélecteur de langue",
         themeModeLabel: "Mode d’affichage",
         title: "Prochaine paie",
+        selectedTitle: "Paie s\u00e9lectionn\u00e9e",
         auto: "Auto",
         light: "Clair",
         dark: "Sombre",
@@ -488,6 +594,10 @@
         calendarLegendLabel: "L\u00e9gende du calendrier",
         cycleLegend: "Cycle de paie",
         paydayLegend: "Jour de paie",
+        selectPaydayLabel: "Afficher les d\u00e9tails du jour de paie",
+        payPeriods: "P\u00e9riodes de paie",
+        earlierPeriods: "P\u00e9riodes de paie pr\u00e9c\u00e9dentes",
+        laterPeriods: "P\u00e9riodes de paie suivantes",
         upcoming: "Prochaines paies",
         note: "Les dates et les numéros de période sont calculés automatiquement dans votre navigateur. Veuillez contacter la paie ou les RH en cas d’écart.",
         period: "Période",
@@ -495,10 +605,13 @@
         of: "sur",
         daysRemaining: "jours restants",
         dayRemaining: "jour restant",
+        daysSincePayday: "jours depuis la paie",
+        daySincePayday: "jour depuis la paie",
         todayIsPayday: "La paie est aujourd’hui",
         todayTag: "Aujourd’hui",
         days: "jours",
         messageToday: "La paie est aujourd’hui.",
+        messagePast: "Ce jour de paie est pass\u00e9.",
         messageSoon: "La paie arrive bientôt.",
         messageNormal: "Planifiez à l’avance.",
         fromToday: "à partir d’aujourd’hui"
@@ -511,6 +624,9 @@
       (navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en");
 
     let theme = localStorage.getItem(themeStorageKey) || localStorage.getItem("payrollTheme") || "auto";
+    let selectedPaydayOffset = 0;
+    const periodHistory = 13;
+    const periodFuture = 13;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -584,8 +700,12 @@
       const locale = lang === "fr" ? "fr-CA" : "en-CA";
       const { start, end } = getPayPeriodRange(payday);
       const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
-      const lastMonth = new Date(payday.getFullYear(), payday.getMonth(), 1);
+      let lastMonth = new Date(payday.getFullYear(), payday.getMonth(), 1);
       const months = [];
+
+      if (sameDate(firstMonth, lastMonth)) {
+        lastMonth = new Date(firstMonth.getFullYear(), firstMonth.getMonth() + 1, 1);
+      }
 
       for (let month = new Date(firstMonth); month <= lastMonth; month.setMonth(month.getMonth() + 1)) {
         months.push(new Date(month));
@@ -682,12 +802,28 @@
       document.getElementById("themeDark").setAttribute("aria-pressed", String(theme === "dark"));
     }
 
-    function render() {
+    function formatPeriodDistance(daysDifference) {
       const t = i18n[lang];
-      const nextPayday = getNextPayday();
-      const daysLeft = diffDays(today, nextPayday);
-      const periodNumber = getPeriodNumber(nextPayday);
+
+      if (daysDifference === 0) return t.todayTag;
+      if (daysDifference > 0) return `${daysDifference} ${t.days}`;
+
+      const elapsed = Math.abs(daysDifference);
+      return lang === "fr"
+        ? `il y a ${elapsed} ${elapsed === 1 ? "jour" : "jours"}`
+        : `${elapsed} ${elapsed === 1 ? "day" : "days"} ago`;
+    }
+
+    function renderDetails() {
+      const t = i18n[lang];
+      const firstUpcomingPayday = getNextPayday();
+      const selectedPayday = addDays(firstUpcomingPayday, selectedPaydayOffset * intervalDays);
+      const daysDifference = diffDays(today, selectedPayday);
+      const periodNumber = getPeriodNumber(selectedPayday);
       const displayPeriod = getDisplayPeriod(periodNumber);
+
+      document.getElementById("pageTitle").textContent =
+        selectedPaydayOffset === 0 ? t.title : t.selectedTitle;
 
       document.getElementById("currentPeriod").textContent =
         `${t.period} ${displayPeriod}`;
@@ -695,34 +831,75 @@
       document.getElementById("periodSub").textContent =
         `${t.payPeriod} ${displayPeriod} ${t.of} ${totalPeriods}`;
 
-      document.getElementById("daysLeft").textContent = daysLeft;
+      document.getElementById("daysLeft").textContent = Math.abs(daysDifference);
 
       document.getElementById("daysLabel").textContent =
-        daysLeft === 0 ? t.todayIsPayday :
-        daysLeft === 1 ? t.dayRemaining :
+        daysDifference === 0 ? t.todayIsPayday :
+        daysDifference === -1 ? t.daySincePayday :
+        daysDifference < 0 ? t.daysSincePayday :
+        daysDifference === 1 ? t.dayRemaining :
         t.daysRemaining;
 
-      document.getElementById("nextPayday").textContent = formatDate(nextPayday);
+      document.getElementById("nextPayday").textContent = formatDate(selectedPayday);
 
       document.getElementById("paydayMessage").textContent =
-        daysLeft === 0 ? t.messageToday :
-        daysLeft <= 3 ? t.messageSoon :
+        daysDifference < 0 ? t.messagePast :
+        daysDifference === 0 ? t.messageToday :
+        daysDifference <= 3 ? t.messageSoon :
         t.messageNormal;
 
       document.getElementById("todayDate").textContent = formatDate(today);
-      document.getElementById("cycleRange").textContent = formatPayPeriodRange(nextPayday);
-      renderCalendar(nextPayday);
+      document.getElementById("cycleRange").textContent = formatPayPeriodRange(selectedPayday);
+      renderCalendar(selectedPayday);
+    }
+
+    function updatePeriodNavButtons() {
+      const list = document.getElementById("paydayList");
+      const tolerance = 2;
+      document.getElementById("periodUp").disabled = list.scrollTop <= tolerance;
+      document.getElementById("periodDown").disabled =
+        list.scrollTop + list.clientHeight >= list.scrollHeight - tolerance;
+    }
+
+    function centerPeriodRow(offset) {
+      const list = document.getElementById("paydayList");
+      const rows = Array.from(list.querySelectorAll(".row"));
+      const rowIndex = rows.findIndex(row => Number(row.dataset.paydayOffset) === offset);
+      if (rowIndex < 0) return;
+
+      const firstVisibleIndex = Math.max(0, Math.min(rowIndex - 2, rows.length - 6));
+      const paddingTop = parseFloat(getComputedStyle(list).paddingTop) || 0;
+      list.scrollTop = rows[firstVisibleIndex].offsetTop - paddingTop;
+      updatePeriodNavButtons();
+    }
+
+    function updateSelectedPeriodRow() {
+      document.querySelectorAll("#paydayList .row").forEach(row => {
+        const isSelected = Number(row.dataset.paydayOffset) === selectedPaydayOffset;
+        row.classList.toggle("selected", isSelected);
+        row.setAttribute("aria-pressed", String(isSelected));
+      });
+    }
+
+    function renderPaydayList() {
+      const t = i18n[lang];
+      const firstUpcomingPayday = getNextPayday();
 
       const list = document.getElementById("paydayList");
       list.innerHTML = "";
 
-      for (let i = 0; i < 6; i++) {
-        const payday = addDays(nextPayday, i * intervalDays);
-        const remaining = diffDays(today, payday);
+      for (let offset = -periodHistory; offset <= periodFuture; offset++) {
+        const payday = addDays(firstUpcomingPayday, offset * intervalDays);
+        const daysDifference = diffDays(today, payday);
         const period = getDisplayPeriod(getPeriodNumber(payday));
+        const distanceText = formatPeriodDistance(daysDifference);
 
-        const row = document.createElement("div");
-        row.className = "row";
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = `row${offset === selectedPaydayOffset ? " selected" : ""}`;
+        row.dataset.paydayOffset = offset;
+        row.setAttribute("aria-pressed", String(offset === selectedPaydayOffset));
+        row.setAttribute("aria-label", `${t.selectPaydayLabel}: ${t.period} ${period}, ${formatDate(payday)}, ${distanceText}`);
 
         row.innerHTML = `
           <div>
@@ -730,12 +907,35 @@
             <span>${formatDate(payday)}</span>
           </div>
           <div class="tag">
-            ${remaining === 0 ? t.todayTag : remaining + " " + t.days}
+            ${distanceText}
           </div>
         `;
 
+        row.onclick = () => {
+          selectedPaydayOffset = offset;
+          renderDetails();
+          updateSelectedPeriodRow();
+          row.focus();
+        };
+
         list.appendChild(row);
       }
+
+      requestAnimationFrame(() => centerPeriodRow(selectedPaydayOffset));
+    }
+
+    function render() {
+      renderDetails();
+      renderPaydayList();
+    }
+
+    function scrollPeriodList(direction) {
+      const list = document.getElementById("paydayList");
+      const row = list.querySelector(".row");
+      if (!row) return;
+
+      const gap = parseFloat(getComputedStyle(list).rowGap) || 10;
+      list.scrollBy({ top: direction * (row.offsetHeight + gap), behavior: "smooth" });
     }
 
     document.getElementById("langEn").onclick = () => {
@@ -772,6 +972,10 @@
       localStorage.setItem("payrollTheme", theme);
       applyTheme();
     };
+
+    document.getElementById("periodUp").onclick = () => scrollPeriodList(-1);
+    document.getElementById("periodDown").onclick = () => scrollPeriodList(1);
+    document.getElementById("paydayList").addEventListener("scroll", updatePeriodNavButtons, { passive: true });
 
     applyTheme();
     applyLanguage();
