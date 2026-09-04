@@ -337,6 +337,18 @@
       gap: 20px;
     }
 
+    .card-divider {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 30px 0 20px;
+    }
+
+    .additional-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -362,6 +374,10 @@
       transform: rotate(-18deg);
       pointer-events: none;
       z-index: -1;
+    }
+
+    .kex-card::before {
+      background-image: url("https://img.klncanada.com/company/logo/SF%20KEX.png");
     }
 
     .card > * {
@@ -450,6 +466,10 @@
       .cards {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .additional-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 900px) {
@@ -483,7 +503,8 @@
 
       .visitor-row,
       .timezone-grid,
-      .cards {
+      .cards,
+      .additional-cards {
         grid-template-columns: 1fr;
       }
     }
@@ -649,6 +670,18 @@
             </div>
           </article>
         </div>
+
+        <hr class="card-divider" />
+
+        <div class="additional-cards">
+          <article class="card kex-card">
+            <div class="card-icon">🏢</div>
+            <h4 data-i18n="kexOfficeTitle">KEX Canada Offices</h4>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="https://tools.klncanada.com/KEXCanadaOffices" target="_blank" rel="noopener noreferrer" data-i18n="openPage">Open page</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
   </main>
@@ -688,6 +721,7 @@
         groupEmailTitle: 'HR Group Email',
         paydayTitle: 'Payday Countdown',
         milestoneTitle: 'Company Milestones',
+        kexOfficeTitle: 'KEX Canada Offices',
         openPage: 'Open page',
         footerLeft: 'KLN Canada Employee Portal',
         footerRight: 'Powered by OpenAI · GitHub · Cloudflare',
@@ -723,6 +757,7 @@
         groupEmailTitle: 'Courriel de groupe RH',
         paydayTitle: 'Compte à rebours de la paie',
         milestoneTitle: 'Jalons de l’entreprise',
+        kexOfficeTitle: 'Bureaux KEX Canada',
         openPage: 'Ouvrir la page',
         footerLeft: 'Portail Employés KLN Canada',
         footerRight: 'Propulsé par OpenAI · GitHub · Cloudflare',
