@@ -498,11 +498,18 @@
                     holidays.push(holiday);
                     const d = new Date(`${h.date}T12:00:00`);
                     const dayOfWeek = d.getDay();
-                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    let observedDate = h.observedDate;
+                    if (observedDate && !/^\d{4}-\d{2}-\d{2}$/.test(observedDate)) {
+                        throw new Error(`Invalid observed date for ${h.name.en}`);
+                    }
+                    if (!observedDate && (dayOfWeek === 0 || dayOfWeek === 6)) {
                         const obsDate = new Date(d);
                         obsDate.setDate(d.getDate() + (dayOfWeek === 0 ? 1 : 2));
+                        observedDate = obsDate.toISOString().split('T')[0];
+                    }
+                    if (observedDate) {
                         holidays.push({
-                            date: obsDate.toISOString().split('T')[0],
+                            date: observedDate,
                             regions: [...h.regions],
                             sourceYear: year,
                             isObserved: true,
