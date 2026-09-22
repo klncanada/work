@@ -1,0 +1,65 @@
+{
+  "year": 2026,
+  "holidays": [
+    {
+      "date": "2026-01-01",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "New Year's Day", "fr": "Jour de l'An", "zh": "元旦" }
+    },
+    {
+      "date": "2026-02-16",
+      "regions": ["ON", "BC"],
+      "name": { "en": "Family Day", "fr": "Jour de la famille", "zh": "家庭日" }
+    },
+    {
+      "date": "2026-04-03",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Good Friday", "fr": "Vendredi saint", "zh": "耶稣受难日" }
+    },
+    {
+      "date": "2026-05-18",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Victoria Day", "fr": "Fête de la Reine", "zh": "维多利亚日" }
+    },
+    {
+      "date": "2026-06-24",
+      "regions": ["QC"],
+      "name": { "en": "St. Jean Baptiste Day", "fr": "Fête nationale", "zh": "圣让-巴蒂斯特节" }
+    },
+    {
+      "date": "2026-07-01",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Canada Day", "fr": "Fête du Canada", "zh": "加拿大日" }
+    },
+    {
+      "date": "2026-08-03",
+      "regions": ["BC"],
+      "name": { "en": "BC Day", "fr": "Fête de la CB", "zh": "卑诗省日" }
+    },
+    {
+      "date": "2026-08-03",
+      "regions": ["ON"],
+      "name": { "en": "Civic Holiday", "fr": "Congé civique", "zh": "公民日" }
+    },
+    {
+      "date": "2026-09-07",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Labour Day", "fr": "Fête du Travail", "zh": "劳动节" }
+    },
+    {
+      "date": "2026-10-12",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Thanksgiving", "fr": "Action de grâce", "zh": "感恩节" }
+    },
+    {
+      "date": "2026-12-25",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Christmas Day", "fr": "Jour de Noël", "zh": "圣诞节" }
+    },
+    {
+      "date": "2026-12-26",
+      "regions": ["ON", "BC", "QC"],
+      "name": { "en": "Boxing Day", "fr": "Lendemain de Noël", "zh": "节礼日" }
+    }
+  ]
+}
