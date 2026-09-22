@@ -117,11 +117,13 @@
         }
 
         .calendar-context { width: min(calc(100% - 32px), 1152px); min-height: 48px; margin: 0 auto; padding: 12px 0 0; display: flex; align-items: center; justify-content: center; position: relative; }
-        .calendar-context h2 { margin: 0; color: var(--portal-text); font-size: 1.25rem; font-weight: 700; }
+        .calendar-context h2 { margin: 0; color: var(--portal-text); font-size: 1.35rem; font-weight: 750; line-height: 1; text-align: center; }
         #back-btn { position: absolute; left: 0; color: var(--portal-brand); font-weight: 500; cursor: pointer; display: flex; align-items: center; transition: opacity 0.2s ease; }
-        .year-navigation { display: flex; align-items: center; justify-content: center; gap: 16px; }
-        .year-nav-btn { width: 36px; height: 36px; border: 1px solid var(--portal-line); border-radius: 999px; background: var(--portal-panel); color: var(--portal-brand); font-size: 1.75rem; line-height: 1; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+        .year-navigation { display: grid; grid-template-columns: 42px 72px 42px; align-items: center; justify-content: center; gap: 12px; }
+        .year-nav-btn { width: 42px; height: 42px; padding: 0; border: 1px solid var(--portal-line); border-radius: 999px; background: var(--portal-panel); color: var(--portal-brand); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
+        .year-nav-btn svg { width: 19px; height: 19px; }
         .year-nav-btn:hover { background: var(--portal-active-control); border-color: var(--portal-brand); transform: translateY(-1px); }
+        .year-nav-btn:active { transform: translateY(0); box-shadow: none; }
         .year-nav-btn:focus-visible { outline: 2px solid var(--portal-brand); outline-offset: 2px; }
 
         html[data-theme="dark"] .bg-white { background-color: var(--portal-panel) !important; }
@@ -366,9 +368,13 @@
             <span id="back-text">2026</span>
         </button>
         <div id="year-navigation" class="year-navigation">
-            <button id="prev-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="previousYearLabel" aria-label="Previous year">‹</button>
+            <button id="prev-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="previousYearLabel" aria-label="Previous year">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
             <h2 id="main-title">2026</h2>
-            <button id="next-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="nextYearLabel" aria-label="Next year">›</button>
+            <button id="next-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="nextYearLabel" aria-label="Next year">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
         </div>
     </div>
 
