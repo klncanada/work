@@ -149,13 +149,15 @@
 
         .table-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 12px 36px rgba(15, 23, 42, 0.05); }
         .table-scroll { overflow-x: auto; }
-        table { width: 100%; min-width: 760px; border-collapse: collapse; }
+        table { width: 100%; min-width: 860px; border-collapse: collapse; }
         th, td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
         th { background: var(--soft); color: var(--muted); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
         td { font-size: 0.94rem; }
         tbody tr:last-child td { border-bottom: 0; }
         tbody tr:hover { background: color-mix(in srgb, var(--brand) 4%, transparent); }
         .date-cell, .day-cell { white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .province-list { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .province-code { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--soft); color: var(--text); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.03em; }
         .status-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; padding: 5px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; }
         .status-badge.reg { background: var(--regular-bg); color: var(--regular-text); }
         .status-badge.obs { background: var(--observed-bg); color: var(--observed-text); }
@@ -243,6 +245,7 @@
                             <th>English Name</th>
                             <th>Date</th>
                             <th>Day</th>
+                            <th>Province</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -464,6 +467,14 @@
             return new Intl.DateTimeFormat('en-CA', { weekday: 'long', timeZone: 'UTC' }).format(new Date(`${dateString}T12:00:00Z`));
         }
 
+        function getProvinceCodes(regions) {
+            const provinceOrder = ['QC', 'ON', 'BC'];
+            return provinceOrder
+                .filter(province => regions.includes(province))
+                .map(province => `<span class="province-code">${province}</span>`)
+                .join('');
+        }
+
         function renderRows() {
             const body = document.getElementById('holiday-rows');
             const emptyState = document.getElementById('empty-state');
@@ -497,6 +508,7 @@
                     <td>${holiday.name.en}</td>
                     <td class="date-cell">${holiday.date}</td>
                     <td class="day-cell">${getDayName(holiday.date)}</td>
+                    <td><div class="province-list">${getProvinceCodes(holiday.regions)}</div></td>
                     <td><span class="status-badge ${holiday.status.toLowerCase()}">${holiday.status}</span></td>
                 `;
                 body.appendChild(row);
