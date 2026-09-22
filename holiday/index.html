@@ -650,10 +650,11 @@
             notice.classList.toggle('hidden', !missing);
         }
 
-        function getSequentialWeekNumber(d) {
-            const startOfYear = new Date(defaultYear, 0, 1);
-            const diff = Math.floor((d - startOfYear) / (1000 * 60 * 60 * 24));
-            return Math.floor((diff + startOfYear.getDay()) / 7) + 1;
+        function getSequentialWeekNumber(d, calendarYear) {
+            const firstDayOfYear = new Date(Date.UTC(calendarYear, 0, 1));
+            const firstCalendarRow = Date.UTC(calendarYear, 0, 1 - firstDayOfYear.getUTCDay());
+            const rowStart = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+            return Math.floor((rowStart - firstCalendarRow) / (7 * 24 * 60 * 60 * 1000)) + 1;
         }
 
         function hidePopover() {
@@ -834,7 +835,7 @@
 
             for (let r = 0; r < rows; r++) {
                 const rowStartDate = new Date(mYear, mIdx, dayCounter - (r === 0 ? firstDay : 0));
-                const weekNum = getSequentialWeekNumber(rowStartDate);
+                const weekNum = getSequentialWeekNumber(rowStartDate, mYear);
                 const weekCell = document.createElement('div');
                 weekCell.className = 'week-num';
                 weekCell.innerText = `${langData.weekPrefix}${weekNum}`;
