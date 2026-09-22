@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLN Holiday Sheet</title>
+    <script>
+        (() => {
+            const hour = new Date().getHours();
+            const automaticTheme = hour >= 19 || hour < 7 ? 'dark' : 'light';
+            try {
+                const savedMode = localStorage.getItem('kln-portal-theme-mode');
+                const mode = ['auto', 'light', 'dark'].includes(savedMode) ? savedMode : 'auto';
+                document.documentElement.dataset.theme = mode === 'auto' ? automaticTheme : mode;
+            } catch (error) {
+                document.documentElement.dataset.theme = automaticTheme;
+            }
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #69758a;
+            --line: #e2e8f0;
+            --soft: #f3f6fc;
+            --active: #ffffff;
+            --brand: #2563eb;
+            --topbar: rgba(255, 255, 255, 0.86);
+            --topbar-border: rgba(219, 227, 240, 0.92);
+            --regular-bg: #eef4ff;
+            --regular-text: #2459c4;
+            --observed-bg: #fff4e5;
+            --observed-text: #a34b00;
+            color-scheme: light;
+        }
+
+        html[data-theme="dark"] {
+            --bg: #07111f;
+            --panel: #0f1b2d;
+            --text: #e5eefc;
+            --muted: #9babc1;
+            --line: #29415f;
+            --soft: #101f33;
+            --active: #1b304a;
+            --brand: #60a5fa;
+            --topbar: rgba(7, 17, 31, 0.88);
+            --topbar-border: rgba(41, 65, 95, 0.92);
+            --regular-bg: #15315d;
+            --regular-text: #a9c9ff;
+            --observed-bg: #472d16;
+            --observed-text: #ffd29a;
+            color-scheme: dark;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        button, select { font: inherit; }
+        .portal-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid var(--topbar-border);
+            background: var(--topbar);
+            backdrop-filter: blur(10px);
+        }
+        .portal-topbar-inner {
+            width: min(calc(100% - 32px), 1152px);
+            min-height: 72px;
+            margin: 0 auto;
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .portal-brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
+        .portal-brand-logo { width: 100px; height: 46px; padding: 3px 0; object-fit: contain; flex: 0 0 auto; }
+        .portal-brand h1 { margin: 0; font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+        .portal-brand p { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
+        .portal-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .switcher { display: inline-flex; gap: 6px; padding: 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--soft); }
+        .switcher button { border: 0; border-radius: 999px; padding: 8px 14px; background: transparent; color: var(--muted); cursor: pointer; transition: 0.2s ease; }
+        .switcher button.active { background: var(--active); color: var(--brand); box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12); font-weight: 650; }
+        .switcher button:focus-visible, select:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+        main { width: min(calc(100% - 32px), 1152px); margin: 0 auto; padding: 42px 0 64px; }
+        .page-heading { margin-bottom: 24px; }
+        .page-heading h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -0.035em; }
+        .page-heading p { margin: 10px 0 0; color: var(--muted); font-size: 1rem; }
+
+        .filter-panel {
+            display: grid;
+            grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 20px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--panel);
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.04);
+        }
+        .filter-field { display: grid; gap: 7px; }
+        .filter-field label { color: var(--muted); font-size: 0.8rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; }
+        .filter-field select, .year-picker-button {
+            width: 100%;
+            height: 44px;
+            padding: 0 38px 0 13px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--soft);
+            color: var(--text);
+            cursor: pointer;
+        }
+        .year-picker { position: relative; }
+        .year-picker-button { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-right: 13px; text-align: left; }
+        .year-picker-button svg { width: 17px; height: 17px; flex: 0 0 auto; color: var(--muted); transition: transform 0.2s ease; }
+        .year-picker-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+        .year-options {
+            position: absolute;
+            top: calc(100% + 7px);
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: none;
+            padding: 8px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--panel);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
+        }
+        .year-options.open { display: block; }
+        .year-option { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 10px; border-radius: 9px; cursor: pointer; }
+        .year-option:hover { background: var(--soft); }
+        .year-option input { width: 17px; height: 17px; margin: 0; accent-color: var(--brand); }
+        .year-option:has(input:disabled) { cursor: not-allowed; opacity: 0.45; }
+        .year-limit-note { margin: 6px 6px 2px; color: var(--muted); font-size: 0.76rem; }
+        .result-count { min-width: 110px; padding-bottom: 12px; color: var(--muted); font-size: 0.9rem; text-align: right; white-space: nowrap; }
+
+        .table-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 12px 36px rgba(15, 23, 42, 0.05); }
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; min-width: 760px; border-collapse: collapse; }
+        th, td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+        th { background: var(--soft); color: var(--muted); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+        td { font-size: 0.94rem; }
+        tbody tr:last-child td { border-bottom: 0; }
+        tbody tr:hover { background: color-mix(in srgb, var(--brand) 4%, transparent); }
+        .date-cell, .day-cell { white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .status-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; padding: 5px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; }
+        .status-badge.reg { background: var(--regular-bg); color: var(--regular-text); }
+        .status-badge.obs { background: var(--observed-bg); color: var(--observed-text); }
+        .empty-state { padding: 48px 24px; color: var(--muted); text-align: center; }
+        .legend { display: flex; justify-content: flex-end; gap: 14px; margin-top: 12px; color: var(--muted); font-size: 0.8rem; }
+        .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+        @media (max-width: 760px) {
+            .portal-topbar-inner { align-items: flex-start; flex-wrap: wrap; }
+            .portal-controls { width: 100%; }
+            main { padding-top: 28px; }
+            .filter-panel { grid-template-columns: 1fr 1fr; }
+            .result-count { grid-column: 1 / -1; padding: 0; text-align: left; }
+        }
+        @media (max-width: 520px) {
+            .portal-brand-logo { width: 88px; }
+            .portal-controls { gap: 8px; }
+            .switcher { gap: 3px; padding: 4px; }
+            .switcher button { padding: 7px 10px; font-size: 0.84rem; }
+            .filter-panel { grid-template-columns: 1fr; }
+            .result-count { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+    <header class="portal-topbar">
+        <div class="portal-topbar-inner">
+            <a class="portal-brand" href="https://tools.klncanada.com/" data-i18n-aria-label="homeLinkLabel" aria-label="Go to the KLN Employee Portal home page">
+                <img class="portal-brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN">
+                <div>
+                    <h1 data-i18n="brandTitle">KLN Employee Portal</h1>
+                    <p data-i18n="brandSubtitle">Holiday Sheet</p>
+                </div>
+            </a>
+            <div class="portal-controls">
+                <div class="switcher" role="group" data-i18n-aria-label="languageSwitcherLabel" aria-label="Language switcher">
+                    <button id="btn-en" type="button" data-language="en">EN</button>
+                    <button id="btn-fr" type="button" data-language="fr">FR</button>
+                    <button id="btn-zh" type="button" data-language="zh">ZH</button>
+                </div>
+                <div class="switcher" role="group" data-i18n-aria-label="themeModeLabel" aria-label="Display mode">
+                    <button type="button" data-theme-mode="auto" data-i18n="themeAuto">Auto</button>
+                    <button type="button" data-theme-mode="light" data-i18n="themeLight">Light</button>
+                    <button type="button" data-theme-mode="dark" data-i18n="themeDark">Dark</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-heading">
+            <h2 data-i18n="pageTitle">Holiday Sheet</h2>
+            <p data-i18n="pageSubtitle">Browse confirmed holidays by year and province.</p>
+        </div>
+
+        <section class="filter-panel" data-i18n-aria-label="filtersLabel" aria-label="Holiday filters">
+            <div class="filter-field">
+                <label for="year-picker-button" data-i18n="yearLabel">Year</label>
+                <div class="year-picker" id="year-picker">
+                    <button id="year-picker-button" class="year-picker-button" type="button" aria-expanded="false" aria-controls="year-options">
+                        <span id="year-picker-text">Select up to 3 years</span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                    </button>
+                    <div id="year-options" class="year-options"></div>
+                </div>
+            </div>
+            <div class="filter-field">
+                <label for="province-filter" data-i18n="provinceLabel">Province</label>
+                <select id="province-filter">
+                    <option value="all">All provinces</option>
+                    <option value="QC">QC</option>
+                    <option value="ON">ON</option>
+                    <option value="BC">BC</option>
+                </select>
+            </div>
+            <div id="result-count" class="result-count" aria-live="polite"></div>
+        </section>
+
+        <section class="table-shell" data-i18n-aria-label="tableLabel" aria-label="Holiday list">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>French Name</th>
+                            <th>English Name</th>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="holiday-rows"></tbody>
+                </table>
+            </div>
+            <div id="empty-state" class="empty-state" data-i18n="loading">Loading holiday data…</div>
+        </section>
+        <div class="legend" aria-label="Status legend">
+            <span><b class="status-badge reg">REG</b><span data-i18n="regularLegend">Regular date</span></span>
+            <span><b class="status-badge obs">OBS</b><span data-i18n="observedLegend">Observed date</span></span>
+        </div>
+    </main>
+
+    <script>
+        const translations = {
+            en: {
+                brandTitle: 'KLN Employee Portal', brandSubtitle: 'Holiday Sheet', homeLinkLabel: 'Go to the KLN Employee Portal home page',
+                languageSwitcherLabel: 'Language switcher', themeModeLabel: 'Display mode', themeAuto: 'Auto', themeLight: 'Light', themeDark: 'Dark',
+                pageTitle: 'Holiday Sheet', pageSubtitle: 'Browse confirmed holidays by year and province.', filtersLabel: 'Holiday filters',
+                yearLabel: 'Year', provinceLabel: 'Province', selectYears: 'Select up to 3 years', maxYears: 'You can select up to three years.', allProvinces: 'All provinces', tableLabel: 'Holiday list',
+                loading: 'Loading holiday data…', chooseYear: 'Select at least one year to display holidays.', noResults: 'No holidays match the selected filters.', result: 'holiday', results: 'holidays',
+                regularLegend: 'Regular date', observedLegend: 'Observed date'
+            },
+            fr: {
+                brandTitle: 'Portail Employés KLN', brandSubtitle: 'Feuille des jours fériés', homeLinkLabel: 'Aller à la page d’accueil du Portail Employés KLN',
+                languageSwitcherLabel: 'Sélecteur de langue', themeModeLabel: 'Mode d’affichage', themeAuto: 'Auto', themeLight: 'Clair', themeDark: 'Sombre',
+                pageTitle: 'Feuille des jours fériés', pageSubtitle: 'Consultez les jours fériés confirmés par année et par province.', filtersLabel: 'Filtres des jours fériés',
+                yearLabel: 'Année', provinceLabel: 'Province', selectYears: 'Sélectionnez jusqu’à 3 années', maxYears: 'Vous pouvez sélectionner jusqu’à trois années.', allProvinces: 'Toutes les provinces', tableLabel: 'Liste des jours fériés',
+                loading: 'Chargement des jours fériés…', chooseYear: 'Sélectionnez au moins une année pour afficher les jours fériés.', noResults: 'Aucun jour férié ne correspond aux filtres sélectionnés.', result: 'jour férié', results: 'jours fériés',
+                regularLegend: 'Date régulière', observedLegend: 'Date observée'
+            },
+            zh: {
+                brandTitle: 'KLN 员工门户', brandSubtitle: '假期数据表', homeLinkLabel: '前往 KLN 员工门户首页',
+                languageSwitcherLabel: '语言切换', themeModeLabel: '显示模式', themeAuto: '自动', themeLight: '浅色', themeDark: '深色',
+                pageTitle: '假期数据表', pageSubtitle: '按年份和省份查看已确认的假期。', filtersLabel: '假期筛选',
+                yearLabel: '年份', provinceLabel: '省份', selectYears: '最多选择 3 个年份', maxYears: '最多可以选择三个年份。', allProvinces: '所有省份', tableLabel: '假期列表',
+                loading: '正在加载假期数据…', chooseYear: '请至少选择一个年份以显示假期。', noResults: '没有符合当前筛选条件的假期。', result: '个假期', results: '个假期',
+                regularLegend: '常规日期', observedLegend: '调休日期'
+            }
+        };
+
+        const DATA_START_YEAR = 2026;
+        const DATA_END_YEAR = 2100;
+        const MAX_CONSECUTIVE_MISSING_YEARS = 3;
+        const supportedLanguages = ['en', 'fr', 'zh'];
+        const supportedThemeModes = ['auto', 'light', 'dark'];
+        const languageStorageKey = 'kln-holiday-lang';
+        const themeStorageKey = 'kln-portal-theme-mode';
+        const allHolidays = [];
+        const loadedYears = [];
+        const selectedYears = new Set();
+        let currentLang = 'en';
+        let isLoading = true;
+
+        function detectLanguage() {
+            try {
+                const saved = localStorage.getItem(languageStorageKey);
+                if (supportedLanguages.includes(saved)) return saved;
+            } catch (error) {}
+            const navLang = navigator.language.toLowerCase();
+            if (navLang.startsWith('zh')) return 'zh';
+            if (navLang.startsWith('fr')) return 'fr';
+            return 'en';
+        }
+
+        function getAutomaticTheme(date = new Date()) {
+            const hour = date.getHours();
+            return hour >= 19 || hour < 7 ? 'dark' : 'light';
+        }
+
+        function detectInitialThemeMode() {
+            try {
+                const saved = localStorage.getItem(themeStorageKey);
+                return supportedThemeModes.includes(saved) ? saved : 'auto';
+            } catch (error) {
+                return 'auto';
+            }
+        }
+
+        function applyTheme(mode, persist = true) {
+            const selected = supportedThemeModes.includes(mode) ? mode : 'auto';
+            document.documentElement.dataset.themeMode = selected;
+            document.documentElement.dataset.theme = selected === 'auto' ? getAutomaticTheme() : selected;
+            document.querySelectorAll('[data-theme-mode]').forEach(button => {
+                const active = button.dataset.themeMode === selected;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', String(active));
+            });
+            if (persist) {
+                try { localStorage.setItem(themeStorageKey, selected); } catch (error) {}
+            }
+        }
+
+        function setLanguage(lang, persist = true) {
+            currentLang = supportedLanguages.includes(lang) ? lang : 'en';
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll('[data-language]').forEach(button => {
+                const active = button.dataset.language === currentLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', String(active));
+            });
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                element.textContent = translations[currentLang][element.dataset.i18n];
+            });
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+                element.setAttribute('aria-label', translations[currentLang][element.dataset.i18nAriaLabel]);
+            });
+            updateFilterLabels();
+            renderRows();
+            if (persist) {
+                try { localStorage.setItem(languageStorageKey, currentLang); } catch (error) {}
+            }
+        }
+
+        function updateFilterLabels() {
+            const lang = translations[currentLang];
+            const provinceFilter = document.getElementById('province-filter');
+            provinceFilter.options[0].textContent = lang.allProvinces;
+            updateYearPicker();
+        }
+
+        function calculateObservedDate(holiday) {
+            if (holiday.observedDate) return holiday.observedDate;
+            const date = new Date(`${holiday.date}T12:00:00`);
+            const weekday = date.getDay();
+            if (weekday !== 0 && weekday !== 6) return null;
+            date.setDate(date.getDate() + (weekday === 0 ? 1 : 2));
+            return date.toISOString().split('T')[0];
+        }
+
+        function addYearData(data, year) {
+            data.holidays.forEach(holiday => {
+                allHolidays.push({ ...holiday, year, status: 'REG' });
+                const observedDate = calculateObservedDate(holiday);
+                if (observedDate) {
+                    allHolidays.push({
+                        ...holiday,
+                        date: observedDate,
+                        year,
+                        status: 'OBS',
+                        name: {
+                            en: `${holiday.name.en} (Observed)`,
+                            fr: `${holiday.name.fr} (Observé)`,
+                            zh: `${holiday.name.zh}（补假）`
+                        }
+                    });
+                }
+            });
+        }
+
+        async function loadYear(year) {
+            try {
+                const response = await fetch(`./${year}.json`, { cache: 'no-store' });
+                if (!response.ok) return false;
+                const data = await response.json();
+                if (!data || !Array.isArray(data.holidays)) return false;
+                addYearData(data, year);
+                loadedYears.push(year);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function discoverHolidayData() {
+            let missingYears = 0;
+            for (let year = DATA_START_YEAR; year <= DATA_END_YEAR && missingYears < MAX_CONSECUTIVE_MISSING_YEARS; year += 1) {
+                const loaded = await loadYear(year);
+                missingYears = loaded ? 0 : missingYears + 1;
+            }
+            loadedYears.sort((a, b) => a - b);
+            allHolidays.sort((a, b) => a.date.localeCompare(b.date) || a.status.localeCompare(b.status) || a.name.en.localeCompare(b.name.en));
+            populateYearFilter();
+            isLoading = false;
+            renderRows();
+        }
+
+        function populateYearFilter() {
+            const options = document.getElementById('year-options');
+            options.innerHTML = '';
+            loadedYears.forEach(year => {
+                const label = document.createElement('label');
+                label.className = 'year-option';
+                label.innerHTML = `<input type="checkbox" value="${year}"><span>${year}</span>`;
+                label.querySelector('input').addEventListener('change', event => toggleYear(year, event.target.checked));
+                options.appendChild(label);
+            });
+            const note = document.createElement('p');
+            note.className = 'year-limit-note';
+            note.dataset.i18n = 'maxYears';
+            note.textContent = translations[currentLang].maxYears;
+            options.appendChild(note);
+            updateYearPicker();
+        }
+
+        function toggleYear(year, checked) {
+            if (checked && selectedYears.size < 3) selectedYears.add(year);
+            if (!checked) selectedYears.delete(year);
+            updateYearPicker();
+            renderRows();
+        }
+
+        function updateYearPicker() {
+            const selected = [...selectedYears].sort((a, b) => a - b);
+            document.getElementById('year-picker-text').textContent = selected.length
+                ? selected.join(', ')
+                : translations[currentLang].selectYears;
+            document.querySelectorAll('#year-options input[type="checkbox"]').forEach(input => {
+                const year = Number(input.value);
+                input.checked = selectedYears.has(year);
+                input.disabled = selectedYears.size >= 3 && !selectedYears.has(year);
+            });
+            const note = document.querySelector('.year-limit-note');
+            if (note) note.textContent = translations[currentLang].maxYears;
+        }
+
+        function getDayName(dateString) {
+            return new Intl.DateTimeFormat('en-CA', { weekday: 'long', timeZone: 'UTC' }).format(new Date(`${dateString}T12:00:00Z`));
+        }
+
+        function renderRows() {
+            const body = document.getElementById('holiday-rows');
+            const emptyState = document.getElementById('empty-state');
+            const count = document.getElementById('result-count');
+            if (isLoading) {
+                body.innerHTML = '';
+                emptyState.hidden = false;
+                emptyState.textContent = translations[currentLang].loading;
+                count.textContent = '';
+                return;
+            }
+
+            const selectedProvince = document.getElementById('province-filter').value;
+            if (selectedYears.size === 0) {
+                body.innerHTML = '';
+                emptyState.hidden = false;
+                emptyState.textContent = translations[currentLang].chooseYear;
+                count.textContent = '';
+                return;
+            }
+            const rows = allHolidays.filter(holiday => {
+                const provinceMatches = selectedProvince === 'all' || holiday.regions.includes(selectedProvince);
+                return selectedYears.has(holiday.year) && provinceMatches;
+            });
+
+            body.innerHTML = '';
+            rows.forEach(holiday => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${holiday.name.fr}</td>
+                    <td>${holiday.name.en}</td>
+                    <td class="date-cell">${holiday.date}</td>
+                    <td class="day-cell">${getDayName(holiday.date)}</td>
+                    <td><span class="status-badge ${holiday.status.toLowerCase()}">${holiday.status}</span></td>
+                `;
+                body.appendChild(row);
+            });
+
+            emptyState.hidden = rows.length > 0;
+            emptyState.textContent = translations[currentLang].noResults;
+            const noun = rows.length === 1 ? translations[currentLang].result : translations[currentLang].results;
+            count.textContent = currentLang === 'zh' ? `${rows.length} ${noun}` : `${rows.length} ${noun}`;
+        }
+
+        document.querySelectorAll('[data-language]').forEach(button => {
+            button.addEventListener('click', () => setLanguage(button.dataset.language));
+        });
+        document.querySelectorAll('[data-theme-mode]').forEach(button => {
+            button.addEventListener('click', () => applyTheme(button.dataset.themeMode));
+        });
+        document.getElementById('year-picker-button').addEventListener('click', () => {
+            const button = document.getElementById('year-picker-button');
+            const options = document.getElementById('year-options');
+            const open = !options.classList.contains('open');
+            options.classList.toggle('open', open);
+            button.setAttribute('aria-expanded', String(open));
+        });
+        document.addEventListener('click', event => {
+            if (event.target.closest('#year-picker')) return;
+            document.getElementById('year-options').classList.remove('open');
+            document.getElementById('year-picker-button').setAttribute('aria-expanded', 'false');
+        });
+        document.getElementById('province-filter').addEventListener('change', renderRows);
+
+        applyTheme(detectInitialThemeMode());
+        setLanguage(detectLanguage(), false);
+        discoverHolidayData();
+        setInterval(() => {
+            if (document.documentElement.dataset.themeMode === 'auto') applyTheme('auto', false);
+        }, 60000);
+    </script>
+</body>
+</html>
