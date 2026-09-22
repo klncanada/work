@@ -119,6 +119,10 @@
         .calendar-context { width: min(calc(100% - 32px), 1152px); min-height: 48px; margin: 0 auto; padding: 12px 0 0; display: flex; align-items: center; justify-content: center; position: relative; }
         .calendar-context h2 { margin: 0; color: var(--portal-text); font-size: 1.25rem; font-weight: 700; }
         #back-btn { position: absolute; left: 0; color: var(--portal-brand); font-weight: 500; cursor: pointer; display: flex; align-items: center; transition: opacity 0.2s ease; }
+        .year-navigation { display: flex; align-items: center; justify-content: center; gap: 16px; }
+        .year-nav-btn { width: 36px; height: 36px; border: 1px solid var(--portal-line); border-radius: 999px; background: var(--portal-panel); color: var(--portal-brand); font-size: 1.75rem; line-height: 1; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+        .year-nav-btn:hover { background: var(--portal-active-control); border-color: var(--portal-brand); transform: translateY(-1px); }
+        .year-nav-btn:focus-visible { outline: 2px solid var(--portal-brand); outline-offset: 2px; }
 
         html[data-theme="dark"] .bg-white { background-color: var(--portal-panel) !important; }
         html[data-theme="dark"] .bg-gray-50, html[data-theme="dark"] .bg-gray-50\/50, html[data-theme="dark"] .bg-gray-100 { background-color: #132137 !important; }
@@ -361,7 +365,11 @@
             </svg>
             <span id="back-text">2026</span>
         </button>
-        <h2 id="main-title">2026</h2>
+        <div id="year-navigation" class="year-navigation">
+            <button id="prev-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="previousYearLabel" aria-label="Previous year">‹</button>
+            <h2 id="main-title">2026</h2>
+            <button id="next-year-btn" class="year-nav-btn" type="button" data-i18n-aria-label="nextYearLabel" aria-label="Next year">›</button>
+        </div>
     </div>
 
     <main id="year-view" class="p-4 active-view view-transition max-w-6xl mx-auto text-center">
@@ -419,6 +427,8 @@
                 holidayTitle: " Holidays",
                 holidayDataPending: "Holidays for this month have not yet been confirmed. Please refer to the Holiday Notice you receive.",
                 holidayYearDataPending: "Holidays for this year have not yet been confirmed. Please refer to the Holiday Notice you receive.",
+                previousYearLabel: "Previous year",
+                nextYearLabel: "Next year",
                 noHolidays: "No holidays."
             },
             fr: {
@@ -439,6 +449,8 @@
                 holidayTitle: " Vacances",
                 holidayDataPending: "Les jours fériés de ce mois ne sont pas encore confirmés. Veuillez vous référer à l’avis des jours fériés que vous recevrez.",
                 holidayYearDataPending: "Les jours fériés de cette année ne sont pas encore confirmés. Veuillez vous référer à l’avis des jours fériés que vous recevrez.",
+                previousYearLabel: "Année précédente",
+                nextYearLabel: "Année suivante",
                 noHolidays: "Aucun jour férié."
             },
             zh: {
@@ -459,6 +471,8 @@
                 holidayTitle: "假期清单",
                 holidayDataPending: "当前月份的假期尚未核定，请以接收到的 Holiday Notice 为准。",
                 holidayYearDataPending: "当前年份的假期尚未核定，请以接收到的 Holiday Notice 为准。",
+                previousYearLabel: "上一年",
+                nextYearLabel: "下一年",
                 noHolidays: "本月没有假期。"
             }
         };
@@ -689,6 +703,8 @@
             document.getElementById('main-title').innerText = String(year);
             document.title = `${year} KLN Calendar`;
             document.getElementById('back-btn').classList.add('invisible');
+            document.getElementById('prev-year-btn').classList.remove('invisible');
+            document.getElementById('next-year-btn').classList.remove('invisible');
             updateDataNotice('year-data-notice', year, 'year');
 
             // The year overview always shows all 12 months for the selected year.
@@ -788,6 +804,8 @@
             document.title = `${monthTitle} · KLN Calendar`;
             document.getElementById('back-text').innerText = String(mYear);
             document.getElementById('back-btn').classList.remove('invisible');
+            document.getElementById('prev-year-btn').classList.add('invisible');
+            document.getElementById('next-year-btn').classList.add('invisible');
             updateDataNotice('month-data-notice', mYear);
 
             const dayLabels = document.getElementById('day-labels');
@@ -910,6 +928,12 @@
             }, 400);
         }
 
+        async function changeYear(offset) {
+            const targetYear = displayedYear + offset;
+            await loadHolidayYear(targetYear);
+            initYearView(targetYear);
+        }
+
         // --- Holiday Modal & Export Logic ---
 
         function openHolidayModal(region) {
@@ -983,6 +1007,8 @@
         }
 
         document.getElementById('back-btn').onclick = showYear;
+        document.getElementById('prev-year-btn').onclick = () => changeYear(-1);
+        document.getElementById('next-year-btn').onclick = () => changeYear(1);
         window.onload = async () => {
             applyTheme(detectInitialThemeMode());
             displayedYear = defaultYear;
