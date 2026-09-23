@@ -120,6 +120,7 @@
         .calendar-context h2 { margin: 0; color: var(--portal-text); font-size: 1.35rem; font-weight: 750; line-height: 1; text-align: center; }
         #back-btn { position: absolute; left: 0; color: var(--portal-brand); font-weight: 500; cursor: pointer; display: flex; align-items: center; transition: opacity 0.2s ease; }
         .year-navigation { display: grid; grid-template-columns: 42px 72px 42px; align-items: center; justify-content: center; gap: 12px; }
+        .year-navigation.month-hidden { display: none; }
         .year-nav-btn { width: 42px; height: 42px; padding: 0; border: 1px solid var(--portal-line); border-radius: 999px; background: var(--portal-panel); color: var(--portal-brand); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
         .year-nav-btn svg { width: 19px; height: 19px; }
         .year-nav-btn:hover { background: var(--portal-active-control); border-color: var(--portal-brand); transform: translateY(-1px); }
@@ -717,8 +718,7 @@
             document.getElementById('main-title').innerText = String(year);
             document.title = `${year} KLN Calendar`;
             document.getElementById('back-btn').classList.add('invisible');
-            document.getElementById('prev-year-btn').classList.remove('invisible');
-            document.getElementById('next-year-btn').classList.remove('invisible');
+            document.getElementById('year-navigation').classList.remove('month-hidden');
             updateDataNotice('year-data-notice', year, 'year');
 
             // The year overview always shows all 12 months for the selected year.
@@ -814,12 +814,10 @@
 
             const monthTitle = getMonthLabel(mYear, mIdx, true);
             document.getElementById('current-month-name').innerText = monthTitle;
-            document.getElementById('main-title').innerText = monthTitle;
             document.title = `${monthTitle} · KLN Calendar`;
             document.getElementById('back-text').innerText = String(mYear);
             document.getElementById('back-btn').classList.remove('invisible');
-            document.getElementById('prev-year-btn').classList.add('invisible');
-            document.getElementById('next-year-btn').classList.add('invisible');
+            document.getElementById('year-navigation').classList.add('month-hidden');
             updateDataNotice('month-data-notice', mYear);
 
             const dayLabels = document.getElementById('day-labels');
