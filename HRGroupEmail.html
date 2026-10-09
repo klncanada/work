@@ -40,7 +40,7 @@
     html[data-theme="dark"] .pill{background:var(--card)}
     .kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--brand);background:var(--brand2);padding:7px 12px;border-radius:999px;margin-bottom:12px}
     h1{font-size:clamp(28px,4vw,46px);line-height:1.02;margin:0;letter-spacing:-.04em}.sub{margin:12px 0 0;color:var(--muted);font-size:16px;max-width:720px}.date{font-weight:800;color:var(--text)}
-    main{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;padding:26px 30px 30px}.hero{background:linear-gradient(135deg,#0f62fe,#4f8dff);color:white;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:330px}.hero p{margin:0;color:rgba(255,255,255,.86);font-size:16px;line-height:1.55}.email{margin:22px 0;padding:18px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24)}.email .label{font-size:13px;opacity:.8;margin-bottom:7px}.email a{color:white;font-size:clamp(24px,3vw,34px);font-weight:900;text-decoration:none;letter-spacing:-.03em;word-break:break-all}.note{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.14);border-radius:16px;padding:14px;font-weight:650}.grid{display:grid;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}.card h2{font-size:19px;margin:0 0 14px;letter-spacing:-.02em}.item{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.item:first-of-type{border-top:0;padding-top:0}.num{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--brand2);color:var(--brand);font-weight:900}.item h3{margin:0 0 6px;font-size:16px}.item p{margin:0;color:var(--muted);line-height:1.45;font-size:14.5px}.footer{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:13px;padding:0 30px 26px}.pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 11px}.fr{display:none}body[data-lang="fr"] .en{display:none}body[data-lang="fr"] .fr{display:initial}body[data-lang="fr"] .fr.block{display:block}body[data-lang="fr"] .fr.grid{display:grid}
+    main{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;padding:26px 30px 30px}.hero{background:linear-gradient(135deg,#0f62fe 0%,#2878f0 42%,#7048d7 76%,#d94f9d 100%);color:white;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:330px}.hero p{margin:0;color:rgba(255,255,255,.86);font-size:16px;line-height:1.55}.email{margin:22px 0 12px;padding:18px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24)}.email .label{font-size:13px;opacity:.8;margin-bottom:7px}.email a{color:white;font-size:clamp(24px,3vw,34px);font-weight:900;text-decoration:none;letter-spacing:-.03em;word-break:break-all}.hero .previous-email{margin:0 0 22px;color:rgba(255,255,255,.86);font-size:14px;line-height:1.5}.previous-email strong{color:white}.note{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.14);border-radius:16px;padding:14px;font-weight:650}.grid{display:grid;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}.card h2{font-size:19px;margin:0 0 14px;letter-spacing:-.02em}.item{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.item:first-of-type{border-top:0;padding-top:0}.num{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:white;font-weight:900}.item:nth-of-type(1) .num{background:#2563eb}.item:nth-of-type(2) .num{background:#7c3aed}.item:nth-of-type(3) .num{background:#db2777}.item h3{margin:0 0 6px;font-size:16px}.item p{margin:0;color:var(--muted);line-height:1.45;font-size:14.5px}.footer{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:13px;padding:0 30px 26px}.pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 11px}.fr{display:none}body[data-lang="fr"] .en{display:none}body[data-lang="fr"] .fr{display:initial}body[data-lang="fr"] .fr.block{display:block}body[data-lang="fr"] .fr.grid{display:grid}
     @media (max-width:850px){.wrap{padding:12px}.page{border-radius:24px}.group-email-intro{align-items:flex-start;flex-direction:column;padding:22px}main{grid-template-columns:1fr;padding:18px 22px}.hero{min-height:auto}.footer{padding:0 22px 22px}.card{padding:17px}.email a{font-size:24px}}
     @media (max-width:640px){.portal-topbar-inner{align-items:flex-start;flex-wrap:wrap}.portal-controls{width:100%}.wrap{padding-top:12px}}
   </style>
@@ -72,26 +72,24 @@
   <div class="wrap"><section class="page">
     <section class="group-email-intro">
       <div>
-        <div class="kicker"><span>HR Notice</span><span class="date">2026-01-01</span></div>
+        <div class="kicker"><span class="en">HR Notice</span><span class="fr">Avis RH</span><span class="date">2026-11-01</span></div>
         <h1><span class="en">Using the HR Group Email</span><span class="fr">Utilisation du courriel de groupe RH</span></h1>
         <p class="sub en">For selected HR requests in Canada, please use the HR group email so requests can be tracked and handled more efficiently.</p>
         <p class="sub fr block">Pour certaines demandes RH au Canada, veuillez utiliser le courriel de groupe afin d’assurer un meilleur suivi et un traitement plus efficace.</p>
-      </div>
-      <div class="toggle" aria-label="Language switcher" hidden>
-        <button id="enBtn" class="active" type="button">English</button>
-        <button id="frBtn" type="button">Français</button>
       </div>
     </section>
 
     <main>
       <section class="hero">
         <div>
-          <p class="en">Effective January 1, 2026, use this mailbox for the items below:</p>
-          <p class="fr block">À compter du 1er janvier 2026, utilisez cette boîte courriel pour les sujets ci-dessous :</p>
+          <p class="en">Effective November 1, 2026, use this mailbox for the items below:</p>
+          <p class="fr block">À compter du 1er novembre 2026, utilisez cette boîte courriel pour les sujets ci-dessous :</p>
           <div class="email">
-            <div class="label en">HR group email</div><div class="label fr block">Courriel de groupe RH</div>
-            <a href="mailto:ca.montreal.hr@kln.com">ca.montreal.hr@kln.com</a>
+            <div class="label en">New HR group email</div><div class="label fr block">Nouveau courriel de groupe RH</div>
+            <a href="mailto:CA.HR@kln.com">CA.HR@kln.com</a>
           </div>
+          <p class="previous-email en"><strong>Previous address:</strong> ca.montreal.hr@kln.com — it will continue to work during the transition and will be gradually retired over the following year.</p>
+          <p class="previous-email fr block"><strong>Ancienne adresse :</strong> ca.montreal.hr@kln.com — elle continuera de fonctionner pendant la transition et sera progressivement retirée au cours de l’année suivante.</p>
         </div>
         <div class="note">
           <span>✓</span>
@@ -118,9 +116,9 @@
     </main>
 
     <div class="footer">
-      <span class="pill en">Requests already sent before 2026-01-01 do not need to be resubmitted.</span>
-      <span class="pill fr">Les demandes déjà envoyées avant le 2026-01-01 n’ont pas besoin d’être renvoyées.</span>
-      <span class="pill">KLN Freight Canada Inc.</span>
+      <span class="pill en">Requests already sent before November 1, 2026 do not need to be resubmitted.</span>
+      <span class="pill fr">Les demandes déjà envoyées avant le 1er novembre 2026 n’ont pas besoin d’être renvoyées.</span>
+      <span class="pill">KLN/KEX Canada</span>
     </div>
   </section></div>
 
@@ -151,10 +149,8 @@
       } catch (error) {
         // Fall back to the browser language when storage is unavailable.
       }
-      const languages = navigator.languages && navigator.languages.length
-        ? navigator.languages
-        : [navigator.language || navigator.userLanguage || 'en'];
-      return languages.some(lang => String(lang).toLowerCase().startsWith('fr')) ? 'fr' : 'en';
+      const browserLanguage = navigator.language || navigator.userLanguage || 'en';
+      return String(browserLanguage).toLowerCase().startsWith('fr') ? 'fr' : 'en';
     }
 
     function setLang(lang){
