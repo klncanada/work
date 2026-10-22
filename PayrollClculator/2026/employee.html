@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 Payroll Deductions</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg-grad:linear-gradient(135deg,#eef3fb 0%,#f6f1fb 45%,#fdf3ec 100%);
+  --card-grad:linear-gradient(160deg,rgba(255,255,255,.96) 0%,rgba(246,249,255,.92) 55%,rgba(250,245,255,.9) 100%);
+  --card-border:rgba(42,120,214,.14);
+  --ink:#0b0b0b;--muted:#52514e;--line:rgba(20,30,50,.10);--accent:#2a78d6;
+  --btn-grad:linear-gradient(135deg,#2a78d6,#6250d6);
+  --input-bg:rgba(255,255,255,.85);
+  --shadow:0 8px 30px rgba(40,60,120,.08);
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--net:#d4d6d9;
+  --warn:#a15c00;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg-grad:linear-gradient(135deg,#0f1420 0%,#16121f 50%,#1d1512 100%);
+    --card-grad:linear-gradient(160deg,rgba(30,34,44,.95) 0%,rgba(26,28,38,.93) 55%,rgba(32,26,40,.92) 100%);
+    --card-border:rgba(120,150,230,.16);
+    --ink:#f0efec;--muted:#c3c2b7;--line:rgba(255,255,255,.09);--accent:#3987e5;
+    --btn-grad:linear-gradient(135deg,#3987e5,#9085e9);
+    --input-bg:rgba(0,0,0,.25);
+    --shadow:0 8px 30px rgba(0,0,0,.35);
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--net:#3a3a38;
+    --warn:#e0a55a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-grad:linear-gradient(135deg,#0f1420 0%,#16121f 50%,#1d1512 100%);
+  --card-grad:linear-gradient(160deg,rgba(30,34,44,.95) 0%,rgba(26,28,38,.93) 55%,rgba(32,26,40,.92) 100%);
+  --card-border:rgba(120,150,230,.16);
+  --ink:#f0efec;--muted:#c3c2b7;--line:rgba(255,255,255,.09);--accent:#3987e5;
+  --btn-grad:linear-gradient(135deg,#3987e5,#9085e9);
+  --input-bg:rgba(0,0,0,.25);
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--net:#3a3a38;
+  --warn:#e0a55a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{min-height:100%;background:var(--bg-grad);background-attachment:fixed}
+body{margin:0;min-height:100vh;background:var(--bg-grad);background-attachment:fixed;color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 48px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.ver{font-size:12px;color:var(--muted);padding:4px 10px;border:1px solid var(--card-border);border-radius:999px;background:var(--card-grad)}
+.lang{display:inline-flex;padding:3px;border-radius:999px;background:var(--card-grad);border:1px solid var(--card-border);box-shadow:var(--shadow)}
+.lang button{border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500}
+.lang button.on{background:var(--btn-grad);color:#fff}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card-grad);border:1px solid var(--card-border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);color:var(--ink);font-size:16px}
+input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.prov{display:flex;gap:6px}
+.prov button{flex:1;padding:9px 0;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);border-radius:8px;cursor:pointer;font-size:14px}
+.prov button.on{background:var(--btn-grad);border-color:transparent;color:#fff}
+.main{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:center;margin-top:16px}
+@media (max-width:760px){.main{grid-template-columns:1fr}}
+.chart{position:relative;width:100%;max-width:300px;margin:0 auto}
+.chart svg{display:block;width:100%;height:auto}
+.chart path{cursor:pointer;stroke:var(--input-bg);stroke-width:2;transition:opacity .15s}
+.chart.hovering path:not(.hl){opacity:.35}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 70px}
+.center .l{font-size:12px;color:var(--muted)}
+.center .v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.center .s{font-size:12px;color:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--card-grad);border:1px solid var(--card-border);border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:var(--shadow);white-space:nowrap;display:none;z-index:2;backdrop-filter:blur(6px)}
+.tip b{display:block;font-size:13px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td .n{display:block;font-size:11.5px;color:var(--muted);font-weight:400;margin-left:18px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:baseline}
+tbody tr.hl td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+tr.tot td{font-weight:600;border-top:2px solid var(--ink);border-bottom:none}
+tr.net td{font-weight:600;border-bottom:none}
+.tbl-scroll{overflow-x:auto}
+h2{font-size:15px;margin:0 0 10px}
+.ref{margin-top:16px}
+.ref td,.ref th{font-size:13px}
+.ref td:nth-child(2){white-space:nowrap;text-align:left}
+.ref td:nth-child(3){text-align:left}
+.notes{color:var(--muted);font-size:12.5px;margin:14px 0 0;padding-left:18px}
+.notes li{margin:3px 0}
+.warn{color:var(--warn)}
+.prov button.cmp{flex:1.8;white-space:nowrap;padding:9px 8px}
+#cmpView{position:relative;margin-top:18px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center}
+.multiples{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.panel{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--input-bg)}
+.panel h3{font-size:13px;font-weight:600;margin:0 0 10px}
+.panel.key{border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.bar-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;height:26px;cursor:default}
+.bar-row .pl{font-size:12px;color:var(--muted);font-weight:500}
+.bar-track{position:relative;height:14px}
+.bar{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;transition:width .25s,opacity .15s}
+.bar-row .val{font-size:12.5px;font-variant-numeric:tabular-nums;min-width:84px;text-align:right}
+.bar-row .val.na{color:var(--muted)}
+.multiples.hovering .bar-row:not(.hl) .bar{opacity:.35}
+.cmp-tbl td.best{font-weight:600}
+.cmp-tbl td.best::after{content:" ✓";color:var(--muted)}
+.cmp-tbl td,.cmp-tbl th{white-space:nowrap}
+
+.topbar{flex-wrap:wrap}
+.navwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.home{font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;white-space:nowrap}
+.home:hover{color:var(--accent)}
+.home::before{content:"← ";color:var(--muted)}
+.nav{display:inline-flex;padding:3px;border-radius:999px;background:var(--card-grad);border:1px solid var(--card-border);box-shadow:var(--shadow)}
+.nav a{color:var(--muted);padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.nav a.on{background:var(--btn-grad);color:#fff}
+.nav a:not(.on):hover{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="navwrap"><a class="home" id="navHome" href="index.html" data-i="navHome"></a><nav class="nav"><a id="navEe" href="employee.html" data-i="navEe" class="on" aria-current="page"></a><a id="navEr" href="employer.html" data-i="navEr"></a></nav><span class="ver">Employee v1.1</span></div>
+    <div class="lang" id="lang" role="group" aria-label="Language">
+      <button data-l="zh">中文</button>
+      <button data-l="en">English</button>
+      <button data-l="fr">Français</button>
+    </div>
+  </div>
+
+  <h1 data-i="title"></h1>
+  <p class="sub" data-i="subtitle"></p>
+
+  <div class="card">
+    <div class="inputs">
+      <div>
+        <label for="sal" data-i="salary"></label>
+        <input id="sal" type="text" inputmode="decimal" value="80000">
+      </div>
+      <div>
+        <label data-i="province"></label>
+        <div class="prov" id="prov">
+          <button data-p="BC">BC</button>
+          <button data-p="ON">ON</button>
+          <button data-p="QC" class="on">QC</button>
+          <button data-p="ALL" class="cmp" data-i="compareBtn"></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="cmpView" hidden>
+      <div class="legend" id="cmpLegend"></div>
+      <div class="multiples" id="multiples"></div>
+      <h2 style="margin-top:20px" data-i="cmpTableTitle"></h2>
+      <div class="tbl-scroll"><table id="tCmp" class="cmp-tbl"></table></div>
+      <div class="tip" id="tip2"></div>
+    </div>
+
+    <div class="main" id="singleView">
+      <div class="chart" id="chart">
+        <svg viewBox="0 0 300 300" id="svg" role="img"></svg>
+        <div class="center" id="center"></div>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="tbl-scroll"><table id="tbl"></table></div>
+    </div>
+  </div>
+
+  <div class="card ref">
+    <div id="refBlock">
+    <h2><span data-i="refTitle"></span> <span id="refTag" style="color:var(--muted);font-weight:400"></span></h2>
+    <div class="tbl-scroll"><table id="tRef"></table></div>
+    </div>
+    <ul class="notes" id="notes"></ul>
+  </div>
+</div>
+
+<script>
+/* ===================== 2026 PARAMETERS ===================== */
+const R = {
+  fed:{ brackets:[[58523,.14],[117045,.205],[181440,.26],[258482,.29],[Infinity,.33]],
+        bpaMax:16452,bpaMin:14829,bpaFrom:181440,bpaTo:258482,cea:1501,credit:.14,qcAbatement:.165 },
+  cpp:{ ympe:74600,yampe:85000,exempt:3500,rate:.0595,base:.0495,r2:.04 },
+  qpp:{ ympe:74600,yampe:85000,exempt:3500,rate:.063,base:.053,r2:.04 },
+  ei:{ mie:68900,rate:.0163 },
+  eiQC:{ mie:68900,rate:.013 },
+  qpip:{ mie:103000,rate:.0043 },
+  BC:{ brackets:[[50363,.056],[100728,.077],[115648,.105],[140430,.1229],[190405,.147],[265545,.168],[Infinity,.205]],
+       bpa:13216,credit:.056,red:{max:690,from:25570,rate:.0356} },
+  ON:{ brackets:[[53891,.0505],[107785,.0915],[150000,.1116],[220000,.1216],[Infinity,.1316]],
+       bpa:12989,credit:.0505,surtax:[[5818,.20],[7446,.36]],reductionBase:300 },
+  QC:{ brackets:[[54345,.14],[108680,.19],[132245,.24],[Infinity,.2575]],
+       bpa:18952,credit:.14,workerDed:{rate:.06,max:1450} }
+};
+
+/* ===================== I18N ===================== */
+const I18N = {
+  zh:{
+    htmlLang:'zh-CN', navHome:'2026 薪资计算器', navEe:'员工扣款', navEr:'雇主成本', locale:'en-CA',
+    docTitle:'2026 员工薪资扣款计算器',
+    title:'2026 员工薪资扣款计算器',
+    subtitle:'BC · 安大略 · 魁北克 — 员工方年度扣款：联邦/省所得税、CPP/QPP、CPP2/QPP2、EI、QPIP',
+    salary:'年薪（加元）', province:'工作所在省份',
+    prov:{BC:'不列颠哥伦比亚省',ON:'安大略省',QC:'魁北克省'},
+    chartAria:'年薪构成环状图',
+    centerLabel:'员工扣款合计', ofSalary:p=>'占年薪 '+p,
+    colItem:'项目', colAmount:'年度金额', colPct:'占年薪',
+    fed:'联邦所得税', provTax:p=>`省所得税（${p}）`,
+    pen:{CPP:'CPP 加拿大退休金',QPP:'QPP 魁北克退休金'},
+    pen2:{CPP2:'CPP2 第二档退休金',QPP2:'QPP2 第二档退休金'},
+    ei:'EI 就业保险', qpip:'QPIP 魁北克育儿保险',
+    total:'员工扣款合计', net:'税后实收', effMarg:'所得税实际税率 / 边际税率（约）',
+    nTaxable:v=>`应税收入 ${v}`,
+    nQcFed:(b,a)=>`基本联邦税 ${b} − 魁省减免 16.5% ${a}`,
+    nON:(b,s,r,o)=>`基本税 ${b} + 附加税 ${s} − 减税额 ${r} + 安省健康保费 ${o}`,
+    nBC:(b,r)=>`基本税 ${b} − BC 减税额 ${r}`,
+    nQC:w=>`已扣工作者扣除 ${w}`,
+    nPen:(r,y,e)=>`${r} × (min(年薪, ${y}) − ${e})`,
+    nPen2:(y,a)=>`4% × (${y} – ${a} 区间收入)`,
+    nEI:(r,m,qc)=>`${r}，上限 ${m}${qc?'（魁省减费率）':''}`,
+    nQPIP:(r,m)=>`${r}，上限 ${m}`,
+    refTitle:'2026 员工方适用费率', refCols:['项目','费率 / 档位','规则'],
+    above:'以上', fedTaxRow:'联邦所得税', provTaxRow:p=>`${p}所得税`,
+    rFed:(qc)=>`基本个人免税额 $16,452（收入 $181,440–$258,482 递减至 $14,829）· 加拿大就业金额 $1,501 · 抵免率 14%${qc?' · 魁省联邦税减免 16.5%':''}`,
+    rProv:{
+      ON:'基本个人免税额 $12,989，抵免率 5.05% · 附加税：基本省税超 $5,818 部分 20%，超 $7,446 部分再加 36% · 减税基本额 $300 · 安省健康保费最高 $900',
+      BC:'基本个人免税额 $13,216，抵免率 5.6% · BC 减税额最高 $690，收入超 $25,570 后按 3.56% 递减，$44,952 归零',
+      QC:'基本个人免税额 $18,952，抵免率 14% · 工作者扣除 6%，最高 $1,450 · 魁省不对 QPP/EI/QPIP 给予抵免'
+    },
+    rPen:(e,y,m)=>`${e} – ${y}，最高 ${m}`, rPen2:(y,a)=>`${y} – ${a}，最高 $416.00`,
+    rCap:(m,x)=>`上限 ${m}，最高 ${x}`,
+    notes:[
+      '按全年年化方式计算，假设仅有薪资收入、只申报基本个人免税额（Claim code 1），无其他扣除或抵免。实际预扣以 CRA PDOC / Revenu Québec WinRAS 为准。',
+      'CPP/QPP 第一附加部分（1%）及 CPP2/QPP2 可从应税收入中扣除；基础部分（CPP 4.95% / QPP 5.30%）按抵免率计算抵免。',
+      '2026 QPP 基础费率由 5.40% 降至 5.30%，合计 6.30%；联邦最低税率全年 14%。'
+    ],
+    noteON:'安大略：未计入 LIFT 低收入抵免（与 CRA 预扣表一致）。',
+    compareBtn:'三省比较', cmpTableTitle:'三省比较明细',
+    cmp:{fed:'联邦所得税',prov:'省所得税',pen:'CPP / QPP 退休金',pen2:'CPP2 / QPP2 第二档退休金',ei:'EI 就业保险',qpip:'QPIP 育儿保险（仅魁省）',tot:'员工扣款合计',net:'税后实收'},
+    na:'不适用', bestNote:'✓ = 三省中扣款最低（税后实收为最高）', cmpNote:'每一项单独比例尺，柱长只在同一项内比较。',
+    noteBC:'BC：2026 预算将最低税率由 5.06% 上调至 5.60%（全年），BC 减税额上调至 $690。本工具按全年实际税负计算；CRA 预扣为 1–6 月 5.06%、7–12 月折算 6.14%，与实际预扣会有差异。'
+  },
+  en:{
+    htmlLang:'en-CA', navHome:'Payroll Calculator 2026', navEe:'Employee Deductions', navEr:'Employer Costs', locale:'en-CA',
+    docTitle:'2026 Payroll Deductions',
+    title:'2026 Employee Payroll Deductions',
+    subtitle:'BC · Ontario · Québec — annual employee deductions: federal & provincial income tax, CPP/QPP, CPP2/QPP2, EI, QPIP',
+    salary:'Annual salary (CAD)', province:'Province of employment',
+    prov:{BC:'British Columbia',ON:'Ontario',QC:'Québec'},
+    chartAria:'Donut chart of annual salary breakdown',
+    centerLabel:'Total deductions', ofSalary:p=>p+' of salary',
+    colItem:'Item', colAmount:'Annual', colPct:'% of salary',
+    fed:'Federal income tax', provTax:p=>`Provincial income tax (${p})`,
+    pen:{CPP:'CPP – Canada Pension Plan',QPP:'QPP – Québec Pension Plan'},
+    pen2:{CPP2:'CPP2 – second additional',QPP2:'QPP2 – second additional'},
+    ei:'EI – Employment Insurance', qpip:'QPIP – Québec Parental Insurance',
+    total:'Total employee deductions', net:'Net pay', effMarg:'Effective / marginal income tax rate (approx.)',
+    nTaxable:v=>`Taxable income ${v}`,
+    nQcFed:(b,a)=>`Basic federal tax ${b} − Québec abatement 16.5% ${a}`,
+    nON:(b,s,r,o)=>`Basic tax ${b} + surtax ${s} − tax reduction ${r} + Ontario Health Premium ${o}`,
+    nBC:(b,r)=>`Basic tax ${b} − BC tax reduction ${r}`,
+    nQC:w=>`After deduction for workers ${w}`,
+    nPen:(r,y,e)=>`${r} × (min(salary, ${y}) − ${e})`,
+    nPen2:(y,a)=>`4% × earnings between ${y} and ${a}`,
+    nEI:(r,m,qc)=>`${r}, max insurable ${m}${qc?' (Québec reduced rate)':''}`,
+    nQPIP:(r,m)=>`${r}, max insurable ${m}`,
+    refTitle:'2026 employee rates', refCols:['Item','Rate / bracket','Rules'],
+    above:'and over', fedTaxRow:'Federal income tax', provTaxRow:p=>`${p} income tax`,
+    rFed:(qc)=>`Basic personal amount $16,452 (reduced to $14,829 between $181,440 and $258,482) · Canada employment amount $1,501 · credit rate 14%${qc?' · Québec abatement 16.5%':''}`,
+    rProv:{
+      ON:'Basic personal amount $12,989, credit rate 5.05% · Surtax: 20% of basic tax over $5,818, plus 36% over $7,446 · Tax reduction basic amount $300 · Ontario Health Premium up to $900',
+      BC:'Basic personal amount $13,216, credit rate 5.6% · BC tax reduction up to $690, reduced by 3.56% of income over $25,570, nil at $44,952',
+      QC:'Basic personal amount $18,952, credit rate 14% · Deduction for workers 6%, max $1,450 · Québec gives no credit for QPP/EI/QPIP'
+    },
+    rPen:(e,y,m)=>`${e} – ${y}, max ${m}`, rPen2:(y,a)=>`${y} – ${a}, max $416.00`,
+    rCap:(m,x)=>`Max insurable ${m}, max premium ${x}`,
+    notes:[
+      'Annualized calculation assuming employment income only and the basic personal amount only (claim code 1), with no other deductions or credits. Actual withholding: use CRA PDOC / Revenu Québec WinRAS.',
+      'The first additional CPP/QPP portion (1%) and all CPP2/QPP2 are deducted from taxable income; the base portion (CPP 4.95% / QPP 5.30%) is claimed as a credit.',
+      'In 2026 the QPP base rate fell from 5.40% to 5.30% (6.30% total); the lowest federal rate is 14% for the full year.'
+    ],
+    noteON:'Ontario: the LIFT credit is not included (consistent with CRA payroll tables).',
+    compareBtn:'Compare all', cmpTableTitle:'Province comparison',
+    cmp:{fed:'Federal income tax',prov:'Provincial income tax',pen:'CPP / QPP',pen2:'CPP2 / QPP2',ei:'EI',qpip:'QPIP (Québec only)',tot:'Total deductions',net:'Net pay'},
+    na:'n/a', bestNote:'✓ = lowest deduction of the three (highest for net pay)', cmpNote:'Each panel has its own scale; compare bar lengths within a panel only.',
+    noteBC:'BC: Budget 2026 raised the lowest rate from 5.06% to 5.60% for the full year and the BC tax reduction to $690. This tool shows full-year liability; CRA withholding uses 5.06% for Jan–Jun and a prorated 6.14% for Jul–Dec, so per-period withholding will differ.'
+  },
+  fr:{
+    htmlLang:'fr-CA', navHome:'Calculateur de paie 2026', navEe:'Retenues de l’employé', navEr:'Coûts de l’employeur', locale:'fr-CA',
+    docTitle:'Retenues sur la paie 2026',
+    title:'Retenues salariales de l’employé 2026',
+    subtitle:'C.-B. · Ontario · Québec — retenues annuelles de l’employé : impôt fédéral et provincial, RPC/RRQ, RPC2/RRQ2, AE, RQAP',
+    salary:'Salaire annuel ($ CA)', province:'Province d’emploi',
+    prov:{BC:'Colombie-Britannique',ON:'Ontario',QC:'Québec'},
+    chartAria:'Graphique en anneau de la répartition du salaire annuel',
+    centerLabel:'Total des retenues', ofSalary:p=>p+' du salaire',
+    colItem:'Élément', colAmount:'Annuel', colPct:'% du salaire',
+    fed:'Impôt fédéral', provTax:p=>`Impôt provincial (${p})`,
+    pen:{CPP:'RPC – Régime de pensions du Canada',QPP:'RRQ – Régime de rentes du Québec'},
+    pen2:{CPP2:'RPC2 – deuxième cotisation supplémentaire',QPP2:'RRQ2 – deuxième cotisation supplémentaire'},
+    ei:'AE – Assurance-emploi', qpip:'RQAP – Régime québécois d’assurance parentale',
+    total:'Total des retenues', net:'Salaire net', effMarg:'Taux d’imposition effectif / marginal (approx.)',
+    nTaxable:v=>`Revenu imposable ${v}`,
+    nQcFed:(b,a)=>`Impôt fédéral de base ${b} − abattement du Québec 16,5 % ${a}`,
+    nON:(b,s,r,o)=>`Impôt de base ${b} + surtaxe ${s} − réduction d’impôt ${r} + contribution-santé de l’Ontario ${o}`,
+    nBC:(b,r)=>`Impôt de base ${b} − réduction d’impôt de la C.-B. ${r}`,
+    nQC:w=>`Après déduction pour travailleur ${w}`,
+    nPen:(r,y,e)=>`${r} × (min(salaire, ${y}) − ${e})`,
+    nPen2:(y,a)=>`4 % × gains entre ${y} et ${a}`,
+    nEI:(r,m,qc)=>`${r}, maximum assurable ${m}${qc?' (taux réduit Québec)':''}`,
+    nQPIP:(r,m)=>`${r}, maximum assurable ${m}`,
+    refTitle:'Taux 2026 – employé', refCols:['Élément','Taux / tranche','Règles'],
+    above:'et plus', fedTaxRow:'Impôt fédéral', provTaxRow:p=>`Impôt – ${p}`,
+    rFed:(qc)=>`Montant personnel de base 16 452 $ (réduit à 14 829 $ entre 181 440 $ et 258 482 $) · Montant canadien pour emploi 1 501 $ · taux de crédit 14 %${qc?' · abattement du Québec 16,5 %':''}`,
+    rProv:{
+      ON:'Montant personnel de base 12 989 $, taux de crédit 5,05 % · Surtaxe : 20 % de l’impôt de base au-delà de 5 818 $, plus 36 % au-delà de 7 446 $ · Réduction d’impôt de base 300 $ · Contribution-santé de l’Ontario jusqu’à 900 $',
+      BC:'Montant personnel de base 13 216 $, taux de crédit 5,6 % · Réduction d’impôt de la C.-B. jusqu’à 690 $, réduite de 3,56 % du revenu au-delà de 25 570 $, nulle à 44 952 $',
+      QC:'Montant personnel de base 18 952 $, taux de crédit 14 % · Déduction pour travailleur 6 %, max. 1 450 $ · Aucun crédit au Québec pour RRQ/AE/RQAP'
+    },
+    rPen:(e,y,m)=>`${e} – ${y}, max. ${m}`, rPen2:(y,a)=>`${y} – ${a}, max. 416,00 $`,
+    rCap:(m,x)=>`Maximum assurable ${m}, cotisation max. ${x}`,
+    notes:[
+      'Calcul annualisé, en supposant uniquement un revenu d’emploi et le seul montant personnel de base (code de demande 1), sans autres déductions ni crédits. Pour les retenues réelles : PDOC de l’ARC / WinRAS de Revenu Québec.',
+      'La première cotisation supplémentaire RPC/RRQ (1 %) et la totalité du RPC2/RRQ2 sont déduites du revenu imposable; la cotisation de base (RPC 4,95 % / RRQ 5,30 %) donne droit à un crédit.',
+      'En 2026, le taux de base du RRQ passe de 5,40 % à 5,30 % (6,30 % au total); le taux fédéral le plus bas est de 14 % pour toute l’année.'
+    ],
+    noteON:'Ontario : le crédit LIFT n’est pas inclus (comme dans les tables de retenues de l’ARC).',
+    compareBtn:'Comparer', cmpTableTitle:'Comparaison des provinces',
+    cmp:{fed:'Impôt fédéral',prov:'Impôt provincial',pen:'RPC / RRQ',pen2:'RPC2 / RRQ2',ei:'AE',qpip:'RQAP (Québec seulement)',tot:'Total des retenues',net:'Salaire net'},
+    na:'s.o.', bestNote:'✓ = retenue la plus basse des trois (la plus élevée pour le salaire net)', cmpNote:'Chaque panneau a sa propre échelle; comparez les barres à l’intérieur d’un même panneau.',
+    noteBC:'C.-B. : le budget 2026 fait passer le taux le plus bas de 5,06 % à 5,60 % pour toute l’année et la réduction d’impôt de la C.-B. à 690 $. Cet outil montre l’impôt annuel réel; les retenues de l’ARC utilisent 5,06 % de janvier à juin et un taux proratisé de 6,14 % de juillet à décembre, d’où un écart par période.'
+  }
+};
+
+function detectLang(){
+  try{ const q=new URLSearchParams(location.search).get('lang'); if(I18N[q]) return q; }catch(e){}
+  try{ const s=localStorage.getItem('payroll26-lang'); if(I18N[s]) return s; }catch(e){}
+  for(const l of (navigator.languages||[navigator.language||'en'])){
+    const p=String(l).toLowerCase().slice(0,2);
+    if(p==='zh') return 'zh'; if(p==='fr') return 'fr'; if(p==='en') return 'en';
+  }
+  return 'en';
+}
+let lang = detectLang();
+const T = () => I18N[lang];
+
+/* ===================== HELPERS ===================== */
+const r2 = x => Math.round(x*100)/100;
+const fmt = x => new Intl.NumberFormat(T().locale,{style:'currency',currency:'CAD',currencyDisplay:'narrowSymbol',minimumFractionDigits:2,maximumFractionDigits:2}).format(x);
+const fmt0 = x => new Intl.NumberFormat(T().locale,{style:'currency',currency:'CAD',currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(x);
+const pct = (x,d=2) => new Intl.NumberFormat(T().locale,{style:'percent',maximumFractionDigits:d}).format(x);
+const num = s => { const v=parseFloat(String(s).replace(/\s| | /g,'').replace(/[^0-9.,\-]/g,'').replace(/,(?=\d{1,2}$)/,'.').replace(/,/g,'')); return isFinite(v)?v:0; };
+const progressive = (inc,br) => { let t=0,lo=0; for(const [hi,r] of br){ if(inc>lo) t+=(Math.min(inc,hi)-lo)*r; lo=hi; } return t; };
+const marginal = (inc,br) => { for(const [hi,r] of br) if(inc<=hi) return r; };
+
+/* ===================== CALC (employee only) ===================== */
+function calc(sal, prov){
+  const isQC = prov==='QC', P = isQC?R.qpp:R.cpp, E = isQC?R.eiQC:R.ei;
+  const pen = r2(Math.max(0, Math.min(sal,P.ympe)-P.exempt) * P.rate);
+  const penBase = pen*(P.base/P.rate), penEnh = pen-penBase;
+  const pen2 = r2(Math.max(0, Math.min(sal,P.yampe)-P.ympe) * P.r2);
+  const ei = r2(Math.min(sal,E.mie)*E.rate);
+  const qpip = isQC ? r2(Math.min(sal,R.qpip.mie)*R.qpip.rate) : 0;
+
+  const F = R.fed;
+  const fedTaxable = Math.max(0, sal-penEnh-pen2);
+  let bpa = F.bpaMax;
+  if(fedTaxable>F.bpaFrom) bpa = F.bpaMax - Math.min(1,(fedTaxable-F.bpaFrom)/(F.bpaTo-F.bpaFrom))*(F.bpaMax-F.bpaMin);
+  const fedBasic = Math.max(0, progressive(fedTaxable,F.brackets) - (bpa+Math.min(F.cea,sal)+penBase+ei+qpip)*F.credit);
+  const abatement = isQC ? fedBasic*F.qcAbatement : 0;
+  const fedTax = r2(fedBasic-abatement);
+
+  const S = R[prov]; let provTaxable, provTax, d={};
+  if(prov==='QC'){
+    d.wd = Math.min(sal*S.workerDed.rate, S.workerDed.max);
+    provTaxable = Math.max(0, sal-penEnh-pen2-d.wd);
+    provTax = Math.max(0, progressive(provTaxable,S.brackets) - S.bpa*S.credit);
+  } else if(prov==='ON'){
+    provTaxable = fedTaxable;
+    d.basic = Math.max(0, progressive(provTaxable,S.brackets) - (S.bpa+penBase+ei)*S.credit);
+    d.surtax = 0; for(const [th,rt] of S.surtax) if(d.basic>th) d.surtax += (d.basic-th)*rt;
+    const t = d.basic+d.surtax;
+    d.reduction = Math.max(0, Math.min(t, 2*S.reductionBase-t));
+    const ti = provTaxable; let o=0;
+    if(ti>200000) o=Math.min(900,750+.25*(ti-200000));
+    else if(ti>72000) o=Math.min(750,600+.25*(ti-72000));
+    else if(ti>48000) o=Math.min(600,450+.25*(ti-48000));
+    else if(ti>36000) o=Math.min(450,300+.06*(ti-36000));
+    else if(ti>20000) o=Math.min(300,.06*(ti-20000));
+    d.ohp = o;
+    provTax = t-d.reduction+o;
+  } else {
+    provTaxable = fedTaxable;
+    d.basic = Math.max(0, progressive(provTaxable,S.brackets) - (S.bpa+penBase+ei)*S.credit);
+    d.reduction = Math.min(d.basic, Math.max(0, S.red.max - Math.max(0,provTaxable-S.red.from)*S.red.rate));
+    provTax = d.basic-d.reduction;
+  }
+  provTax = r2(provTax);
+  return {sal,isQC,pen,pen2,ei,qpip,fedTax,provTax,fedTaxable,provTaxable,fedBasic,abatement,d};
+}
+
+/* ===================== DONUT ===================== */
+const CX=150, CY=150, RO=140, RI=96;
+function arc(a0,a1){
+  const big = (a1-a0)>Math.PI?1:0;
+  const p = (r,a)=>[CX+r*Math.sin(a), CY-r*Math.cos(a)];
+  const [x0,y0]=p(RO,a0),[x1,y1]=p(RO,a1),[x2,y2]=p(RI,a1),[x3,y3]=p(RI,a0);
+  return `M${x0},${y0}A${RO},${RO} 0 ${big} 1 ${x1},${y1}L${x2},${y2}A${RI},${RI} 0 ${big} 0 ${x3},${y3}Z`;
+}
+
+/* ===================== RENDER ===================== */
+let prov='QC';
+const $ = id => document.getElementById(id);
+
+function applyLang(){
+  const t=T();
+  document.documentElement.lang = t.htmlLang;
+  document.title = t.docTitle;
+  document.querySelectorAll('[data-i]').forEach(el=>{ el.textContent = t[el.dataset.i]; });
+  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on', b.dataset.l===lang));
+  $('svg').setAttribute('aria-label', t.chartAria);
+  const s=num($('sal').value); $('sal').value = s ? s.toLocaleString(t.locale) : '';
+}
+
+const PROVS=['BC','ON','QC'], PCOL={BC:'--s1',ON:'--s2',QC:'--s3'};
+
+function syncLinks(){
+  const s=num(document.getElementById('sal').value);
+  const q='?'+new URLSearchParams({salary:String(s||''),lang}).toString();
+  [['navHome','index.html'],['navEe','employee.html'],['navEr','employer.html']].forEach(([id,f])=>{ const a=document.getElementById(id); if(a) a.href=f+q; });
+}
+(function(){ try{ const v=new URLSearchParams(location.search).get('salary'); const n=parseFloat(v); if(isFinite(n)&&n>=0) document.getElementById('sal').value=String(n); }catch(e){} })();
+function render(){
+  syncLinks();
+  const all = prov==='ALL';
+  $('cmpView').hidden = !all; $('singleView').hidden = all; $('refBlock').hidden = all;
+  if(all){ renderCompare(); return; }
+  renderSingle();
+}
+function renderCompare(){
+  const t=T(), sal=num($('sal').value);
+  const res={}; PROVS.forEach(p=>res[p]=calc(sal,p));
+  const tot=p=>res[p].fedTax+res[p].provTax+res[p].pen+res[p].pen2+res[p].ei+res[p].qpip;
+  const rows=[
+    ['fed',p=>res[p].fedTax],['prov',p=>res[p].provTax],['pen',p=>res[p].pen],['pen2',p=>res[p].pen2],
+    ['ei',p=>res[p].ei],['qpip',p=>res[p].isQC?res[p].qpip:null],['tot',tot],['net',p=>sal-tot(p)]
+  ];
+  $('cmpLegend').innerHTML = PROVS.map(p=>`<span><span class="sw" style="background:var(${PCOL[p]})"></span>${t.prov[p]}</span>`).join('')
+    + `<span style="color:var(--muted)">${t.cmpNote}</span>`;
+  let m='';
+  for(const [k,f] of rows){
+    const vals=PROVS.map(f), max=Math.max(...vals.map(v=>v||0));
+    m += `<div class="panel${k==='tot'||k==='net'?' key':''}"><h3>${t.cmp[k]}</h3>`;
+    PROVS.forEach((p,i)=>{
+      const v=vals[i], w = v&&max>0 ? v/max*100 : 0;
+      m += `<div class="bar-row" data-p="${p}" data-k="${k}"><span class="pl">${p}</span><div class="bar-track"><div class="bar" style="width:${w}%;${w>0?'min-width:2px;':'display:none;'}background:var(${PCOL[p]})"></div></div><span class="val${v==null?' na':''}">${v==null?t.na:fmt(v)}</span></div>`;
+    });
+    m += `</div>`;
+  }
+  $('multiples').innerHTML=m;
+
+  let h=`<thead><tr><th>${t.colItem}</th>${PROVS.map(p=>`<th><span class="sw" style="background:var(${PCOL[p]})"></span>${p}</th>`).join('')}</tr></thead><tbody>`;
+  for(const [k,f] of rows){
+    const vals=PROVS.map(f), real=vals.filter(v=>v!=null);
+    const best = k==='qpip' ? null : (k==='net'?Math.max(...real):Math.min(...real));
+    const allEq = real.every(v=>Math.abs(v-real[0])<.005);
+    const cls = k==='tot'?' class="tot"':(k==='net'?' class="net"':'');
+    h+=`<tr${cls}><td>${t.cmp[k]}</td>${vals.map(v=>`<td class="${(!allEq&&v!=null&&best!=null&&Math.abs(v-best)<.005)?'best':''}">${v==null?t.na:fmt(v)}</td>`).join('')}</tr>`;
+    if(k==='net') h+=`<tr><td style="color:var(--muted)">${t.colPct}</td>${PROVS.map(p=>`<td style="color:var(--muted)">${sal>0?pct(tot(p)/sal):'—'}</td>`).join('')}</tr>`;
+  }
+  $('tCmp').innerHTML=h+'</tbody>';
+
+  const notes=[t.bestNote,...t.notes,t.noteON,`<span class="warn">${t.noteBC}</span>`];
+  $('notes').innerHTML = notes.map(x=>`<li>${x}</li>`).join('');
+
+  const mult=$('multiples'), tip=$('tip2'), view=$('cmpView');
+  mult.querySelectorAll('.bar-row').forEach(r=>{
+    r.onmousemove=e=>{
+      mult.classList.add('hovering');
+      mult.querySelectorAll('.bar-row').forEach(x=>x.classList.toggle('hl',x.dataset.p===r.dataset.p));
+      const b=view.getBoundingClientRect();
+      tip.innerHTML=`<b>${t.prov[r.dataset.p]}</b>${t.cmp[r.dataset.k]} · ${r.querySelector('.val').textContent}`;
+      tip.style.display='block';
+      let x=e.clientX-b.left+12; if(x+tip.offsetWidth>b.width) x=e.clientX-b.left-tip.offsetWidth-12;
+      tip.style.left=x+'px'; tip.style.top=(e.clientY-b.top+14)+'px';
+    };
+    r.onmouseleave=()=>{ mult.classList.remove('hovering'); mult.querySelectorAll('.bar-row').forEach(x=>x.classList.remove('hl')); tip.style.display='none'; };
+  });
+}
+function renderSingle(){
+  const t=T();
+  const sal = num($('sal').value);
+  const res = calc(sal, prov);
+  const isQC = res.isQC, P = isQC?R.qpp:R.cpp, E = isQC?R.eiQC:R.ei;
+  const pName = t.prov[prov];
+
+  let provNote = t.nTaxable(fmt(res.provTaxable));
+  if(prov==='ON') provNote += ' · ' + t.nON(fmt(res.d.basic),fmt(res.d.surtax),fmt(res.d.reduction),fmt(res.d.ohp));
+  if(prov==='BC') provNote += ' · ' + t.nBC(fmt(res.d.basic),fmt(res.d.reduction));
+  if(prov==='QC') provNote += ' · ' + t.nQC(fmt(res.d.wd));
+
+  const items = [
+    {k:'fed', c:'--s1', name:t.fed, v:res.fedTax, note: isQC ? t.nQcFed(fmt(res.fedBasic),fmt(res.abatement)) : t.nTaxable(fmt(res.fedTaxable))},
+    {k:'prov', c:'--s2', name:t.provTax(pName), v:res.provTax, note:provNote},
+    {k:'pen', c:'--s3', name:t.pen[isQC?'QPP':'CPP'], v:res.pen, note:t.nPen(pct(P.rate),fmt0(P.ympe),fmt0(P.exempt))},
+    {k:'pen2', c:'--s4', name:t.pen2[isQC?'QPP2':'CPP2'], v:res.pen2, note:t.nPen2(fmt0(P.ympe),fmt0(P.yampe))},
+    {k:'ei', c:'--s5', name:t.ei, v:res.ei, note:t.nEI(pct(E.rate),fmt0(E.mie),isQC)},
+  ];
+  if(isQC) items.push({k:'qpip', c:'--s6', name:t.qpip, v:res.qpip, note:t.nQPIP(pct(R.qpip.rate,3),fmt0(R.qpip.mie))});
+  const tot = items.reduce((a,b)=>a+b.v,0);
+  const net = sal-tot;
+  const slices = [...items, {k:'net', c:'--net', name:t.net, v:Math.max(0,net)}];
+
+  let svg='';
+  if(sal>0){
+    let a=0;
+    for(const s of slices){
+      if(s.v<=0) continue;
+      let a1 = a + s.v/sal*2*Math.PI;
+      if(a1-a>=2*Math.PI-1e-6) a1 = a+2*Math.PI-1e-4;
+      svg += `<path data-k="${s.k}" d="${arc(a,a1)}" style="fill:var(${s.c})"></path>`;
+      a = a1;
+    }
+  } else {
+    svg = `<circle cx="${CX}" cy="${CY}" r="${(RO+RI)/2}" fill="none" stroke="var(--line)" stroke-width="${RO-RI}"></circle>`;
+  }
+  $('svg').innerHTML = svg;
+  $('center').innerHTML = `<div class="l">${t.centerLabel}</div><div class="v">${fmt(tot)}</div><div class="s">${sal>0?t.ofSalary(pct(tot/sal)):''}</div>`;
+
+  let h = `<thead><tr><th>${t.colItem}</th><th>${t.colAmount}</th><th>${t.colPct}</th></tr></thead><tbody>`;
+  for(const s of items){
+    h += `<tr data-k="${s.k}"><td><span class="sw" style="background:var(${s.c})"></span>${s.name}<span class="n">${s.note}</span></td><td>${fmt(s.v)}</td><td>${sal>0?pct(s.v/sal):'—'}</td></tr>`;
+  }
+  h += `<tr class="tot"><td>${t.total}</td><td>${fmt(tot)}</td><td>${sal>0?pct(tot/sal):'—'}</td></tr>`;
+  h += `<tr class="net" data-k="net"><td><span class="sw" style="background:var(--net)"></span>${t.net}</td><td>${fmt(net)}</td><td>${sal>0?pct(net/sal):'—'}</td></tr>`;
+  const mFed = marginal(res.fedTaxable,R.fed.brackets)*(isQC?1-R.fed.qcAbatement:1);
+  const mProv = marginal(res.provTaxable,R[prov].brackets);
+  h += `<tr><td style="color:var(--muted)">${t.effMarg}</td><td>${sal>0?pct((res.fedTax+res.provTax)/sal):'—'}</td><td>${pct(mFed+mProv)}</td></tr></tbody>`;
+  $('tbl').innerHTML = h;
+
+  bindHover(slices, sal);
+  renderRef();
+}
+
+function bindHover(slices, sal){
+  const chart=$('chart'), tip=$('tip');
+  const set = k => {
+    chart.classList.toggle('hovering', !!k);
+    document.querySelectorAll('#svg path').forEach(p=>p.classList.toggle('hl', p.dataset.k===k));
+    document.querySelectorAll('#tbl tr[data-k]').forEach(r=>r.classList.toggle('hl', r.dataset.k===k));
+  };
+  document.querySelectorAll('#svg path').forEach(p=>{
+    const s = slices.find(x=>x.k===p.dataset.k);
+    p.onmousemove = e=>{
+      set(s.k);
+      const b = chart.getBoundingClientRect();
+      tip.innerHTML = `<b>${s.name}</b>${fmt(s.v)} · ${pct(s.v/sal)}`;
+      tip.style.display='block';
+      let x = e.clientX-b.left+12, y = e.clientY-b.top+12;
+      if(x+tip.offsetWidth>b.width) x = e.clientX-b.left-tip.offsetWidth-12;
+      tip.style.left=x+'px'; tip.style.top=y+'px';
+    };
+    p.onmouseleave = ()=>{ set(null); tip.style.display='none'; };
+  });
+  document.querySelectorAll('#tbl tr[data-k]').forEach(r=>{
+    r.onmouseenter = ()=>set(r.dataset.k);
+    r.onmouseleave = ()=>set(null);
+  });
+}
+
+function renderRef(){
+  const t=T(), S=R[prov], isQC=prov==='QC', P=isQC?R.qpp:R.cpp, E=isQC?R.eiQC:R.ei;
+  $('refTag').textContent = '· '+t.prov[prov];
+  const br = b=>{ let lo=0; return b.map(([hi,r])=>{ const s=`${pct(r)} : ${fmt0(lo)} – ${hi===Infinity?t.above:fmt0(hi)}`; lo=hi; return s; }).join('<br>'); };
+  let h = `<thead><tr>${t.refCols.map((c,i)=>`<th style="text-align:left">${c}</th>`).join('')}</tr></thead><tbody>`;
+  h += `<tr><td>${t.fedTaxRow}</td><td>${br(R.fed.brackets)}</td><td>${t.rFed(isQC)}</td></tr>`;
+  h += `<tr><td>${t.provTaxRow(t.prov[prov])}</td><td>${br(S.brackets)}</td><td>${t.rProv[prov]}</td></tr>`;
+  h += `<tr><td>${t.pen[isQC?'QPP':'CPP']}</td><td>${pct(P.rate)}</td><td>${t.rPen(fmt0(P.exempt),fmt0(P.ympe),fmt((P.ympe-P.exempt)*P.rate))}</td></tr>`;
+  h += `<tr><td>${t.pen2[isQC?'QPP2':'CPP2']}</td><td>${pct(.04)}</td><td>${t.rPen2(fmt0(P.ympe),fmt0(P.yampe))}</td></tr>`;
+  h += `<tr><td>${t.ei}</td><td>${pct(E.rate)}</td><td>${t.rCap(fmt0(E.mie),fmt(E.mie*E.rate))}</td></tr>`;
+  if(isQC) h += `<tr><td>${t.qpip}</td><td>${pct(R.qpip.rate,3)}</td><td>${t.rCap(fmt0(R.qpip.mie),fmt(R.qpip.mie*R.qpip.rate))}</td></tr>`;
+  $('tRef').innerHTML = h+'</tbody>';
+
+  const notes=[...t.notes];
+  if(prov==='ON') notes.push(t.noteON);
+  if(prov==='BC') notes.push(`<span class="warn">${t.noteBC}</span>`);
+  $('notes').innerHTML = notes.map(x=>`<li>${x}</li>`).join('');
+}
+
+/* ===================== EVENTS ===================== */
+$('lang').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  lang=b.dataset.l;
+  try{ localStorage.setItem('payroll26-lang', lang); }catch(err){}
+  applyLang(); render();
+});
+$('prov').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  prov=b.dataset.p;
+  document.querySelectorAll('#prov button').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+});
+$('sal').addEventListener('input', render);
+$('sal').addEventListener('blur', ()=>{ if($('sal').value!=='') $('sal').value=num($('sal').value).toLocaleString(T().locale); });
+applyLang(); render();
+</script>
+</body>
+</html>

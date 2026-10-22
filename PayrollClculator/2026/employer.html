@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Employer Cost 2026</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg-grad:linear-gradient(135deg,#eef3fb 0%,#f6f1fb 45%,#fdf3ec 100%);
+  --card-grad:linear-gradient(160deg,rgba(255,255,255,.96) 0%,rgba(246,249,255,.92) 55%,rgba(250,245,255,.9) 100%);
+  --card-border:rgba(42,120,214,.14);
+  --ink:#0b0b0b;--muted:#52514e;--line:rgba(20,30,50,.10);--accent:#2a78d6;
+  --btn-grad:linear-gradient(135deg,#2a78d6,#6250d6);
+  --input-bg:rgba(255,255,255,.85);
+  --shadow:0 8px 30px rgba(40,60,120,.08);
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--net:#d4d6d9;
+  --warn:#a15c00;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg-grad:linear-gradient(135deg,#0f1420 0%,#16121f 50%,#1d1512 100%);
+    --card-grad:linear-gradient(160deg,rgba(30,34,44,.95) 0%,rgba(26,28,38,.93) 55%,rgba(32,26,40,.92) 100%);
+    --card-border:rgba(120,150,230,.16);
+    --ink:#f0efec;--muted:#c3c2b7;--line:rgba(255,255,255,.09);--accent:#3987e5;
+    --btn-grad:linear-gradient(135deg,#3987e5,#9085e9);
+    --input-bg:rgba(0,0,0,.25);
+    --shadow:0 8px 30px rgba(0,0,0,.35);
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--net:#3a3a38;
+    --warn:#e0a55a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-grad:linear-gradient(135deg,#0f1420 0%,#16121f 50%,#1d1512 100%);
+  --card-grad:linear-gradient(160deg,rgba(30,34,44,.95) 0%,rgba(26,28,38,.93) 55%,rgba(32,26,40,.92) 100%);
+  --card-border:rgba(120,150,230,.16);
+  --ink:#f0efec;--muted:#c3c2b7;--line:rgba(255,255,255,.09);--accent:#3987e5;
+  --btn-grad:linear-gradient(135deg,#3987e5,#9085e9);
+  --input-bg:rgba(0,0,0,.25);
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--net:#3a3a38;
+  --warn:#e0a55a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{min-height:100%;background:var(--bg-grad);background-attachment:fixed}
+body{margin:0;min-height:100vh;background:var(--bg-grad);background-attachment:fixed;color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 48px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.ver{font-size:12px;color:var(--muted);padding:4px 10px;border:1px solid var(--card-border);border-radius:999px;background:var(--card-grad)}
+.lang{display:inline-flex;padding:3px;border-radius:999px;background:var(--card-grad);border:1px solid var(--card-border);box-shadow:var(--shadow)}
+.lang button{border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500}
+.lang button.on{background:var(--btn-grad);color:#fff}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card-grad);border:1px solid var(--card-border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);color:var(--ink);font-size:16px}
+input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.prov{display:flex;gap:6px}
+.prov button{flex:1;padding:9px 0;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);border-radius:8px;cursor:pointer;font-size:14px}
+.prov button.on{background:var(--btn-grad);border-color:transparent;color:#fff}
+.main{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:center;margin-top:16px}
+@media (max-width:760px){.main{grid-template-columns:1fr}}
+.chart{position:relative;width:100%;max-width:300px;margin:0 auto}
+.chart svg{display:block;width:100%;height:auto}
+.chart path{cursor:pointer;stroke:var(--input-bg);stroke-width:2;transition:opacity .15s}
+.chart.hovering path:not(.hl){opacity:.35}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 70px}
+.center .l{font-size:12px;color:var(--muted)}
+.center .v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.center .s{font-size:12px;color:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--card-grad);border:1px solid var(--card-border);border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:var(--shadow);white-space:nowrap;display:none;z-index:2;backdrop-filter:blur(6px)}
+.tip b{display:block;font-size:13px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td .n{display:block;font-size:11.5px;color:var(--muted);font-weight:400;margin-left:18px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:baseline}
+tbody tr.hl td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+tr.tot td{font-weight:600;border-top:2px solid var(--ink);border-bottom:none}
+tr.net td{font-weight:600;border-bottom:none}
+.tbl-scroll{overflow-x:auto}
+h2{font-size:15px;margin:0 0 10px}
+.ref{margin-top:16px}
+.ref td,.ref th{font-size:13px}
+.ref td:nth-child(2){white-space:nowrap;text-align:left}
+.ref td:nth-child(3){text-align:left}
+.notes{color:var(--muted);font-size:12.5px;margin:14px 0 0;padding-left:18px}
+.notes li{margin:3px 0}
+.warn{color:var(--warn)}
+.prov button.cmp{flex:1.8;white-space:nowrap;padding:9px 8px}
+#cmpView{position:relative;margin-top:18px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center}
+.multiples{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.panel{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--input-bg)}
+.panel h3{font-size:13px;font-weight:600;margin:0 0 10px}
+.panel.key{border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.bar-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;height:26px;cursor:default}
+.bar-row .pl{font-size:12px;color:var(--muted);font-weight:500}
+.bar-track{position:relative;height:14px}
+.bar{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;transition:width .25s,opacity .15s}
+.bar-row .val{font-size:12.5px;font-variant-numeric:tabular-nums;min-width:84px;text-align:right}
+.bar-row .val.na{color:var(--muted)}
+.multiples.hovering .bar-row:not(.hl) .bar{opacity:.35}
+.cmp-tbl td.best{font-weight:600}
+.cmp-tbl td.best::after{content:" ✓";color:var(--muted)}
+.cmp-tbl td,.cmp-tbl th{white-space:nowrap}
+
+<style>
+.topbar{justify-content:space-between!important;align-items:center;gap:12px}
+.ver{font-size:12px;color:var(--muted);padding:4px 10px;border:1px solid var(--card-border);border-radius:999px;background:var(--card-grad)}
+.wcb{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;align-items:end}
+@media (max-width:640px){.wcb{grid-template-columns:1fr 1fr}}
+:root{--s7:#6250d6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s7:#9085e9}}
+:root[data-theme="dark"]{--s7:#9085e9}
+.wcb .hint{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:-4px}
+.unit{position:relative}
+.unit input,.unit select{padding-right:64px}
+select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);color:var(--ink);font-size:16px;appearance:none;-webkit-appearance:none;cursor:pointer}
+select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+input.fixed{color:var(--muted);cursor:default;background:transparent}
+input.fixed:focus{outline:none}
+.unit span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+
+.topbar{flex-wrap:wrap}
+.navwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.home{font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;white-space:nowrap}
+.home:hover{color:var(--accent)}
+.home::before{content:"← ";color:var(--muted)}
+.nav{display:inline-flex;padding:3px;border-radius:999px;background:var(--card-grad);border:1px solid var(--card-border);box-shadow:var(--shadow)}
+.nav a{color:var(--muted);padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.nav a.on{background:var(--btn-grad);color:#fff}
+.nav a:not(.on):hover{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="navwrap"><a class="home" id="navHome" href="index.html" data-i="navHome"></a><nav class="nav"><a id="navEe" href="employee.html" data-i="navEe"></a><a id="navEr" href="employer.html" data-i="navEr" class="on" aria-current="page"></a></nav><span class="ver">Employer v0.6</span></div>
+    <div class="lang" id="lang" role="group" aria-label="Language">
+      <button data-l="zh">中文</button>
+      <button data-l="en">English</button>
+      <button data-l="fr">Français</button>
+    </div>
+  </div>
+
+  <h1 data-i="title"></h1>
+  <p class="sub" data-i="subtitle"></p>
+
+  <div class="card">
+    <div class="inputs">
+      <div>
+        <label for="sal" data-i="salary"></label>
+        <input id="sal" type="text" inputmode="decimal" value="80000">
+      </div>
+      <div>
+        <label data-i="province"></label>
+        <div class="prov" id="prov">
+          <button data-p="BC">BC</button>
+          <button data-p="ON">ON</button>
+          <button data-p="QC" class="on">QC</button>
+          <button data-p="ALL" class="cmp" data-i="compareBtn"></button>
+        </div>
+      </div>
+    </div>
+    <div class="wcb">
+      <div><label for="wcbON" data-i="wcbON"></label><div class="unit"><input id="wcbON" type="text" value="0.32" readonly tabindex="-1" class="fixed"><span data-i="fixedTag"></span></div></div>
+      <div><label for="wcbBC" data-i="wcbBC"></label><div class="unit"><select id="wcbBC"><option value="0.11">0.11</option><option value="0.13">0.13</option></select><span>/ $100 ▾</span></div></div>
+      <div><label for="wcbQC" data-i="wcbQC"></label><div class="unit"><select id="wcbQC"><option value="0.34">0.34</option><option value="2.19">2.19</option></select><span>/ $100 ▾</span></div></div>
+      <div><label for="ehtONBC" data-i="ehtLbl"></label><div class="unit"><input id="ehtONBC" type="text" value="1.95%" readonly tabindex="-1" class="fixed"><span data-i="fixedPct"></span></div></div>
+      <div><label for="hsfQC" data-i="hsfLbl"></label><div class="unit"><input id="hsfQC" type="text" value="4.26%" readonly tabindex="-1" class="fixed"><span data-i="fixedPct"></span></div></div>
+      <div><label for="cntQC" data-i="cntLbl"></label><div class="unit"><input id="cntQC" type="text" value="0.06%" readonly tabindex="-1" class="fixed"><span data-i="fixedPct"></span></div></div>
+      <div class="hint" data-i="wcbHint"></div>
+    </div>
+
+    <div id="cmpView" hidden>
+      <div class="legend" id="cmpLegend"></div>
+      <div class="multiples" id="multiples"></div>
+      <h2 style="margin-top:20px" data-i="cmpTableTitle"></h2>
+      <div class="tbl-scroll"><table id="tCmp" class="cmp-tbl"></table></div>
+      <div class="tip" id="tip2"></div>
+    </div>
+
+    <div class="main" id="singleView">
+      <div class="chart" id="chart">
+        <svg viewBox="0 0 300 300" id="svg" role="img"></svg>
+        <div class="center" id="center"></div>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="tbl-scroll"><table id="tbl"></table></div>
+    </div>
+  </div>
+
+  <div class="card ref">
+    <div id="refBlock">
+      <h2><span data-i="refTitle"></span></h2>
+      <div class="tbl-scroll"><table id="tRef"></table></div>
+    </div>
+    <ul class="notes" id="notes"></ul>
+  </div>
+</div>
+
+<script>
+/* ===================== 2026 PARAMETERS (employer side) ===================== */
+const R = {
+  cpp:{ ympe:74600,yampe:85000,exempt:3500,rate:.0595,r2:.04 },
+  qpp:{ ympe:74600,yampe:85000,exempt:3500,rate:.063,r2:.04 },
+  ei:{ mie:68900,rate:.0163,mult:1.4 },
+  eiQC:{ mie:68900,rate:.013,mult:1.4 },
+  qpip:{ mie:103000,er:.00602 },
+  hsf:.0426, eht:.0195,
+  cnt:{ rate:.0006, max:103000 },
+  wcb:{ ON:{max:121700}, BC:{max:127500}, QC:{max:103000} }
+};
+const PROVS=['BC','ON','QC'], PCOL={BC:'--s1',ON:'--s2',QC:'--s3'};
+
+/* ===================== I18N ===================== */
+const I18N = {
+  zh:{
+    htmlLang:'zh-CN', navHome:'2026 薪资计算器', navEe:'员工扣款', navEr:'雇主成本', locale:'en-CA', docTitle:'2026 雇主人工成本计算器',
+    title:'2026 雇主人工成本计算器',
+    subtitle:'BC · 安大略 · 魁北克 — 给定年薪，公司需额外缴纳 CPP/QPP、CPP2/QPP2、EI、QPIP、工伤保险、雇主健康税（EHT / HSF）及 CNT，合计总人工成本',
+    salary:'年薪（加元）', province:'工作所在省份', compareBtn:'三省比较',
+    prov:{BC:'不列颠哥伦比亚省',ON:'安大略省',QC:'魁北克省'},
+    wcbON:'安省 WSIB', wcbBC:'BC WorkSafeBC', wcbQC:'魁省 CNESST（SST）', fixedTag:'/ $100 · 固定', ehtLbl:'安省 / BC EHT 费率', cntLbl:'魁省 CNT 费率', cnt:'CNT 劳动标准', nCNT:(r,m)=>`${r}，上限 ${m}`, hsfLbl:'魁省 HSF / FSS 费率', fixedPct:'固定',
+    health:{ON:'EHT 雇主健康税',BC:'EHT 雇主健康税',QC:'HSF / FSS 健康服务基金'}, nHSF:r=>`${r} × 全部薪酬，无上限、无豁免额`,
+    wcbHint:'WSIB 固定 $0.32；WorkSafeBC 可选 $0.11 / $0.13；CNESST（SST）可选 $0.34 / $2.19；安省 / BC EHT 固定 1.95%；魁省 HSF 固定 4.26%；魁省 CNT 固定 0.06%。',
+    chartAria:'公司总人工成本构成环状图',
+    centerLabel:'公司总成本', overSalary:p=>`比年薪高 ${p}`,
+    colItem:'项目', colAmount:'年度金额', colPct:'占总成本',
+    salaryRow:'年薪（员工薪酬）',
+    pen:{CPP:'CPP 雇主匹配',QPP:'QPP 雇主匹配'},
+    pen2:{CPP2:'CPP2 雇主匹配',QPP2:'QPP2 雇主匹配'},
+    ei:'EI 雇主保费', qpip:'QPIP 雇主保费',
+    wcb:{ON:'WSIB 工伤保险',BC:'WorkSafeBC 工伤保险',QC:'CNESST 工伤保险'},
+    erTotal:'雇主缴纳合计', total:'公司总人工成本', loadRow:'雇主附加成本率（占年薪）',
+    nPen:(r,y,e)=>`与员工等额：${r} × (min(年薪, ${y}) − ${e})`,
+    nPen2:(y,a)=>`与员工等额：4% × (${y} – ${a} 区间收入)`,
+    nEI:(r,m)=>`员工费率 × 1.4 = ${r}，上限 ${m}`,
+    nQPIP:(r,m)=>`${r}，上限 ${m}`,
+    nWCB:(r,m)=>`每 $100 收入 ${r}，上限 ${m}`,
+    cmpTableTitle:'三省比较明细',
+    cmp:{pen:'CPP / QPP 雇主匹配',pen2:'CPP2 / QPP2 雇主匹配',ei:'EI 雇主保费',qpip:'QPIP（仅魁省）',wcb:'工伤保险',hsf:'雇主健康税 EHT / HSF',cnt:'CNT（仅魁省）',er:'雇主缴纳合计',total:'公司总人工成本'},
+    na:'不适用', bestNote:'✓ = 三省中成本最低', cmpNote:'每一项单独比例尺，柱长只在同一项内比较。',
+    refTitle:'2026 雇主方费率', refCols:['项目','安大略','BC','魁北克'],
+    ref:{pen:'CPP / QPP',pen2:'CPP2 / QPP2',ei:'EI（雇主）',qpip:'QPIP（雇主）',wcb:'工伤保险',hsf:'EHT / HSF',cnt:'CNT',max:'上限',noMax:'无上限'},
+    notes:[
+      '按全年计算，假设员工全年在同一省份、同一雇主处工作，无其他应税福利。',
+      'CPP/QPP、CPP2/QPP2 雇主缴费与员工扣款等额；EI 雇主保费为员工保费的 1.4 倍（未申请 EI 减费计划）。',
+      '雇主健康税：安省、BC 的 EHT 按 1.95% × 全部薪酬计算，魁省 HSF / FSS 按 4.26%；均不设上限，也未扣除豁免额。','工伤保险费率（每 $100 可保收入）：WSIB 固定 $0.32；WorkSafeBC $0.11 或 $0.13；CNESST（SST）$0.34 或 $2.19。2026 年可保收入上限：WSIB $121,700、WorkSafeBC $127,500、CNESST $103,000。',
+      '魁省劳动标准缴费（CNT）按 0.06% × min(薪酬, $103,000) 计算。','本版暂未计入：魁省 FDRCMO 职业培训基金，以及福利、假期工资等。'
+    ]
+  },
+  en:{
+    htmlLang:'en-CA', navHome:'Payroll Calculator 2026', navEe:'Employee Deductions', navEr:'Employer Costs', locale:'en-CA', docTitle:'Employer Cost 2026',
+    title:'2026 Employer Cost Calculator',
+    subtitle:'BC · Ontario · Québec — for a given salary, the employer’s CPP/QPP, CPP2/QPP2, EI, QPIP, workers’ compensation, employer health tax (EHT / HSF) and CNT, and the total cost of employment',
+    salary:'Annual salary (CAD)', province:'Province of employment', compareBtn:'Compare all',
+    prov:{BC:'British Columbia',ON:'Ontario',QC:'Québec'},
+    wcbON:'Ontario WSIB rate', wcbBC:'BC WorkSafeBC rate (select)', wcbQC:'Québec CNESST (SST) rate (select)', fixedTag:'/ $100 · fixed', ehtLbl:'Ontario / BC EHT rate', cntLbl:'Québec CNT rate', cnt:'CNT – labour standards', nCNT:(r,m)=>`${r}, max ${m}`, hsfLbl:'Québec HSF rate', fixedPct:'fixed',
+    health:{ON:'EHT – Employer Health Tax',BC:'EHT – Employer Health Tax',QC:'HSF – Health Services Fund'}, nHSF:r=>`${r} × total remuneration, no maximum or exemption`,
+    wcbHint:'WSIB fixed at $0.32; WorkSafeBC $0.11 / $0.13; CNESST (SST) $0.34 / $2.19; Ontario / BC EHT fixed at 1.95%; Québec HSF fixed at 4.26%; Québec CNT fixed at 0.06%.',
+    chartAria:'Donut chart of total employment cost',
+    centerLabel:'Total employer cost', overSalary:p=>`${p} above salary`,
+    colItem:'Item', colAmount:'Annual', colPct:'% of total cost',
+    salaryRow:'Salary (employee pay)',
+    pen:{CPP:'CPP – employer',QPP:'QPP – employer'},
+    pen2:{CPP2:'CPP2 – employer',QPP2:'QPP2 – employer'},
+    ei:'EI – employer', qpip:'QPIP – employer',
+    wcb:{ON:'WSIB',BC:'WorkSafeBC',QC:'CNESST'},
+    erTotal:'Employer contributions', total:'Total cost of employment', loadRow:'Employer load (% of salary)',
+    nPen:(r,y,e)=>`Matches employee: ${r} × (min(salary, ${y}) − ${e})`,
+    nPen2:(y,a)=>`Matches employee: 4% × earnings between ${y} and ${a}`,
+    nEI:(r,m)=>`Employee rate × 1.4 = ${r}, max insurable ${m}`,
+    nQPIP:(r,m)=>`${r}, max insurable ${m}`,
+    nWCB:(r,m)=>`${r} per $100, max insurable ${m}`,
+    cmpTableTitle:'Province comparison',
+    cmp:{pen:'CPP / QPP – employer',pen2:'CPP2 / QPP2 – employer',ei:'EI – employer',qpip:'QPIP (Québec only)',wcb:'Workers’ compensation',hsf:'Employer health tax (EHT / HSF)',cnt:'CNT (Québec only)',er:'Employer contributions',total:'Total cost of employment'},
+    na:'n/a', bestNote:'✓ = lowest cost of the three', cmpNote:'Each panel has its own scale; compare bar lengths within a panel only.',
+    refTitle:'2026 employer rates', refCols:['Item','Ontario','BC','Québec'],
+    ref:{pen:'CPP / QPP',pen2:'CPP2 / QPP2',ei:'EI (employer)',qpip:'QPIP (employer)',wcb:'Workers’ compensation',hsf:'EHT / HSF',cnt:'CNT',max:'max',noMax:'no maximum'},
+    notes:[
+      'Full-year calculation assuming the employee works the whole year in one province for one employer, with no other taxable benefits.',
+      'Employer CPP/QPP and CPP2/QPP2 equal the employee contributions; employer EI is 1.4 × the employee premium (no EI premium reduction).',
+      'Employer health tax: Ontario and BC EHT at 1.95% of total remuneration, Québec HSF at 4.26%; no maximum and no exemption applied.','Workers’ compensation rates per $100 of insurable earnings: WSIB fixed at $0.32; WorkSafeBC $0.11 or $0.13; CNESST (SST) $0.34 or $2.19. 2026 maximum insurable earnings: WSIB $121,700, WorkSafeBC $127,500, CNESST $103,000.',
+      'Québec labour standards contribution (CNT) is 0.06% × min(remuneration, $103,000).','Not yet included in this version: Québec WSDRF training fund, benefits and vacation pay.'
+    ]
+  },
+  fr:{
+    htmlLang:'fr-CA', navHome:'Calculateur de paie 2026', navEe:'Retenues de l’employé', navEr:'Coûts de l’employeur', locale:'fr-CA', docTitle:'Coût employeur 2026',
+    title:'Calculateur du coût employeur 2026',
+    subtitle:'C.-B. · Ontario · Québec — pour un salaire donné, les cotisations de l’employeur au RPC/RRQ, RPC2/RRQ2, AE, RQAP, à la santé-sécurité du travail, l’impôt-santé (EHT / FSS) et la CNT, et le coût total de la main-d’œuvre',
+    salary:'Salaire annuel ($ CA)', province:'Province d’emploi', compareBtn:'Comparer',
+    prov:{BC:'Colombie-Britannique',ON:'Ontario',QC:'Québec'},
+    wcbON:'Taux WSIB (Ontario)', wcbBC:'Taux WorkSafeBC (C.-B.) – au choix', wcbQC:'Taux CNESST (SST) – au choix', fixedTag:'/ 100 $ · fixe', ehtLbl:'Taux EHT (Ont. / C.-B.)', cntLbl:'Taux CNT (Québec)', cnt:'CNT – normes du travail', nCNT:(r,m)=>`${r}, max. ${m}`, hsfLbl:'Taux FSS (Québec)', fixedPct:'fixe',
+    health:{ON:'ISE – Impôt-santé des employeurs',BC:'EHT – Impôt-santé des employeurs',QC:'FSS – Fonds des services de santé'}, nHSF:r=>`${r} × rémunération totale, sans maximum ni exemption`,
+    wcbHint:'WSIB fixé à 0,32 $; WorkSafeBC 0,11 $ / 0,13 $; CNESST (SST) 0,34 $ / 2,19 $; impôt-santé Ont. / C.-B. fixé à 1,95 %; FSS du Québec fixé à 4,26 %; CNT fixé à 0,06 %.',
+    chartAria:'Graphique en anneau du coût total de la main-d’œuvre',
+    centerLabel:'Coût total employeur', overSalary:p=>`${p} au-delà du salaire`,
+    colItem:'Élément', colAmount:'Annuel', colPct:'% du coût total',
+    salaryRow:'Salaire (rémunération de l’employé)',
+    pen:{CPP:'RPC – employeur',QPP:'RRQ – employeur'},
+    pen2:{CPP2:'RPC2 – employeur',QPP2:'RRQ2 – employeur'},
+    ei:'AE – employeur', qpip:'RQAP – employeur',
+    wcb:{ON:'WSIB',BC:'WorkSafeBC',QC:'CNESST'},
+    erTotal:'Cotisations de l’employeur', total:'Coût total de la main-d’œuvre', loadRow:'Charges sociales (% du salaire)',
+    nPen:(r,y,e)=>`Égale à l’employé : ${r} × (min(salaire, ${y}) − ${e})`,
+    nPen2:(y,a)=>`Égale à l’employé : 4 % × gains entre ${y} et ${a}`,
+    nEI:(r,m)=>`Taux de l’employé × 1,4 = ${r}, maximum assurable ${m}`,
+    nQPIP:(r,m)=>`${r}, maximum assurable ${m}`,
+    nWCB:(r,m)=>`${r} par 100 $, maximum assurable ${m}`,
+    cmpTableTitle:'Comparaison des provinces',
+    cmp:{pen:'RPC / RRQ – employeur',pen2:'RPC2 / RRQ2 – employeur',ei:'AE – employeur',qpip:'RQAP (Québec seulement)',wcb:'Santé-sécurité du travail',hsf:'Impôt-santé (EHT / FSS)',cnt:'CNT (Québec seulement)',er:'Cotisations de l’employeur',total:'Coût total de la main-d’œuvre'},
+    na:'s.o.', bestNote:'✓ = coût le plus bas des trois', cmpNote:'Chaque panneau a sa propre échelle; comparez les barres à l’intérieur d’un même panneau.',
+    refTitle:'Taux 2026 – employeur', refCols:['Élément','Ontario','C.-B.','Québec'],
+    ref:{pen:'RPC / RRQ',pen2:'RPC2 / RRQ2',ei:'AE (employeur)',qpip:'RQAP (employeur)',wcb:'Santé-sécurité du travail',hsf:'EHT / FSS',cnt:'CNT',max:'max.',noMax:'sans maximum'},
+    notes:[
+      'Calcul annuel, en supposant que l’employé travaille toute l’année dans une seule province pour un seul employeur, sans autres avantages imposables.',
+      'Les cotisations de l’employeur au RPC/RRQ et RPC2/RRQ2 sont égales à celles de l’employé; la cotisation d’AE de l’employeur est de 1,4 × celle de l’employé (sans réduction du taux).',
+      'Impôt-santé : EHT de l’Ontario et de la C.-B. à 1,95 % de la rémunération totale, FSS du Québec à 4,26 %; sans maximum ni exemption.','Taux de santé-sécurité du travail par 100 $ de salaire assurable : WSIB fixé à 0,32 $; WorkSafeBC 0,11 $ ou 0,13 $; CNESST (SST) 0,34 $ ou 2,19 $. Maximums assurables 2026 : WSIB 121 700 $, WorkSafeBC 127 500 $, CNESST 103 000 $.',
+      'Cotisation relative aux normes du travail (CNT) : 0,06 % × min(rémunération, 103 000 $).','Non inclus dans cette version : FDRCMO, avantages sociaux et indemnités de vacances.'
+    ]
+  }
+};
+function detectLang(){
+  try{ const q=new URLSearchParams(location.search).get('lang'); if(I18N[q]) return q; }catch(e){}
+  try{ const s=localStorage.getItem('payroll26-lang'); if(I18N[s]) return s; }catch(e){}
+  for(const l of (navigator.languages||[navigator.language||'en'])){
+    const p=String(l).toLowerCase().slice(0,2);
+    if(p==='zh') return 'zh'; if(p==='fr') return 'fr'; if(p==='en') return 'en';
+  }
+  return 'en';
+}
+let lang=detectLang(), prov='QC';
+const T=()=>I18N[lang];
+
+/* ===================== HELPERS ===================== */
+const r2 = x => Math.round(x*100)/100;
+const fmt = x => new Intl.NumberFormat(T().locale,{style:'currency',currency:'CAD',currencyDisplay:'narrowSymbol',minimumFractionDigits:2,maximumFractionDigits:2}).format(x);
+const fmt0 = x => new Intl.NumberFormat(T().locale,{style:'currency',currency:'CAD',currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(x);
+const pct = (x,d=2) => new Intl.NumberFormat(T().locale,{style:'percent',maximumFractionDigits:d}).format(x);
+const dec = x => new Intl.NumberFormat(T().locale,{style:'currency',currency:'CAD',currencyDisplay:'narrowSymbol',minimumFractionDigits:2,maximumFractionDigits:4}).format(x);
+const num = s => { const v=parseFloat(String(s).replace(/\s| | /g,'').replace(/[^0-9.,\-]/g,'').replace(/,(?=\d{1,2}$)/,'.').replace(/,/g,'')); return isFinite(v)?v:0; };
+const numRate = s => { const v=parseFloat(String(s).replace(/\s/g,'').replace(',','.').replace(/[^0-9.\-]/g,'')); return isFinite(v)&&v>=0?v:0; };
+const $ = id => document.getElementById(id);
+const wcbRate = p => p==='ON' ? 0.32 : Number($('wcb'+p).value);
+
+/* ===================== CALC ===================== */
+function calc(sal, p){
+  const isQC=p==='QC', P=isQC?R.qpp:R.cpp, E=isQC?R.eiQC:R.ei, W=R.wcb[p];
+  const pen = r2(Math.max(0,Math.min(sal,P.ympe)-P.exempt)*P.rate);
+  const pen2 = r2(Math.max(0,Math.min(sal,P.yampe)-P.ympe)*P.r2);
+  const ei = r2(r2(Math.min(sal,E.mie)*E.rate)*E.mult);
+  const qpip = isQC ? r2(Math.min(sal,R.qpip.mie)*R.qpip.er) : null;
+  const wcb = r2(Math.min(sal,W.max)*wcbRate(p)/100);
+  const hsf = r2(sal*(isQC?R.hsf:R.eht));
+  const cnt = isQC ? r2(Math.min(sal,R.cnt.max)*R.cnt.rate) : null;
+  const er = pen+pen2+ei+(qpip||0)+wcb+hsf+(cnt||0);
+  return {sal,isQC,pen,pen2,ei,qpip,wcb,hsf,cnt,er,total:sal+er};
+}
+
+/* ===================== DONUT ===================== */
+const CX=150, CY=150, RO=140, RI=96;
+function arc(a0,a1){
+  const big=(a1-a0)>Math.PI?1:0, p=(r,a)=>[CX+r*Math.sin(a),CY-r*Math.cos(a)];
+  const [x0,y0]=p(RO,a0),[x1,y1]=p(RO,a1),[x2,y2]=p(RI,a1),[x3,y3]=p(RI,a0);
+  return `M${x0},${y0}A${RO},${RO} 0 ${big} 1 ${x1},${y1}L${x2},${y2}A${RI},${RI} 0 ${big} 0 ${x3},${y3}Z`;
+}
+
+/* ===================== RENDER ===================== */
+function applyLang(){
+  const t=T();
+  document.documentElement.lang=t.htmlLang; document.title=t.docTitle;
+  document.querySelectorAll('[data-i]').forEach(el=>{ el.textContent=t[el.dataset.i]; });
+  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
+  $('svg').setAttribute('aria-label',t.chartAria);
+  const s=num($('sal').value); $('sal').value = s ? s.toLocaleString(t.locale) : '';
+  $('hsfQC').value = pct(R.hsf); $('ehtONBC').value = pct(R.eht); $('cntQC').value = pct(R.cnt.rate);
+  $('wcbON').value = (0.32).toLocaleString(t.locale,{minimumFractionDigits:2});
+  [...$('wcbBC').options,...$('wcbQC').options].forEach(o=>o.textContent=Number(o.value).toLocaleString(t.locale,{minimumFractionDigits:2}));
+}
+
+function syncLinks(){
+  const s=num(document.getElementById('sal').value);
+  const q='?'+new URLSearchParams({salary:String(s||''),lang}).toString();
+  [['navHome','index.html'],['navEe','employee.html'],['navEr','employer.html']].forEach(([id,f])=>{ const a=document.getElementById(id); if(a) a.href=f+q; });
+}
+(function(){ try{ const v=new URLSearchParams(location.search).get('salary'); const n=parseFloat(v); if(isFinite(n)&&n>=0) document.getElementById('sal').value=String(n); }catch(e){} })();
+function render(){
+  syncLinks();
+  const all=prov==='ALL';
+  $('cmpView').hidden=!all; $('singleView').hidden=all;
+  all ? renderCompare() : renderSingle();
+  renderRef();
+}
+function renderSingle(){
+  const t=T(), sal=num($('sal').value), res=calc(sal,prov);
+  const isQC=res.isQC, P=isQC?R.qpp:R.cpp, E=isQC?R.eiQC:R.ei, W=R.wcb[prov];
+  const items=[
+    {k:'pen',c:'--s1',name:t.pen[isQC?'QPP':'CPP'],v:res.pen,note:t.nPen(pct(P.rate),fmt0(P.ympe),fmt0(P.exempt))},
+    {k:'pen2',c:'--s2',name:t.pen2[isQC?'QPP2':'CPP2'],v:res.pen2,note:t.nPen2(fmt0(P.ympe),fmt0(P.yampe))},
+    {k:'ei',c:'--s3',name:t.ei,v:res.ei,note:t.nEI(pct(E.rate*E.mult,3),fmt0(E.mie))},
+  ];
+  if(isQC) items.push({k:'qpip',c:'--s4',name:t.qpip,v:res.qpip,note:t.nQPIP(pct(R.qpip.er,3),fmt0(R.qpip.mie))});
+  items.push({k:'wcb',c:'--s5',name:t.wcb[prov],v:res.wcb,note:t.nWCB(dec(wcbRate(prov)),fmt0(W.max))});
+  items.push({k:'hsf',c:'--s6',name:t.health[prov],v:res.hsf,note:t.nHSF(pct(isQC?R.hsf:R.eht))});
+  if(isQC) items.push({k:'cnt',c:'--s7',name:t.cnt,v:res.cnt,note:t.nCNT(pct(R.cnt.rate),fmt0(R.cnt.max))});
+  const total=res.total;
+  const slices=[{k:'sal',c:'--net',name:t.salaryRow,v:sal},...items];
+
+  let svg='';
+  if(total>0){
+    let a=0;
+    for(const s of slices){
+      if(s.v<=0) continue;
+      let a1=a+s.v/total*2*Math.PI;
+      if(a1-a>=2*Math.PI-1e-6) a1=a+2*Math.PI-1e-4;
+      svg+=`<path data-k="${s.k}" d="${arc(a,a1)}" style="fill:var(${s.c})"></path>`; a=a1;
+    }
+  } else svg=`<circle cx="${CX}" cy="${CY}" r="${(RO+RI)/2}" fill="none" stroke="var(--line)" stroke-width="${RO-RI}"></circle>`;
+  $('svg').innerHTML=svg;
+  $('center').innerHTML=`<div class="l">${t.centerLabel}</div><div class="v">${fmt(total)}</div><div class="s">${sal>0?t.overSalary(pct(res.er/sal)):''}</div>`;
+
+  const pc=v=>total>0?pct(v/total):'—';
+  let h=`<thead><tr><th>${t.colItem}</th><th>${t.colAmount}</th><th>${t.colPct}</th></tr></thead><tbody>`;
+  h+=`<tr data-k="sal"><td><span class="sw" style="background:var(--net)"></span>${t.salaryRow}</td><td>${fmt(sal)}</td><td>${pc(sal)}</td></tr>`;
+  for(const s of items) h+=`<tr data-k="${s.k}"><td><span class="sw" style="background:var(${s.c})"></span>${s.name}<span class="n">${s.note}</span></td><td>${fmt(s.v)}</td><td>${pc(s.v)}</td></tr>`;
+  h+=`<tr class="tot"><td>${t.erTotal}</td><td>${fmt(res.er)}</td><td>${pc(res.er)}</td></tr>`;
+  h+=`<tr class="net"><td>${t.total}</td><td>${fmt(total)}</td><td>${total>0?pct(1):'—'}</td></tr>`;
+  h+=`<tr><td style="color:var(--muted)">${t.loadRow}</td><td></td><td>${sal>0?pct(res.er/sal):'—'}</td></tr></tbody>`;
+  $('tbl').innerHTML=h;
+  bindHover(slices,total);
+
+  $('notes').innerHTML=t.notes.map(x=>`<li>${x}</li>`).join('');
+}
+function bindHover(slices,total){
+  const chart=$('chart'), tip=$('tip');
+  const set=k=>{
+    chart.classList.toggle('hovering',!!k);
+    document.querySelectorAll('#svg path').forEach(p=>p.classList.toggle('hl',p.dataset.k===k));
+    document.querySelectorAll('#tbl tr[data-k]').forEach(r=>r.classList.toggle('hl',r.dataset.k===k));
+  };
+  document.querySelectorAll('#svg path').forEach(p=>{
+    const s=slices.find(x=>x.k===p.dataset.k);
+    p.onmousemove=e=>{
+      set(s.k);
+      const b=chart.getBoundingClientRect();
+      tip.innerHTML=`<b>${s.name}</b>${fmt(s.v)} · ${pct(s.v/total)}`;
+      tip.style.display='block';
+      let x=e.clientX-b.left+12; if(x+tip.offsetWidth>b.width) x=e.clientX-b.left-tip.offsetWidth-12;
+      tip.style.left=x+'px'; tip.style.top=(e.clientY-b.top+12)+'px';
+    };
+    p.onmouseleave=()=>{ set(null); tip.style.display='none'; };
+  });
+  document.querySelectorAll('#tbl tr[data-k]').forEach(r=>{ r.onmouseenter=()=>set(r.dataset.k); r.onmouseleave=()=>set(null); });
+}
+function renderCompare(){
+  const t=T(), sal=num($('sal').value), res={}; PROVS.forEach(p=>res[p]=calc(sal,p));
+  const rows=[['pen',p=>res[p].pen],['pen2',p=>res[p].pen2],['ei',p=>res[p].ei],['qpip',p=>res[p].qpip],['wcb',p=>res[p].wcb],['hsf',p=>res[p].hsf],['cnt',p=>res[p].cnt],['er',p=>res[p].er],['total',p=>res[p].total]];
+  $('cmpLegend').innerHTML=PROVS.map(p=>`<span><span class="sw" style="background:var(${PCOL[p]})"></span>${t.prov[p]}</span>`).join('')+`<span style="color:var(--muted)">${t.cmpNote}</span>`;
+  let m='';
+  for(const [k,f] of rows){
+    const vals=PROVS.map(f), max=Math.max(...vals.map(v=>v||0));
+    m+=`<div class="panel${k==='er'||k==='total'?' key':''}"><h3>${t.cmp[k]}</h3>`;
+    PROVS.forEach((p,i)=>{
+      const v=vals[i], w=v&&max>0?v/max*100:0;
+      m+=`<div class="bar-row" data-p="${p}" data-k="${k}"><span class="pl">${p}</span><div class="bar-track"><div class="bar" style="width:${w}%;${w>0?'min-width:2px;':'display:none;'}background:var(${PCOL[p]})"></div></div><span class="val${v==null?' na':''}">${v==null?t.na:fmt(v)}</span></div>`;
+    });
+    m+='</div>';
+  }
+  $('multiples').innerHTML=m;
+
+  let h=`<thead><tr><th>${t.colItem}</th>${PROVS.map(p=>`<th><span class="sw" style="background:var(${PCOL[p]})"></span>${p}</th>`).join('')}</tr></thead><tbody>`;
+  h+=`<tr><td>${t.salaryRow}</td>${PROVS.map(()=>`<td>${fmt(sal)}</td>`).join('')}</tr>`;
+  for(const [k,f] of rows){
+    const vals=PROVS.map(f), real=vals.filter(v=>v!=null), best=(k==='qpip'||k==='cnt')?null:Math.min(...real);
+    const allEq=real.every(v=>Math.abs(v-real[0])<.005);
+    const cls=k==='er'?' class="tot"':(k==='total'?' class="net"':'');
+    h+=`<tr${cls}><td>${t.cmp[k]}</td>${vals.map(v=>`<td class="${(!allEq&&v!=null&&best!=null&&Math.abs(v-best)<.005)?'best':''}">${v==null?t.na:fmt(v)}</td>`).join('')}</tr>`;
+  }
+  h+=`<tr><td style="color:var(--muted)">${t.loadRow}</td>${PROVS.map(p=>`<td style="color:var(--muted)">${sal>0?pct(res[p].er/sal):'—'}</td>`).join('')}</tr>`;
+  $('tCmp').innerHTML=h+'</tbody>';
+  $('notes').innerHTML=[t.bestNote,...t.notes].map(x=>`<li>${x}</li>`).join('');
+
+  const mult=$('multiples'), tip=$('tip2'), view=$('cmpView');
+  mult.querySelectorAll('.bar-row').forEach(r=>{
+    r.onmousemove=e=>{
+      mult.classList.add('hovering');
+      mult.querySelectorAll('.bar-row').forEach(x=>x.classList.toggle('hl',x.dataset.p===r.dataset.p));
+      const b=view.getBoundingClientRect();
+      tip.innerHTML=`<b>${t.prov[r.dataset.p]}</b>${t.cmp[r.dataset.k]} · ${r.querySelector('.val').textContent}`;
+      tip.style.display='block';
+      let x=e.clientX-b.left+12; if(x+tip.offsetWidth>b.width) x=e.clientX-b.left-tip.offsetWidth-12;
+      tip.style.left=x+'px'; tip.style.top=(e.clientY-b.top+14)+'px';
+    };
+    r.onmouseleave=()=>{ mult.classList.remove('hovering'); mult.querySelectorAll('.bar-row').forEach(x=>x.classList.remove('hl')); tip.style.display='none'; };
+  });
+}
+function renderRef(){
+  const t=T(), order=['ON','BC','QC'];
+  const cell=p=>{ const isQC=p==='QC', P=isQC?R.qpp:R.cpp, E=isQC?R.eiQC:R.ei, W=R.wcb[p];
+    return {pen:`${pct(P.rate)} · ${fmt0(P.exempt)}–${fmt0(P.ympe)}`, pen2:`4% · ${fmt0(P.ympe)}–${fmt0(P.yampe)}`,
+      ei:`${pct(E.rate*E.mult,3)} · ${t.ref.max} ${fmt0(E.mie)}`, qpip:isQC?`${pct(R.qpip.er,3)} · ${t.ref.max} ${fmt0(R.qpip.mie)}`:t.na,
+      wcb:`${dec(wcbRate(p))} / $100 · ${t.ref.max} ${fmt0(W.max)}`, hsf:`${pct(isQC?R.hsf:R.eht)} · ${t.ref.noMax}`, cnt:isQC?`${pct(R.cnt.rate)} · ${t.ref.max} ${fmt0(R.cnt.max)}`:t.na}; };
+  const c={}; order.forEach(p=>c[p]=cell(p));
+  let h=`<thead><tr>${t.refCols.map(x=>`<th style="text-align:left">${x}</th>`).join('')}</tr></thead><tbody>`;
+  for(const k of ['pen','pen2','ei','qpip','wcb','hsf','cnt']) h+=`<tr><td>${t.ref[k]}</td>${order.map(p=>`<td style="text-align:left;white-space:nowrap">${c[p][k]}</td>`).join('')}</tr>`;
+  $('tRef').innerHTML=h+'</tbody>';
+}
+
+/* ===================== EVENTS ===================== */
+$('lang').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; lang=b.dataset.l; try{localStorage.setItem('payroll26-lang',lang);}catch(err){} applyLang(); render(); });
+$('prov').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; prov=b.dataset.p; document.querySelectorAll('#prov button').forEach(x=>x.classList.toggle('on',x===b)); render(); });
+$('sal').addEventListener('input',render);
+['wcbBC','wcbQC'].forEach(id=>$(id).addEventListener('change',render));
+$('sal').addEventListener('blur',()=>{ if($('sal').value!=='') $('sal').value=num($('sal').value).toLocaleString(T().locale); });
+applyLang(); render();
+</script>
+</body>
+</html>
