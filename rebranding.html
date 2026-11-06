@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="KLN Canada company name changes in English and French, effective April 1, 2025.">
+  <title>Rebranding · KLN Canada</title>
+  <script>
+    (() => {
+      let mode = 'auto';
+      try { mode = localStorage.getItem('kln-portal-theme-mode') || mode; } catch (_) {}
+      const hour = new Date().getHours();
+      document.documentElement.dataset.theme = ['light', 'dark'].includes(mode) ? mode : (hour >= 19 || hour < 7 ? 'dark' : 'light');
+    })();
+  </script>
+  <style>
+    :root { color-scheme: light; --bg:#f5f7fb; --surface:#fff; --soft:#eef3ff; --text:#1f2937; --muted:#58677c; --brand:#1d4ed8; --border:#dbe3f0; --shadow:0 10px 30px rgba(15,23,42,.06); }
+    html[data-theme="dark"] { color-scheme:dark; --bg:#07111f; --surface:#0f1b2d; --soft:#172a42; --text:#e5eefc; --muted:#a6b5c9; --brand:#80baff; --border:#29415f; --shadow:0 10px 30px rgba(0,0,0,.2); }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif; line-height:1.5; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    button { font:inherit; cursor:pointer; }
+    button:focus-visible,a:focus-visible { outline:3px solid var(--brand); outline-offset:4px; }
+    .container { width:min(1100px,calc(100% - 32px)); margin:auto; }
+    :root { --topbar-bg:rgba(255,255,255,.82); --switcher-bg:#f3f6fc; --active-control-bg:#fff; --primary:#1d4ed8; }
+    html[data-theme="dark"] { --topbar-bg:rgba(7,17,31,.86); --switcher-bg:#101f33; --active-control-bg:#1b304a; --primary:#60a5fa; }
+    .topbar { position:sticky; top:0; z-index:10; backdrop-filter:blur(10px); background:var(--topbar-bg); border-bottom:1px solid var(--border); }
+    .topbar-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; min-height:72px; padding:12px 0; }
+    .brand { display:flex; align-items:center; gap:12px; min-width:0; color:inherit; text-decoration:none; }
+    .brand-logo { width:100px; height:46px; padding:3px 0; display:block; object-fit:contain; flex:none; }
+    .brand-text { min-width:0; }
+    .brand-text .brand-title { margin:0; font-size:1.1rem; line-height:1.2; font-weight:700; letter-spacing:normal; }
+    .brand-text p { margin:4px 0 0; color:var(--muted); font-size:.92rem; }
+    .back { color:var(--brand); font-weight:700; text-decoration:none; min-height:44px; display:inline-flex; align-items:center; gap:8px; }
+    .controls { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+    .switch { display:inline-flex; padding:6px; gap:6px; background:var(--switcher-bg); border:1px solid var(--border); border-radius:999px; }
+    .switch button { border:0; background:transparent; color:var(--muted); border-radius:999px; padding:8px 14px; min-height:44px; font-size:.92rem; }
+    .switch button[aria-pressed="true"] { background:var(--active-control-bg); color:var(--primary); box-shadow:0 2px 10px rgba(37,99,235,.12); font-weight:600; }
+    main { padding:32px 0; }
+    .intro { margin-bottom:24px; }
+    .eyebrow { margin:0 0 10px; color:var(--brand); font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    h1 { font-size:clamp(28px,4vw,40px); line-height:1.2; letter-spacing:-.035em; margin:0 0 12px; }
+    .intro p:not(.eyebrow) { margin:8px 0; color:var(--muted); max-width:760px; }
+    .effective { display:inline-block; padding:6px 12px; border-radius:999px; background:var(--soft); color:var(--brand); font-size:14px; font-weight:700; margin-top:12px; }
+    .companies { display:grid; gap:20px; }
+    .company { border:1px solid var(--company-border); border-radius:20px; background:var(--company-bg); box-shadow:0 4px 18px rgba(15,23,42,.035); overflow:hidden; }
+    .company[data-code="KLC"] { --company-bg:#f0f5fb; --company-border:#d7e2ef; --company-accent:#496d96; --company-inner:#344f70; }
+    .company[data-code="KBC"] { --company-bg:#fcf8e9; --company-border:#eae1c2; --company-accent:#8a6a25; --company-inner:#69562b; }
+    .company[data-code="KLIS"] { --company-bg:#f0f6ef; --company-border:#d6e3d3; --company-accent:#52735a; --company-inner:#365543; }
+    html[data-theme="dark"] .company[data-code="KLC"] { --company-bg:#18232f; --company-border:#344456; --company-accent:#a4bfdd; --company-inner:#24394f; }
+    html[data-theme="dark"] .company[data-code="KBC"] { --company-bg:#29261d; --company-border:#4e4530; --company-accent:#ddc280; --company-inner:#43391f; }
+    html[data-theme="dark"] .company[data-code="KLIS"] { --company-bg:#1c2922; --company-border:#354b3c; --company-accent:#afcbb2; --company-inner:#293f31; }
+    .company .company-header { border-color:var(--company-border); }
+    .company h2,.company .language-name { color:var(--company-accent); }
+    .company h2 { display:inline-flex; align-items:center; gap:10px; font-size:18px; letter-spacing:.025em; }
+    .company h2::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--company-accent); }
+    .company .language-row + .language-row { border-color:var(--company-border); }
+    .company-header { display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; padding:17px 22px; border-bottom:1px solid var(--border); }
+    h2 { margin:0; font-size:20px; }
+    .abbreviation { margin:0; color:var(--muted); font-size:13px; }
+    .abbreviation strong { color:var(--text); }
+    .language-row { display:grid; grid-template-columns:100px minmax(0,1fr) 24px minmax(0,1.15fr); align-items:start; gap:16px; padding:22px; }
+    .language-row + .language-row { border-top:1px solid var(--border); }
+    .language-name { font-size:14px; font-weight:700; padding-top:22px; }
+    .label { color:var(--muted); display:block; font-size:12px; font-weight:700; margin-bottom:6px; }
+    .name { margin:0; font-size:16px; overflow-wrap:anywhere; }
+    .arrow { color:var(--muted); padding-top:24px; }
+    .new-name { background:var(--company-inner); color:#fff; border-radius:14px; padding:14px 16px; margin-top:-12px; min-width:0; }
+    .new-name .label { color:rgba(255,255,255,.8); font-weight:500; }
+    .new-name .copy { background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.18); font-weight:600; }
+    .new-name .copy:hover { background:rgba(255,255,255,.18); }
+    .new-name .copy:focus-visible { outline-color:#fff; }
+    .name-with-copy { display:flex; align-items:flex-start; gap:12px; }
+    .name-with-copy .name { flex:1; min-width:0; font-weight:700; user-select:all; }
+    .copy { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:8px 11px; margin-top:-5px; border:1px solid var(--border); border-radius:9px; background:var(--surface); color:var(--brand); font-size:13px; font-weight:700; }
+    .copy:disabled { opacity:.7; cursor:wait; }
+    .copy svg { width:15px; height:15px; }
+    .reference { margin-top:24px; font-size:13px; color:var(--muted); }
+    .reference p { margin:8px 0; }
+    .footer { padding:0 0 40px; }
+    .footer-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:18px 20px; color:var(--muted); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    #status { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); width:max-content; max-width:calc(100% - 32px); padding:12px 18px; border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text); box-shadow:var(--shadow); z-index:10; }
+    #status:empty { display:none; }
+    @media(max-width:700px) {
+      main { padding-top:24px; }
+      .topbar-inner { gap:8px; }
+      .controls { width:100%; gap:10px; }
+      .company-header { padding:16px; }
+      .language-row { grid-template-columns:minmax(0,1fr); gap:10px; padding:16px; }
+      .language-name { padding:0; color:var(--brand); }
+      .arrow { display:none; }
+      .new-name { margin:0; }
+      .name { font-size:16px; }
+      .name-with-copy { flex-wrap:wrap; gap:10px; }
+      .name-with-copy .name { flex-basis:100%; }
+      .copy { margin:0; }
+    }
+    @media(prefers-reduced-motion:no-preference) { button { transition:background .15s,color .15s; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="https://tools.klncanada.com/">
+        <img class="brand-logo" src="https://img.klncanada.com/company/logo/KLN%20Logo_colour_RGB.png" alt="KLN" width="100" height="46">
+        <div class="brand-text">
+          <p class="brand-title" data-i18n="brandTitle">KLN Employee Portal</p>
+          <p data-i18n="brandSubtitle">A unified entry point for everyday employee services</p>
+        </div>
+      </a>
+      <div class="controls">
+        <div class="switch" role="group" data-label="language">
+          <button type="button" data-lang="en" lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="fr" lang="fr" aria-pressed="false">FR</button>
+        </div>
+        <div class="switch" role="group" data-label="theme">
+          <button type="button" data-theme-mode="auto" data-i18n="auto" aria-pressed="true">Auto</button>
+          <button type="button" data-theme-mode="light" data-i18n="light" aria-pressed="false">Light</button>
+          <button type="button" data-theme-mode="dark" data-i18n="dark" aria-pressed="false">Dark</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <div class="intro">
+      <p class="eyebrow">KLN Canada</p>
+      <h1 data-i18n="title">Rebranding</h1>
+      <p data-i18n="intro">Find each company's former and new names. Copy the new name in the language you need.</p>
+      <p data-i18n="both">English and French company names are always shown, regardless of the interface language.</p>
+      <span class="effective" data-i18n="effective">Effective April 1, 2025</span>
+    </div>
+    <div class="companies" id="companies"></div>
+    <noscript>Please enable JavaScript to view the company names. / Veuillez activer JavaScript pour afficher les noms des sociétés.</noscript>
+    <div class="reference">
+    <p data-i18n="note">This is a name change only. Existing contractual and business relationships remain unchanged.</p>
+    <p data-i18n="source">Reference: six English/French business partner notices, versions dated March 17 and March 20, 2025.</p>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-card">
+        <span data-i18n="footerLeft">KLN Canada Employee Portal</span>
+        <span data-i18n="footerRight">Powered by OpenAI · GitHub · Cloudflare</span>
+      </div>
+    </div>
+  </footer>
+  <div id="status" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script>
+    // Names transcribed from both supplied versions; retain the notices' exact spelling.
+    // Company abbreviations remain unchanged before and after renaming, as confirmed by the user.
+    const companies = [
+      { code:'KLC', names:{ en:['Kerry Logistics (Canada) Inc.','KLN Freight Canada Inc.'], fr:['Logistique Kerry (Canada) Inc.','Fret KLN Canada Inc.'] } },
+      { code:'KBC', names:{ en:['Kerry Brokerage Services (Canada) Inc.','KLN Brokerage Services Canada Inc.'], fr:['Services de Courtage Kerry (Canada)','KLN Services de Courtage Canada Inc.'] } },
+      { code:'KLIS', names:{ en:['Kerry Logistics Integrated Solutions Inc.','KLN Logistics Canada Inc.'], fr:['Logistique Kerry Solutions Intégrées Inc.','KLN Logistique Canada Inc.'] } }
+    ];
+    const translations = {
+      en:{ brandTitle:'KLN Employee Portal', brandSubtitle:'A unified entry point for everyday employee services', footerLeft:'KLN Canada Employee Portal', footerRight:'Powered by OpenAI · GitHub · Cloudflare', back:'Employee Portal', language:'Language', theme:'Display mode', auto:'Auto', light:'Light', dark:'Dark', title:'Rebranding', intro:"Find each company's former and new names. Copy the new name in the language you need.", both:'English and French company names are always shown, regardless of the interface language.', effective:'Effective April 1, 2025', former:'Former name', newName:'New name', unchangedCode:'Abbreviation unchanged', copy:'Copy', copyName:'Copy company name', copied:'Copied', success:'Company name copied:', failure:'Copy is unavailable. Select the new company name and copy it manually.', note:'This is a name change only. Existing contractual and business relationships remain unchanged.', source:'Reference: six English/French business partner notices, versions dated March 17 and March 20, 2025.' },
+      fr:{ brandTitle:'Portail Employés KLN', brandSubtitle:'Un point d’accès unique pour les services employés courants', footerLeft:'Portail Employés KLN Canada', footerRight:'Propulsé par OpenAI · GitHub · Cloudflare', back:'Portail employés', language:'Langue', theme:'Mode d’affichage', auto:'Auto', light:'Clair', dark:'Sombre', title:'Rebranding', intro:'Consultez les anciens et nouveaux noms de chaque société. Copiez le nouveau nom dans la langue souhaitée.', both:'Les noms anglais et français restent toujours affichés, quelle que soit la langue de l’interface.', effective:'En vigueur depuis le 1er avril 2025', former:'Ancien nom', newName:'Nouveau nom', unchangedCode:'Abréviation inchangée', copy:'Copier', copyName:'Copier le nom de la société', copied:'Copié', success:'Nom de la société copié :', failure:'Copie indisponible. Sélectionnez le nouveau nom de la société et copiez-le manuellement.', note:'Il s’agit uniquement d’un changement de nom. Les relations contractuelles et commerciales existantes restent inchangées.', source:'Référence : six avis bilingues aux partenaires commerciaux, versions des 17 et 20 mars 2025.' }
+    };
+    const storage = {
+      get(key) { try { return localStorage.getItem(key); } catch (_) { return null; } },
+      set(key,value) { try { localStorage.setItem(key,value); } catch (_) {} }
+    };
+    let language = storage.get('kln-portal-lang') || ((navigator.language || 'en').startsWith('fr') ? 'fr' : 'en');
+    let themeMode = storage.get('kln-portal-theme-mode') || 'auto';
+    let statusTimer;
+    const copyIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>';
+    document.getElementById('companies').innerHTML = companies.map((company,index) => `
+      <article class="company" data-code="${company.code}" aria-labelledby="company-${index}">
+        <div class="company-header"><h2 id="company-${index}">${company.code}</h2><p class="abbreviation" data-i18n="unchangedCode"></p></div>
+        ${['en','fr'].map(lang => `<section class="language-row" aria-label="${lang === 'en' ? 'English' : 'Français'}">
+          <div class="language-name" lang="${lang}">${lang === 'en' ? 'English' : 'Français'}</div>
+          <div><span class="label" data-i18n="former"></span><p class="name" lang="${lang}">${company.names[lang][0]}</p></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="new-name"><span class="label" data-i18n="newName"></span><div class="name-with-copy"><p class="name" lang="${lang}">${company.names[lang][1]}</p><button class="copy" type="button" data-company="${index}" data-name-lang="${lang}">${copyIcon}<span data-i18n="copy"></span></button></div></div>
+        </section>`).join('')}
+      </article>`).join('');
+    function setLanguage(value, persist = true) {
+      language = value === 'fr' ? 'fr' : 'en';
+      const dict = translations[language];
+      document.documentElement.lang = language;
+      document.title = dict.title + ' · KLN Canada';
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = dict[el.dataset.i18n]; });
+      document.querySelectorAll('[data-label]').forEach(el => { el.setAttribute('aria-label',dict[el.dataset.label]); });
+      document.querySelectorAll('[data-lang]').forEach(btn => btn.setAttribute('aria-pressed',String(btn.dataset.lang === language)));
+      document.querySelectorAll('.copy').forEach(btn => btn.setAttribute('aria-label',dict.copyName + ': ' + companies[btn.dataset.company].names[btn.dataset.nameLang][1]));
+      document.getElementById('status').textContent = '';
+      if (persist) storage.set('kln-portal-lang',language);
+    }
+    function setTheme(value, persist = true) {
+      themeMode = ['auto','light','dark'].includes(value) ? value : 'auto';
+      const hour = new Date().getHours();
+      document.documentElement.dataset.theme = themeMode === 'auto' ? (hour >= 19 || hour < 7 ? 'dark' : 'light') : themeMode;
+      document.querySelectorAll('[data-theme-mode]').forEach(btn => btn.setAttribute('aria-pressed',String(btn.dataset.themeMode === themeMode)));
+      if (persist) storage.set('kln-portal-theme-mode',themeMode);
+    }
+    async function copyName(text) {
+      try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return; } } catch (_) {}
+      const input = document.createElement('textarea');
+      input.value = text;
+      input.readOnly = true;
+      input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+      const previous = document.activeElement;
+      document.body.appendChild(input);
+      try { input.select(); input.setSelectionRange(0,text.length); if (!document.execCommand('copy')) throw new Error('Copy failed'); }
+      finally { input.remove(); if (previous) previous.focus({preventScroll:true}); }
+    }
+    document.querySelectorAll('[data-lang]').forEach(btn => btn.addEventListener('click',() => setLanguage(btn.dataset.lang)));
+    document.querySelectorAll('[data-theme-mode]').forEach(btn => btn.addEventListener('click',() => setTheme(btn.dataset.themeMode)));
+    document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click',async () => {
+      btn.disabled = true;
+      const name = companies[btn.dataset.company].names[btn.dataset.nameLang][1];
+      const status = document.getElementById('status');
+      clearTimeout(statusTimer);
+      status.textContent = '';
+      try { await copyName(name); status.textContent = translations[language].success + ' ' + name; }
+      catch (_) { status.textContent = translations[language].failure; }
+      finally { btn.disabled = false; btn.focus({preventScroll:true}); statusTimer = setTimeout(() => { status.textContent = ''; },6000); }
+    }));
+    window.addEventListener('storage',event => {
+      if (event.key === 'kln-portal-lang') setLanguage(event.newValue,false);
+      if (event.key === 'kln-portal-theme-mode') setTheme(event.newValue,false);
+    });
+    setLanguage(language,false);
+    setTheme(themeMode,false);
+    setInterval(() => { if (themeMode === 'auto') setTheme('auto',false); },60000);
+  </script>
+</body>
+</html>
