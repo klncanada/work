@@ -118,30 +118,30 @@
     </nav>
 
     <!-- Main Content Grid -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col gap-6">
         
         <!-- Panel 1: Time Controller Dashboard -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
             <!-- Base Time Input Card -->
-            <div class="lg:col-span-12 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 lg:p-8 flex flex-col justify-between">
-                <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="lg:col-span-12 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[20px] p-4 lg:p-5">
+                <div class="grid grid-cols-1 xl:grid-cols-[170px_minmax(0,1fr)_370px] gap-4 xl:gap-5 items-end">
+                    <div class="flex xl:flex-col items-center xl:items-start justify-between xl:justify-center gap-2 self-stretch">
                         <span class="bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 w-fit">
                             <i class="ph ph-anchor-simple text-sm"></i> <span id="lbl-base-ref">基准参考点</span>
                         </span>
-                        <span id="currentTimeDisplay" class="text-xs font-mono text-slate-400"></span>
+                        <span id="currentTimeDisplay" class="text-[10px] font-mono text-slate-400 whitespace-nowrap"></span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <!-- Primary Zone Selector -->
                         <div>
-                            <label id="lbl-base-zone" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准时区</label>
+                            <label id="lbl-base-zone" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">基准时区</label>
                             <div class="relative">
-                                <select id="baseZoneSelect" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950/40 transition appearance-none cursor-pointer">
+                                <select id="baseZoneSelect" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950/40 transition appearance-none cursor-pointer">
                                     <!-- Populated dynamically -->
                                 </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
                                     <i class="ph ph-caret-down text-sm"></i>
                                 </div>
                             </div>
@@ -149,30 +149,26 @@
 
                         <!-- Date Field -->
                         <div>
-                            <label id="lbl-base-date" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准日期</label>
-                            <div class="relative">
-                                <input type="date" id="inputDate" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
-                            </div>
+                            <label id="lbl-base-date" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">基准日期</label>
+                            <input type="date" id="inputDate" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
                         </div>
 
                         <!-- Time Field -->
                         <div>
-                            <label id="lbl-base-time" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">基准时间</label>
-                            <div class="relative">
-                                <input type="time" id="inputTime" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
-                            </div>
+                            <label id="lbl-base-time" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">基准时间</label>
+                            <input type="time" id="inputTime" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition cursor-pointer">
                         </div>
                     </div>
-                </div>
 
-                <!-- Instant Presets -->
-                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                    <span id="lbl-presets" class="block text-xxs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">快捷时刻选择</span>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="setBaseToPreset('now')" id="btn-preset-now" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">当前时刻</button>
-                        <button onclick="setBaseToPreset('work-start')" id="btn-preset-work-start" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">工作开始 (09:00)</button>
-                        <button onclick="setBaseToPreset('noon')" id="btn-preset-noon" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">正午 (12:00)</button>
-                        <button onclick="setBaseToPreset('work-end')" id="btn-preset-work-end" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-xs font-medium transition active:scale-95">下班时间 (18:00)</button>
+                    <!-- Instant Presets -->
+                    <div>
+                        <span id="lbl-presets" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">快捷时刻选择</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setBaseToPreset('now')" id="btn-preset-now" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-[11px] font-medium transition active:scale-95 whitespace-nowrap">当前时刻</button>
+                            <button onclick="setBaseToPreset('work-start')" id="btn-preset-work-start" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-[11px] font-medium transition active:scale-95 whitespace-nowrap">工作开始 (09:00)</button>
+                            <button onclick="setBaseToPreset('noon')" id="btn-preset-noon" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-[11px] font-medium transition active:scale-95 whitespace-nowrap">正午 (12:00)</button>
+                            <button onclick="setBaseToPreset('work-end')" id="btn-preset-work-end" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-slate-600 dark:text-slate-300 text-[11px] font-medium transition active:scale-95 whitespace-nowrap">下班时间 (18:00)</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,7 +181,7 @@
                 <span id="lbl-click-anchor" class="text-xs text-slate-400">点击卡片内 <i class="ph ph-anchor-simple text-blue-500"></i> 一键设为基准 | 标签可自定义</span>
             </div>
             
-            <div id="activeCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div id="activeCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
                 <!-- Fixed 4 timezone comparison cards populated by JS -->
             </div>
         </section>
@@ -484,6 +480,8 @@
         let liveMode = true;
         let liveTimerInterval = null;
         let currentUTCTimestamp = Date.now();
+        let lastLiveMinuteKey = null;
+        let lastLiveHourKey = null;
 
         // Safe Toast System to replace standard alert
         function triggerToast(message, isError = false) {
@@ -742,6 +740,7 @@
             document.getElementById('baseZoneSelect').addEventListener('change', onBaseZoneChanged);
             document.getElementById('inputDate').addEventListener('change', onManualDateTimeInput);
             document.getElementById('inputTime').addEventListener('change', onManualDateTimeInput);
+            window.addEventListener('resize', () => requestAnimationFrame(resizeAllZoneLabels));
             document.querySelectorAll('.lang-btn').forEach(button => button.addEventListener('click', () => {
                 currentLang = button.dataset.lang;
                 try {
@@ -932,22 +931,45 @@
             const text = document.getElementById('liveClockStatusText');
             const t = translations[currentLang];
 
+            if (liveTimerInterval) {
+                clearInterval(liveTimerInterval);
+                liveTimerInterval = null;
+            }
+
             if (liveMode) {
                 btn.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 shadow-sm transition hover:scale-105 active:scale-95";
                 statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
                 text.innerText = t.liveSync;
-                
+
+                currentUTCTimestamp = Date.now();
+                syncInputsWithTimestamp();
+                updateAllViews();
+                lastLiveMinuteKey = Math.floor(currentUTCTimestamp / 60000);
+                lastLiveHourKey = Math.floor(currentUTCTimestamp / 3600000);
+
                 liveTimerInterval = setInterval(() => {
                     currentUTCTimestamp = Date.now();
-                    syncInputsWithTimestamp();
-                    updateAllViews();
+                    updateCurrentTimeDisplay();
+
+                    const minuteKey = Math.floor(currentUTCTimestamp / 60000);
+                    if (minuteKey !== lastLiveMinuteKey) {
+                        syncInputsWithTimestamp();
+                        updateComparativeCardValues();
+                        updateSchedulerUtility(true);
+                        lastLiveMinuteKey = minuteKey;
+                    }
+
+                    const hourKey = Math.floor(currentUTCTimestamp / 3600000);
+                    if (hourKey !== lastLiveHourKey) {
+                        updateTimelineLiveSelection();
+                        lastLiveHourKey = hourKey;
+                    }
                 }, 1000);
             } else {
                 btn.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition hover:scale-105 active:scale-95 text-slate-600 dark:text-slate-300";
                 statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-400 dark:bg-slate-500";
                 text.innerText = t.liveLocked;
                 
-                if (liveTimerInterval) clearInterval(liveTimerInterval);
             }
         }
 
@@ -1015,60 +1037,82 @@
             updateAllViews();
         }
 
+        function elementContainsSelection(element) {
+            const selection = window.getSelection ? window.getSelection() : null;
+            if (!selection || selection.isCollapsed || !selection.rangeCount) return false;
+            return element.contains(selection.anchorNode) || element.contains(selection.focusNode);
+        }
+
+        function setTextPreservingSelection(element, value) {
+            if (!element || elementContainsSelection(element) || element.textContent === value) return;
+            element.textContent = value;
+        }
+
+        function updateCurrentTimeDisplay() {
+            const liveClock = new Date();
+            const t = translations[currentLang];
+            setTextPreservingSelection(
+                document.getElementById('currentTimeDisplay'),
+                `${t.presetNow}: ${liveClock.toLocaleTimeString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour12: false })}`
+            );
+        }
+
         function updateAllViews() {
             updateComparativeCards();
             updateTimelinePlanner();
             updateSchedulerUtility();
-            
-            const liveClock = new Date();
-            const t = translations[currentLang];
-            document.getElementById('currentTimeDisplay').innerText = `${t.presetNow}: ${liveClock.toLocaleTimeString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour12: false })}`;
+            updateCurrentTimeDisplay();
         }
 
-        // Render clean, beautiful comparative cards (Clean typography, zero monospace jitters)
+        function getComparativeCardState(z) {
+            const baseTimeObj = getTimeDetails(currentUTCTimestamp, baseZoneId);
+            const t = translations[currentLang];
+            const details = getTimeDetails(currentUTCTimestamp, z.id);
+            const isBase = z.id === baseZoneId;
+
+            let dayBadge = t.dayToday;
+            let badgeClass = 'bg-slate-100/80 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
+            const diffDays = Math.round((new Date(details.year, details.month - 1, details.day) - new Date(baseTimeObj.year, baseTimeObj.month - 1, baseTimeObj.day)) / 86400000);
+            if (diffDays > 0) {
+                dayBadge = `+${diffDays} ${t.dayDays}`;
+                badgeClass = 'bg-amber-100/80 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400';
+            } else if (diffDays < 0) {
+                dayBadge = `${diffDays} ${t.dayDays}`;
+                badgeClass = 'bg-rose-100/80 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400';
+            }
+
+            const baseOffset = getMinutesOffset(baseTimeObj.offsetStr);
+            const targetOffset = getMinutesOffset(details.offsetStr);
+            const offsetDiffHrs = (targetOffset - baseOffset) / 60;
+            const offsetLabel = offsetDiffHrs === 0
+                ? t.sameAsBase
+                : offsetDiffHrs > 0
+                    ? `${t.fasterThanBase} ${offsetDiffHrs}h`
+                    : `${t.slowerThanBase} ${Math.abs(offsetDiffHrs)}h`;
+
+            return {
+                isBase,
+                details,
+                dayBadge,
+                badgeClass,
+                offsetLabel,
+                cardName: t[z.labelKey] || z.id,
+                dstLabel: details.isDST ? t.isDST : t.isStandard
+            };
+        }
+
+        // Build the cards only when the page structure or user-selected context changes.
         function updateComparativeCards() {
             const container = document.getElementById('activeCardsContainer');
             container.innerHTML = '';
-
-            const baseTimeObj = getTimeDetails(currentUTCTimestamp, baseZoneId);
             const t = translations[currentLang];
 
             activeZones.forEach((z, idx) => {
-                const isBase = z.id === baseZoneId;
-                const details = getTimeDetails(currentUTCTimestamp, z.id);
-
-                // Relative Day Badge logic
-                let dayBadge = t.dayToday;
-                let badgeClass = 'bg-slate-100/80 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
-                
-                const diffDays = Math.round((new Date(details.year, details.month - 1, details.day) - new Date(baseTimeObj.year, baseTimeObj.month - 1, baseTimeObj.day)) / 86400000);
-                if (diffDays > 0) {
-                    dayBadge = `+${diffDays} ${t.dayDays}`;
-                    badgeClass = 'bg-amber-100/80 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400';
-                } else if (diffDays < 0) {
-                    dayBadge = `${diffDays} ${t.dayDays}`;
-                    badgeClass = 'bg-rose-100/80 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400';
-                }
-
-                // Relative Offset logic
-                const baseOffset = getMinutesOffset(baseTimeObj.offsetStr);
-                const targetOffset = getMinutesOffset(details.offsetStr);
-                const offsetDiffMin = targetOffset - baseOffset;
-                const offsetDiffHrs = offsetDiffMin / 60;
-                let offsetLabel = '';
-                if (offsetDiffHrs === 0) {
-                    offsetLabel = t.sameAsBase;
-                } else {
-                    offsetLabel = offsetDiffHrs > 0 
-                        ? `${t.fasterThanBase} ${offsetDiffHrs}h` 
-                        : `${t.slowerThanBase} ${Math.abs(offsetDiffHrs)}h`;
-                }
-
-                // Generic neutral translated Name
-                const cardName = t[z.labelKey] || z.id;
+                const { isBase, details, dayBadge, badgeClass, offsetLabel, cardName, dstLabel } = getComparativeCardState(z);
 
                 const card = document.createElement('div');
-                card.className = `relative rounded-2xl p-5 bg-white dark:bg-slate-900 border transition-all duration-300 flex flex-col justify-between ${
+                card.dataset.zoneIndex = String(idx);
+                card.className = `relative h-full rounded-2xl p-4 bg-white dark:bg-slate-900 border transition-all duration-300 flex flex-col justify-between ${
                     isBase 
                     ? 'border-blue-500/80 dark:border-blue-500 shadow-[0_12px_30px_rgba(37,99,235,0.06)] ring-2 ring-blue-500/10' 
                     : 'border-slate-200/60 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-750 shadow-sm'
@@ -1081,11 +1125,11 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1.5">
                                     <i class="${z.iconClass} text-slate-400 dark:text-slate-500 text-lg"></i>
-                                    <h4 class="font-bold text-sm tracking-tight text-slate-700 dark:text-slate-300 truncate">${cardName}</h4>
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${badgeClass}">${dayBadge}</span>
+                                    <h4 data-role="zone-name" class="font-bold text-sm tracking-tight text-slate-700 dark:text-slate-300 truncate">${cardName}</h4>
+                                    <span data-role="day-badge" class="text-[10px] px-1.5 py-0.5 rounded font-bold ${badgeClass}">${dayBadge}</span>
                                 </div>
-                                <textarea rows="3" onchange="onCustomLabelChange(${idx}, this.value)"
-                                    class="w-full h-12 text-[10px] leading-4 font-medium bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-400 dark:text-slate-500 py-0.5 transition resize-none overflow-hidden"
+                                <textarea rows="1" oninput="onCustomLabelInput(${idx}, this)" onchange="onCustomLabelChange(${idx}, this.value)"
+                                    class="zone-label-editor w-full min-h-[1.25rem] text-[10px] leading-4 font-medium bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-400 dark:text-slate-500 py-0.5 transition resize-none overflow-hidden break-words"
                                     placeholder="${t.labelPlaceholder}">${z.customLabel}</textarea>
                             </div>
                             
@@ -1103,30 +1147,62 @@
                         </div>
 
                         <!-- Time Display: Upgraded to clean tabular geometric figures -->
-                        <div class="mb-4 mt-2">
+                        <div class="mb-3 mt-3">
                             <div class="text-3xl font-extrabold tracking-tight tabular-nums text-slate-900 dark:text-white flex items-baseline gap-1.5">
-                                <span>${details.timeString}</span>
-                                <span class="text-xs font-semibold text-slate-400/80 dark:text-slate-500 select-none">${details.timezoneName}</span>
+                                <span data-role="time">${details.timeString}</span>
+                                <span data-role="timezone-name" class="text-xs font-semibold text-slate-400/80 dark:text-slate-500 select-none">${details.timezoneName}</span>
                             </div>
                             <div class="text-[11px] text-slate-400/90 dark:text-slate-500 mt-1 flex items-center gap-1.5">
                                 <i class="ph ph-calendar-blank"></i>
-                                <span>${details.year} ${details.dateString}</span>
+                                <span data-role="date">${details.year} ${details.dateString}</span>
                                 <span>•</span>
-                                <span class="font-semibold px-1 bg-slate-100 dark:bg-slate-800 rounded text-[10px] tabular-nums">${details.offsetStr}</span>
+                                <span data-role="offset" class="font-semibold px-1 bg-slate-100 dark:bg-slate-800 rounded text-[10px] tabular-nums">${details.offsetStr}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Footer Segment -->
-                    <div class="flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-slate-800/60 pt-3 text-slate-400/90 dark:text-slate-500">
-                        <span class="flex items-center gap-1">
-                            ${details.isDST ? t.isDST : t.isStandard}
+                    <div class="flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-slate-800/60 pt-3 mt-1 text-slate-400/90 dark:text-slate-500">
+                        <span data-role="dst" class="flex items-center gap-1">
+                            ${dstLabel}
                         </span>
-                        <span class="font-medium text-slate-500 dark:text-slate-400">${offsetLabel}</span>
+                        <span data-role="relative-offset" class="font-medium text-slate-500 dark:text-slate-400">${offsetLabel}</span>
                     </div>
                 `;
 
                 container.appendChild(card);
+            });
+
+            requestAnimationFrame(resizeAllZoneLabels);
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(resizeAllZoneLabels);
+            }
+        }
+
+        // Live mode patches values in place so focus, selections, and editors survive.
+        function updateComparativeCardValues() {
+            const container = document.getElementById('activeCardsContainer');
+            if (container.children.length !== activeZones.length) {
+                updateComparativeCards();
+                return;
+            }
+
+            activeZones.forEach((z, idx) => {
+                const card = container.querySelector(`[data-zone-index="${idx}"]`);
+                if (!card) return;
+
+                const { details, dayBadge, badgeClass, offsetLabel, cardName, dstLabel } = getComparativeCardState(z);
+                const badge = card.querySelector('[data-role="day-badge"]');
+
+                setTextPreservingSelection(card.querySelector('[data-role="zone-name"]'), cardName);
+                setTextPreservingSelection(badge, dayBadge);
+                badge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold ${badgeClass}`;
+                setTextPreservingSelection(card.querySelector('[data-role="time"]'), details.timeString);
+                setTextPreservingSelection(card.querySelector('[data-role="timezone-name"]'), details.timezoneName);
+                setTextPreservingSelection(card.querySelector('[data-role="date"]'), `${details.year} ${details.dateString}`);
+                setTextPreservingSelection(card.querySelector('[data-role="offset"]'), details.offsetStr);
+                setTextPreservingSelection(card.querySelector('[data-role="dst"]'), dstLabel);
+                setTextPreservingSelection(card.querySelector('[data-role="relative-offset"]'), offsetLabel);
             });
         }
 
@@ -1140,9 +1216,24 @@
             return (hours * 60) + (sign * mins);
         }
 
+        function resizeZoneLabel(editor) {
+            if (!editor) return;
+            editor.style.height = 'auto';
+            editor.style.height = `${editor.scrollHeight + 2}px`;
+        }
+
+        function resizeAllZoneLabels() {
+            document.querySelectorAll('.zone-label-editor').forEach(resizeZoneLabel);
+        }
+
+        function onCustomLabelInput(index, editor) {
+            activeZones[index].customLabel = editor.value;
+            resizeZoneLabel(editor);
+        }
+
         function onCustomLabelChange(index, val) {
             activeZones[index].customLabel = val;
-            updateAllViews();
+            updateSchedulerUtility();
         }
 
         function setAsBaseZone(zoneId) {
@@ -1150,6 +1241,21 @@
             initTimezoneDropdown();
             recalculateUTCFromInputs();
             updateAllViews();
+        }
+
+        function getHourColorClass(hour, isCurrentSelection) {
+            let hourColorClass = '';
+            if (hour >= 9 && hour < 17) {
+                hourColorClass = 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/10';
+            } else if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 22)) {
+                hourColorClass = 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/10';
+            } else {
+                hourColorClass = 'bg-slate-800 dark:bg-slate-950/50 hover:bg-slate-700 dark:hover:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-700/20';
+            }
+
+            return isCurrentSelection
+                ? `ring-2 ring-blue-500/60 ring-offset-2 dark:ring-offset-slate-900 font-bold ${hourColorClass}`
+                : hourColorClass;
         }
 
         // --- Rendering Horizontal Timeline Grid (Displays only clean Timezone Names) ---
@@ -1160,11 +1266,12 @@
             const baseTimeObj = getTimeDetails(currentUTCTimestamp, baseZoneId);
             const t = translations[currentLang];
 
-            activeZones.forEach((z) => {
+            activeZones.forEach((z, idx) => {
                 const details = getTimeDetails(currentUTCTimestamp, z.id);
                 const cardName = t[z.labelKey] || z.id;
 
                 const row = document.createElement('div');
+                row.dataset.zoneIndex = String(idx);
                 row.className = "flex items-center gap-4 py-2.5 hover:bg-slate-50/60 dark:hover:bg-slate-800/20 rounded-xl transition duration-150 pr-4";
 
                 const labelDiv = document.createElement('div');
@@ -1173,7 +1280,7 @@
                     <i class="${z.iconClass} text-slate-400 text-lg"></i>
                     <div class="min-w-0">
                         <div class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">${cardName}</div>
-                        <div class="text-[10px] text-slate-400/80 dark:text-slate-500 font-medium truncate">${details.offsetStr}</div>
+                        <div data-role="timeline-offset" class="text-[10px] text-slate-400/80 dark:text-slate-500 font-medium truncate">${details.offsetStr}</div>
                     </div>
                 `;
                 row.appendChild(labelDiv);
@@ -1189,29 +1296,19 @@
                     const blockUTC = targetDayMidnightUTC + (h * 3600000);
                     const blockDetails = getTimeDetails(blockUTC, z.id);
                     
-                    let hourColorClass = "";
-                    let isCurrentSelection = (blockDetails.hour === details.hour);
+                    const isCurrentSelection = (blockDetails.hour === details.hour);
                     const hr = blockDetails.hour;
-
-                    if (hr >= 9 && hr < 17) {
-                        hourColorClass = "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/10";
-                    } else if (hr >= 7 && hr < 9 || hr >= 17 && hr < 22) {
-                        hourColorClass = "bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/10";
-                    } else {
-                        hourColorClass = "bg-slate-800 dark:bg-slate-950/50 hover:bg-slate-700 dark:hover:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-700/20";
-                    }
-
-                    if (isCurrentSelection) {
-                        hourColorClass = "ring-2 ring-blue-500/60 ring-offset-2 dark:ring-offset-slate-900 font-bold " + hourColorClass;
-                    }
+                    const hourColorClass = getHourColorClass(hr, isCurrentSelection);
 
                     const hourBlock = document.createElement('div');
+                    hourBlock.dataset.hourIndex = String(h);
+                    hourBlock.dataset.utc = String(blockUTC);
                     hourBlock.className = `h-9 border rounded-lg flex flex-col items-center justify-center text-xxs transition-all cursor-pointer ${hourColorClass}`;
                     hourBlock.innerHTML = `<span class="font-sans text-xs font-semibold tabular-nums">${String(hr).padStart(2, '0')}</span>`;
 
                     hourBlock.addEventListener('click', () => {
                         toggleLiveClock(false);
-                        currentUTCTimestamp = blockUTC;
+                        currentUTCTimestamp = Number(hourBlock.dataset.utc);
                         syncInputsWithTimestamp();
                         updateAllViews();
                     });
@@ -1225,8 +1322,33 @@
             });
         }
 
+        function updateTimelineLiveSelection() {
+            const t = translations[currentLang];
+            activeZones.forEach((z, idx) => {
+                const row = document.querySelector(`#timelineGridContainer [data-zone-index="${idx}"]`);
+                if (!row) return;
+
+                const details = getTimeDetails(currentUTCTimestamp, z.id);
+                const cardName = t[z.labelKey] || z.id;
+                const targetDayMidnightUTC = localToUTC(details.year, details.month, details.day, 0, 0, z.id);
+                setTextPreservingSelection(row.querySelector('[data-role="timeline-offset"]'), details.offsetStr);
+
+                row.querySelectorAll('[data-hour-index]').forEach((hourBlock, hourIndex) => {
+                    const blockUTC = targetDayMidnightUTC + (hourIndex * 3600000);
+                    const blockDetails = getTimeDetails(blockUTC, z.id);
+                    const hour = blockDetails.hour;
+                    const isCurrentSelection = hour === details.hour;
+
+                    hourBlock.dataset.utc = String(blockUTC);
+                    hourBlock.className = `h-9 border rounded-lg flex flex-col items-center justify-center text-xxs transition-all cursor-pointer ${getHourColorClass(hour, isCurrentSelection)}`;
+                    hourBlock.title = `${cardName}: ${blockDetails.year} ${blockDetails.dateString} ${String(hour).padStart(2, '0')}:00 (${details.offsetStr})`;
+                    setTextPreservingSelection(hourBlock.querySelector('span'), String(hour).padStart(2, '0'));
+                });
+            });
+        }
+
         // --- Core Meeting Index Calculation & Sharing Utilities ---
-        function updateSchedulerUtility() {
+        function updateSchedulerUtility(preserveTextSelection = false) {
             let totalScore = 100;
             let deduction = 0;
             const t = translations[currentLang];
@@ -1242,7 +1364,7 @@
             });
 
             totalScore = Math.max(0, totalScore - deduction);
-            document.getElementById('scoreText').innerText = `${totalScore}%`;
+            setTextPreservingSelection(document.getElementById('scoreText'), `${totalScore}%`);
             
             const dashoffset = 251.2 - (251.2 * totalScore) / 100;
             document.getElementById('scoreCircle').style.strokeDashoffset = dashoffset;
@@ -1252,20 +1374,20 @@
             const circle = document.getElementById('scoreCircle');
 
             if (totalScore >= 80) {
-                badge.innerText = t.perfectTime;
+                setTextPreservingSelection(badge, t.perfectTime);
                 badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400';
                 circle.className = 'text-emerald-500 transition-all duration-500';
-                desc.innerText = t.scorePerfectDesc;
+                setTextPreservingSelection(desc, t.scorePerfectDesc);
             } else if (totalScore >= 50) {
-                badge.innerText = t.fairTime;
+                setTextPreservingSelection(badge, t.fairTime);
                 badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400';
                 circle.className = 'text-amber-500 transition-all duration-500';
-                desc.innerText = t.scoreFairDesc;
+                setTextPreservingSelection(desc, t.scoreFairDesc);
             } else {
-                badge.innerText = t.poorTime;
+                setTextPreservingSelection(badge, t.poorTime);
                 badge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-rose-100 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400';
                 circle.className = 'text-rose-500 transition-all duration-500';
-                desc.innerText = t.scorePoorDesc;
+                setTextPreservingSelection(desc, t.scorePoorDesc);
             }
 
             // Copy invite generator content mapping 4 zones cleanly
@@ -1276,12 +1398,15 @@
                 shareText += `📍 ${z.customLabel || cardName} : ${details.year}-${String(details.month).padStart(2,'0')}-${String(details.day).padStart(2,'0')} ${details.timeString} (${details.offsetStr})\n`;
             });
             shareText += `---------------------------------------\n💡 ZoneFlow Engine`;
-            document.getElementById('meetingShareText').value = shareText;
+            const meetingShareText = document.getElementById('meetingShareText');
+            const preserveShareSelection = preserveTextSelection && document.activeElement === meetingShareText;
+            if (!preserveShareSelection) {
+                meetingShareText.value = shareText;
+            }
 
             // Safe Copy Action (Uses document.execCommand for generic iframe sandbox environments)
             document.getElementById('copyInviteBtn').onclick = function() {
-                const textInput = document.getElementById('meetingShareText');
-                textInput.select();
+                meetingShareText.select();
                 try {
                     document.execCommand('copy');
                     triggerToast(t.alertCopySuccess);
