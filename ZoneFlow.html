@@ -250,7 +250,7 @@
 
                 <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
                     <span id="lbl-optimal-time" class="text-slate-400">最佳建议时间:</span>
-                    <span id="optimalTimeSuggestion" class="font-bold text-blue-600 dark:text-blue-400">CST 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00</span>
+                    <span id="optimalTimeSuggestion" class="font-bold text-blue-600 dark:text-blue-400">CST/SGT 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00</span>
                 </div>
             </div>
 
@@ -321,7 +321,7 @@
                 scoreFairDesc: "部分时区成员正经历清晨、黄昏或晚间下班时间。请尽量缩短会议内容。",
                 scorePoorDesc: "警告：此时有团队成员正处于深夜或熟睡阶段。非极紧急事件建议推迟，以尊重彼此的作息规律。",
                 optimalTimeLabel: "最佳建议时间:",
-                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
+                optimalTimeValue: "CST/SGT 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
                 shareTitle: "智能排班结果 & 日历邀约",
                 shareDesc: "自动整合各地当前所选时间段，可直接复制发送给您的跨国成员：",
                 copyBtn: "复制分享文本",
@@ -336,11 +336,11 @@
                 slowerThanBase: "比基准慢",
                 alertCopySuccess: "排班文本已复制到剪贴板，可直接粘贴发给团队伙伴！",
                 alertCopyFail: "复制失败，请手动在文本框中复制。",
-                chinaTzName: "CST (UTC+8)",
+                chinaTzName: "CST/SGT (UTC+8)",
                 nyTzName: "Eastern Time (ET)",
                 chicagoTzName: "Central Time (CT)",
                 laTzName: "Pacific Time (PT)",
-                chinaTzFull: "CST (UTC+8)",
+                chinaTzFull: "CST/SGT (UTC+8)",
                 nyTzFull: "Eastern Time (ET)",
                 chicagoTzFull: "Central Time (CT)",
                 laTzFull: "Pacific Time (PT)",
@@ -377,7 +377,7 @@
                 scoreFairDesc: "Some members are off-office, early morning, or late evening. Keep meetings short.",
                 scorePoorDesc: "Warning: Some members are sleeping. Reschedule unless extremely urgent to protect wellness.",
                 optimalTimeLabel: "Optimal Suggestion:",
-                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
+                optimalTimeValue: "CST/SGT 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
                 shareTitle: "Smart Invite & Scheduler Output",
                 shareDesc: "Consolidated list of target local times ready to copy and share:",
                 copyBtn: "Copy Invite Text",
@@ -392,11 +392,11 @@
                 slowerThanBase: "slower than Base",
                 alertCopySuccess: "Schedule text copied to clipboard!",
                 alertCopyFail: "Copy failed, please select and copy manually.",
-                chinaTzName: "CST (UTC+8)",
+                chinaTzName: "CST/SGT (UTC+8)",
                 nyTzName: "Eastern Time (ET)",
                 chicagoTzName: "Central Time (CT)",
                 laTzName: "Pacific Time (PT)",
-                chinaTzFull: "CST (UTC+8)",
+                chinaTzFull: "CST/SGT (UTC+8)",
                 nyTzFull: "Eastern Time (ET)",
                 chicagoTzFull: "Central Time (CT)",
                 laTzFull: "Pacific Time (PT)",
@@ -433,7 +433,7 @@
                 scoreFairDesc: "Certains membres sont hors bureau, tôt le matin ou tard le soir. Soyez brefs.",
                 scorePoorDesc: "Attention: Certains membres dorment. Reportez la réunion sauf urgence absolue pour respecter leur rythme.",
                 optimalTimeLabel: "Suggestion Optimale:",
-                optimalTimeValue: "CST 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
+                optimalTimeValue: "CST/SGT 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00",
                 shareTitle: "Invitation Intelligente & Partage",
                 shareDesc: "Liste de vos créneaux locaux prête à être copiée et partagée :",
                 copyBtn: "Copier le texte",
@@ -448,11 +448,11 @@
                 slowerThanBase: "plus lent de",
                 alertCopySuccess: "Texte de réunion copié dans le presse-papiers !",
                 alertCopyFail: "Échec de copie, veuillez copier manuellement.",
-                chinaTzName: "CST (UTC+8)",
+                chinaTzName: "CST/SGT (UTC+8)",
                 nyTzName: "Eastern Time (ET)",
                 chicagoTzName: "Central Time (CT)",
                 laTzName: "Pacific Time (PT)",
-                chinaTzFull: "CST (UTC+8)",
+                chinaTzFull: "CST/SGT (UTC+8)",
                 nyTzFull: "Eastern Time (ET)",
                 chicagoTzFull: "Central Time (CT)",
                 laTzFull: "Pacific Time (PT)",
@@ -464,9 +464,9 @@
         // Current Language state
         let currentLang = 'zh';
 
-        // --- 2. Fixed Four Core Neutral Zones (CST, ET, CT, PT) ---
+        // --- 2. Fixed Four Core Neutral Zones (CST/SGT, ET, CT, PT) ---
         const ALL_WORLD_ZONES = [
-            { id: 'Asia/Shanghai', labelKey: 'chinaTzFull', nameKey: 'chinaTzName', defaultLabel: 'CST', iconClass: 'ph ph-globe-hemisphere-east' },
+            { id: 'Asia/Shanghai', labelKey: 'chinaTzFull', nameKey: 'chinaTzName', defaultLabel: 'CST/SGT', iconClass: 'ph ph-globe-hemisphere-east' },
             { id: 'America/New_York', labelKey: 'nyTzFull', nameKey: 'nyTzName', defaultLabel: 'ET', iconClass: 'ph ph-globe-hemisphere-west' },
             { id: 'America/Chicago', labelKey: 'chicagoTzFull', nameKey: 'chicagoTzName', defaultLabel: 'CT', iconClass: 'ph ph-globe-hemisphere-west' },
             { id: 'America/Los_Angeles', labelKey: 'laTzFull', nameKey: 'laTzName', defaultLabel: 'PT', iconClass: 'ph ph-globe-hemisphere-west' }
@@ -474,7 +474,7 @@
 
         // Default Custom labels mapped to 4 regions (incorporating user's cities perfectly, corrected spelling, removed "City")
         let activeZones = [
-            { id: 'Asia/Shanghai', labelKey: 'chinaTzName', customLabel: 'Beijing, Shenzhen, Hong Kong', iconClass: 'ph ph-globe-hemisphere-east' },
+            { id: 'Asia/Shanghai', labelKey: 'chinaTzName', customLabel: 'Beijing, Shenzhen, Hong Kong, SG', iconClass: 'ph ph-globe-hemisphere-east' },
             { id: 'America/New_York', labelKey: 'nyTzName', customLabel: 'New York, Detroit, Miami, Montreal-Dorval, Montreal-Lachine, Toronto-Mississauga, Toronto-Brampton', iconClass: 'ph ph-globe-hemisphere-west' },
             { id: 'America/Chicago', labelKey: 'chicagoTzName', customLabel: 'Chicago', iconClass: 'ph ph-globe-hemisphere-west' },
             { id: 'America/Los_Angeles', labelKey: 'laTzName', customLabel: 'Los Angeles, San Francisco, Vancouver', iconClass: 'ph ph-globe-hemisphere-west' }
@@ -1084,9 +1084,9 @@
                                     <h4 class="font-bold text-sm tracking-tight text-slate-700 dark:text-slate-300 truncate">${cardName}</h4>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${badgeClass}">${dayBadge}</span>
                                 </div>
-                                <input type="text" value="${z.customLabel}" onchange="onCustomLabelChange(${idx}, this.value)" 
-                                    class="w-full text-xxs font-medium bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-400 dark:text-slate-500 py-0.5 transition" 
-                                    placeholder="${t.labelPlaceholder}">
+                                <textarea rows="3" onchange="onCustomLabelChange(${idx}, this.value)"
+                                    class="w-full h-12 text-[10px] leading-4 font-medium bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-400 dark:text-slate-500 py-0.5 transition resize-none overflow-hidden"
+                                    placeholder="${t.labelPlaceholder}">${z.customLabel}</textarea>
                             </div>
                             
                             <div class="flex items-center gap-1.5 flex-shrink-0">
