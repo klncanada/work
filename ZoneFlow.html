@@ -222,31 +222,42 @@
         </section>
 
         <!-- Panel 4: Quick Share & Meeting Index -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Meeting Score Indicator -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 flex flex-col justify-between">
-                <div>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
-                        <i class="ph ph-heart-beat text-rose-500 text-lg"></i> <span id="lbl-meeting-score-title">会议黄金重叠指数 (Meeting Score)</span>
-                    </h4>
-                    <div class="flex items-center gap-6 my-4">
-                        <div class="relative flex items-center justify-center">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 flex flex-col gap-5">
+                <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500"></div>
+                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center">
+                        <i class="ph ph-heartbeat text-rose-500 text-lg"></i>
+                    </span>
+                    <span id="lbl-meeting-score-title">会议黄金重叠指数 (Meeting Score)</span>
+                </h4>
+
+                <div class="grid grid-cols-[96px_minmax(0,1fr)] items-center gap-5">
+                        <div class="relative flex items-center justify-center rounded-full shadow-[0_10px_28px_rgba(15,23,42,0.08)] dark:shadow-none">
                             <svg class="w-24 h-24 transform -rotate-90">
                                 <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" class="text-slate-100 dark:text-slate-800" fill="transparent"></circle>
                                 <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" class="text-emerald-500 transition-all duration-500" stroke-dasharray="251.2" stroke-dashoffset="0" fill="transparent"></circle>
                             </svg>
                             <span id="scoreText" class="absolute text-2xl font-black text-slate-800 dark:text-white font-mono">100%</span>
                         </div>
-                        <div class="flex-1">
+                        <div class="min-w-0 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-100 dark:border-slate-800 p-4">
                             <span id="scoreStatusBadge" class="inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400">绝佳时间</span>
-                            <p id="scoreDescription" class="text-xs text-slate-400 mt-2">该时间段内所有成员均处于理想的工作或苏醒状态，是绝佳的跨国会议时机。</p>
+                            <p id="scoreDescription" class="text-xs leading-5 text-slate-500 dark:text-slate-400 mt-2">该时间段内所有成员均处于理想的工作或苏醒状态，是绝佳的跨国会议时机。</p>
                         </div>
-                    </div>
                 </div>
 
-                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                    <span id="lbl-optimal-time" class="text-slate-400">最佳建议时间:</span>
-                    <span id="optimalTimeSuggestion" class="font-bold text-blue-600 dark:text-blue-400">CST/SGT 08:00 - 10:00 | ET 19:00 - 21:00 | CT 18:00 - 20:00 | PT 16:00 - 18:00</span>
+                <div class="rounded-2xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/20 p-4">
+                    <div class="flex items-center gap-2 mb-3 text-xs font-bold text-blue-700 dark:text-blue-300">
+                        <i class="ph ph-sparkle text-base"></i>
+                        <span id="lbl-optimal-time">最佳建议时间:</span>
+                    </div>
+                    <div id="optimalTimeSuggestion" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-blue-700 dark:text-blue-300">
+                        <span class="rounded-lg bg-white/90 dark:bg-slate-900/80 px-3 py-2">CST/SGT 08:00 - 10:00</span>
+                        <span class="rounded-lg bg-white/90 dark:bg-slate-900/80 px-3 py-2">ET 19:00 - 21:00</span>
+                        <span class="rounded-lg bg-white/90 dark:bg-slate-900/80 px-3 py-2">CT 18:00 - 20:00</span>
+                        <span class="rounded-lg bg-white/90 dark:bg-slate-900/80 px-3 py-2">PT 16:00 - 18:00</span>
+                    </div>
                 </div>
             </div>
 
@@ -264,9 +275,9 @@
                     <button id="copyInviteBtn" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
                         <i class="ph ph-copy text-base"></i> 复制分享文本
                     </button>
-                    <a id="googleCalBtn" target="_blank" class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/10 active:scale-95">
-                        <i class="ph ph-calendar text-base"></i> 谷歌日历预定
-                    </a>
+                    <button id="outlookCalendarBtn" type="button" class="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-brand-500/10 active:scale-95">
+                        <i class="ph ph-microsoft-outlook-logo text-base"></i> 在 Outlook 中打开
+                    </button>
                 </div>
             </div>
         </div>
@@ -321,7 +332,10 @@
                 shareTitle: "智能排班结果 & 日历邀约",
                 shareDesc: "自动整合各地当前所选时间段，可直接复制发送给您的跨国成员：",
                 copyBtn: "复制分享文本",
-                googleCalBtn: "谷歌日历预定",
+                outlookBtn: "在 Outlook 中打开",
+                calendarSubject: "全球协调会议",
+                outlookDownloadSuccess: "Outlook 邀请已生成。请打开下载的 .ics 文件以在桌面端继续。",
+                outlookDownloadFail: "无法生成 Outlook 邀请，请重试。",
                 footer: "© 2026 KLN ZoneFlow. 支持精密夏令时算法，服务多方无界协同。",
                 dayToday: "本日",
                 dayDays: "天",
@@ -377,7 +391,10 @@
                 shareTitle: "Smart Invite & Scheduler Output",
                 shareDesc: "Consolidated list of target local times ready to copy and share:",
                 copyBtn: "Copy Invite Text",
-                googleCalBtn: "Google Calendar",
+                outlookBtn: "Open in Outlook",
+                calendarSubject: "Global Coordination Meeting",
+                outlookDownloadSuccess: "Outlook invite created. Open the downloaded .ics file to continue in the desktop app.",
+                outlookDownloadFail: "Unable to create the Outlook invite. Please try again.",
                 footer: "© 2026 KLN ZoneFlow. Multi-party DST calculations without borders.",
                 dayToday: "Today",
                 dayDays: "days",
@@ -433,7 +450,10 @@
                 shareTitle: "Invitation Intelligente & Partage",
                 shareDesc: "Liste de vos créneaux locaux prête à être copiée et partagée :",
                 copyBtn: "Copier le texte",
-                googleCalBtn: "Google Agenda",
+                outlookBtn: "Ouvrir dans Outlook",
+                calendarSubject: "Réunion de coordination mondiale",
+                outlookDownloadSuccess: "L’invitation Outlook a été créée. Ouvrez le fichier .ics téléchargé pour continuer dans l’application de bureau.",
+                outlookDownloadFail: "Impossible de créer l’invitation Outlook. Veuillez réessayer.",
                 footer: "© 2026 KLN ZoneFlow. Calculs de l'heure d'été multi-parties, sans frontières.",
                 dayToday: "Aujourd'hui",
                 dayDays: "jours",
@@ -832,6 +852,17 @@
             }
         }
 
+        function renderOptimalSuggestion(value) {
+            const container = document.getElementById('optimalTimeSuggestion');
+            container.replaceChildren();
+            value.split('|').map(item => item.trim()).filter(Boolean).forEach(item => {
+                const chip = document.createElement('span');
+                chip.className = 'rounded-lg bg-white/90 dark:bg-slate-900/80 border border-blue-100/80 dark:border-blue-900/40 px-3 py-2 shadow-sm';
+                chip.textContent = item;
+                container.appendChild(chip);
+            });
+        }
+
         // Apply translations based on user's active choice
         function applyLanguageTranslations() {
             const t = translations[currentLang];
@@ -861,11 +892,11 @@
             document.getElementById('lbl-legend-sleep').innerText = t.legendSleep;
             document.getElementById('lbl-meeting-score-title').innerText = t.meetingScoreTitle;
             document.getElementById('lbl-optimal-time').innerText = t.optimalTimeLabel;
-            document.getElementById('optimalTimeSuggestion').innerText = t.optimalTimeValue;
+            renderOptimalSuggestion(t.optimalTimeValue);
             document.getElementById('lbl-share-title').innerText = t.shareTitle;
             document.getElementById('lbl-share-desc').innerText = t.shareDesc;
             document.getElementById('copyInviteBtn').innerHTML = `<i class="ph ph-copy text-base"></i> ` + t.copyBtn;
-            document.getElementById('googleCalBtn').innerHTML = `<i class="ph ph-calendar text-base"></i> ` + t.googleCalBtn;
+            document.getElementById('outlookCalendarBtn').innerHTML = `<i class="ph ph-microsoft-outlook-logo text-base"></i> ` + t.outlookBtn;
             document.getElementById('footer-text').innerText = t.footer;
 
             initTimezoneDropdown();
@@ -1347,6 +1378,55 @@
             });
         }
 
+        function formatICSDate(timestamp) {
+            return new Date(timestamp).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+        }
+
+        function escapeICSText(value) {
+            return String(value)
+                .replace(/\\/g, '\\\\')
+                .replace(/\r?\n/g, '\\n')
+                .replace(/;/g, '\\;')
+                .replace(/,/g, '\\,');
+        }
+
+        function createOutlookInvite() {
+            const t = translations[currentLang];
+            const description = document.getElementById('meetingShareText').value;
+            const calendarLines = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//KLN Canada//ZoneFlow//EN',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                `UID:${Date.now()}@tools.klncanada.com`,
+                `DTSTAMP:${formatICSDate(Date.now())}`,
+                `DTSTART:${formatICSDate(currentUTCTimestamp)}`,
+                `DTEND:${formatICSDate(currentUTCTimestamp + 1800000)}`,
+                `SUMMARY:${escapeICSText(t.calendarSubject)}`,
+                `DESCRIPTION:${escapeICSText(description)}`,
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ];
+
+            try {
+                const blob = new Blob([calendarLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = 'KLN-ZoneFlow-Meeting.ics';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                downloadLink.remove();
+                window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+                triggerToast(t.outlookDownloadSuccess);
+            } catch (error) {
+                triggerToast(t.outlookDownloadFail, true);
+            }
+        }
+
         // --- Core Meeting Index Calculation & Sharing Utilities ---
         function updateSchedulerUtility(preserveTextSelection = false) {
             let totalScore = 100;
@@ -1415,11 +1495,7 @@
                 }
             };
 
-            // Dynamic Calendar URL Generation
-            const startStr = new Date(currentUTCTimestamp).toISOString().replace(/-|:|\.\d\d\d/g, "");
-            const endStr = new Date(currentUTCTimestamp + 1800000).toISOString().replace(/-|:|\.\d\d\d/g, "");
-            const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Multi-party+Coordination+Meeting&dates=${startStr}/${endStr}&details=Scheduled+via+KLN+ZoneFlow&sf=true&output=xml`;
-            document.getElementById('googleCalBtn').href = gCalUrl;
+            document.getElementById('outlookCalendarBtn').onclick = createOutlookInvite;
         }
     </script>
 </body>
